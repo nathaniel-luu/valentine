@@ -392,8 +392,6 @@
       justify-content: center;
       flex-wrap: wrap;
       margin-top: 0.5rem;
-      position: relative;
-      min-height: 80px;
     }
 
     .btn-yes {
@@ -413,10 +411,9 @@
     .btn-yes:hover { background: #3d3530; transform: translateY(-2px); }
 
     .btn-no {
-      position: absolute;
       background: transparent;
-      color: var(--ink-faint);
-      border: 1.5px solid var(--ink-faint);
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
       padding: 14px 40px;
       font-family: 'Cinzel', serif;
       font-size: 0.9rem;
@@ -424,7 +421,7 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: left 0.4s ease, top 0.4s ease, opacity 0.3s, font-size 0.3s;
+      transition: transform 0.35s ease, left 0.35s ease, top 0.35s ease;
       z-index: 4;
       white-space: nowrap;
     }
@@ -805,8 +802,10 @@
     askGifs.forEach(src => { const img = new Image(); img.src = src; });
 
     function initNoButton() {
-      btnNo.style.left = '60%';
-      btnNo.style.top = '0px';
+      // Reset to normal flow position
+      btnNo.style.position = '';
+      btnNo.style.left = '';
+      btnNo.style.top = '';
     }
 
     function dodgeNo() {
@@ -817,7 +816,7 @@
       btnNo.textContent = noMessages[idx];
 
       // Grow Yes button
-      const yesFontSize = 0.9 + noCount * 0.1;
+      const yesFontSize = 0.9 + noCount * 0.12;
       const yesPad = 14 + noCount * 3;
       btnYes.style.fontSize = yesFontSize + 'rem';
       btnYes.style.padding = `${yesPad}px ${yesPad + 26}px`;
@@ -836,25 +835,19 @@
       void askScreen.offsetHeight;
       askScreen.classList.add('shake');
 
-      // Move No button to random position on screen
+      // Dodge — move to a random position but stay fully visible
       const vw = window.innerWidth;
       const vh = window.innerHeight;
       const btnW = btnNo.offsetWidth;
       const btnH = btnNo.offsetHeight;
-      const margin = 20;
+      const pad = 30;
 
-      const maxLeft = vw - btnW - margin;
-      const maxTop = vh - btnH - margin;
-      const newLeft = margin + Math.random() * (maxLeft - margin);
-      const newTop = margin + Math.random() * (maxTop - margin);
+      const newLeft = pad + Math.random() * (vw - btnW - pad * 2);
+      const newTop = pad + Math.random() * (vh - btnH - pad * 2);
 
       btnNo.style.position = 'fixed';
       btnNo.style.left = newLeft + 'px';
       btnNo.style.top = newTop + 'px';
-
-      // Shrink No over time
-      const noScale = Math.max(0.55, 1 - noCount * 0.04);
-      btnNo.style.fontSize = (0.9 * noScale) + 'rem';
     }
 
     // Desktop: dodge on hover
