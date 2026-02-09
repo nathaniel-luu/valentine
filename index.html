@@ -470,6 +470,158 @@
       50% { transform: translateY(-4px) rotate(3deg); }
     }
 
+    /* ─── CODE ENTRY ─── */
+    .code-entry {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .code-input {
+      width: 200px;
+      padding: 10px 16px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      text-align: center;
+      letter-spacing: 0.2em;
+      color: var(--ink);
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid var(--ink-faint);
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .code-input::placeholder {
+      color: var(--ink-faint);
+      letter-spacing: 0.1em;
+      font-style: italic;
+    }
+    .code-input:focus {
+      border-bottom-color: var(--accent);
+    }
+
+    .code-error {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-style: italic;
+      opacity: 0;
+      transition: opacity 0.3s;
+      height: 1.2em;
+    }
+    .code-error.visible {
+      opacity: 1;
+    }
+
+    .btn-start {
+      margin-top: 8px;
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      padding: 12px 48px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-start:hover {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    /* ─── ADVENTURE SCREENS ─── */
+    #adventure, #memory-lane, #love-notes {
+      background: var(--bg-cool);
+      gap: 2rem;
+    }
+
+    .adventure-sticker {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .adventure-sticker img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .adventure-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 6vw, 2.6rem);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0.06em;
+    }
+
+    .adventure-sub {
+      font-size: clamp(1.05rem, 3vw, 1.2rem);
+      color: var(--ink-light);
+      max-width: 360px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .adventure-choices {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .adventure-prompt {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--ink-faint);
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-choice {
+      width: 240px;
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      padding: 14px 32px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-choice:hover {
+      background: var(--ink);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .btn-back {
+      margin-top: 1rem;
+      background: transparent;
+      color: var(--ink-faint);
+      border: 1px solid var(--ink-faint);
+      padding: 10px 32px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-back:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
     /* ─── SCREEN SHAKE ─── */
     .shake { animation: shakeIt 0.35s ease-in-out; }
     @keyframes shakeIt {
@@ -581,10 +733,51 @@
     <div class="celeb-foreshadow fade-in" style="animation-delay:0.6s">
       <p>
         <span class="envelope-icon">&#x1F48C;</span><br>
-        This isn't your only surprise.
+        there are more surprises coming...
       </p>
-      <p class="hint">February 14th &mdash; check your hands.</p>
+      <div class="code-entry">
+        <input type="text" id="secretCode" class="code-input" placeholder="enter the code" maxlength="10" autocomplete="off" spellcheck="false">
+        <p class="code-error" id="codeError">hmm, that's not it</p>
+      </div>
+      <button class="btn-start" id="btnStart" onclick="tryCode()">Start</button>
     </div>
+  </section>
+
+  <!-- ═══════ SCREEN 6 — ADVENTURE ═══════ -->
+  <section class="screen" id="adventure">
+    <div class="adventure-sticker">
+      <img src="https://media.tenor.com/Lgr_6-nkvnUAAAAi/casal-dudu.gif"
+           alt="Dudu and Bubu" loading="lazy">
+    </div>
+
+    <h2 class="adventure-title fade-in">you found it.</h2>
+    <p class="adventure-sub fade-in" style="animation-delay:0.3s">
+      welcome to your adventure, Aamira.
+    </p>
+
+    <div class="adventure-choices fade-in" style="animation-delay:0.6s">
+      <p class="adventure-prompt">where do you want to go?</p>
+      <button class="btn-choice" onclick="goToAdventure('memory-lane')">memory lane</button>
+      <button class="btn-choice" onclick="goToAdventure('love-notes')">love notes</button>
+    </div>
+  </section>
+
+  <!-- ═══════ ADVENTURE: MEMORY LANE ═══════ -->
+  <section class="screen" id="memory-lane">
+    <h2 class="adventure-title fade-in">memory lane</h2>
+    <p class="adventure-sub fade-in" style="animation-delay:0.3s">
+      coming soon...
+    </p>
+    <button class="btn-back" onclick="goTo('adventure')">go back</button>
+  </section>
+
+  <!-- ═══════ ADVENTURE: LOVE NOTES ═══════ -->
+  <section class="screen" id="love-notes">
+    <h2 class="adventure-title fade-in">love notes</h2>
+    <p class="adventure-sub fade-in" style="animation-delay:0.3s">
+      coming soon...
+    </p>
+    <button class="btn-back" onclick="goTo('adventure')">go back</button>
   </section>
 
   <script>
@@ -865,6 +1058,54 @@
         });
         if (Date.now() < end) requestAnimationFrame(frame);
       })();
+    }
+    // ═══════════════════════════════════════
+    //  SECRET CODE — unlocks adventure
+    // ═══════════════════════════════════════
+    const SECRET_CODE = '143';  // Change this to whatever you want on the card
+    const codeInput = document.getElementById('secretCode');
+    const codeError = document.getElementById('codeError');
+
+    function tryCode() {
+      const entered = codeInput.value.trim().toLowerCase();
+      if (entered === SECRET_CODE.toLowerCase()) {
+        goTo('adventure');
+        // Small confetti pop for unlocking
+        setTimeout(() => {
+          confetti({
+            particleCount: 40,
+            spread: 70,
+            origin: { x: 0.5, y: 0.5 },
+            colors: ['#c4956a', '#d4a574', '#2a2320'],
+            scalar: 1.5,
+            disableForReducedMotion: true,
+          });
+        }, 300);
+      } else {
+        codeError.classList.add('visible');
+        codeInput.style.borderBottomColor = '#c4956a';
+        // Shake the input
+        codeInput.style.animation = 'none';
+        void codeInput.offsetHeight;
+        codeInput.style.animation = 'shakeIt 0.35s ease-in-out';
+        setTimeout(() => {
+          codeError.classList.remove('visible');
+          codeInput.style.borderBottomColor = '';
+          codeInput.style.animation = '';
+        }, 2000);
+      }
+    }
+
+    // Allow Enter key to submit code
+    codeInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') tryCode();
+    });
+
+    // ═══════════════════════════════════════
+    //  ADVENTURE NAVIGATION
+    // ═══════════════════════════════════════
+    function goToAdventure(screenId) {
+      goTo(screenId);
     }
   </script>
 </body>
