@@ -603,6 +603,7 @@
     .book-3 { background: #eae6df; }
     .book-4 { background: #e8e3dc; }
     .book-5 { background: #e5e0d8; }
+    .book-6 { background: #e2ddd5; }
 
     .book-number {
       font-family: 'Cinzel', serif;
@@ -1028,6 +1029,187 @@
       line-height: 1.4;
     }
 
+    /* ─── BOOK 6: FLOWERS ─── */
+    #book-flowers {
+      background: var(--bg);
+      gap: 1.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bouquet-wrap {
+      position: relative;
+      width: 280px;
+      height: 360px;
+    }
+
+    /* Blue wrapping paper — cone shape */
+    .bouquet-paper {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 180px;
+      background: linear-gradient(135deg, #8aacc8 0%, #6b9ec2 40%, #5a8db5 100%);
+      clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+      border-radius: 0 0 4px 4px;
+      z-index: 2;
+    }
+    .bouquet-paper::after {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 12px;
+      background: linear-gradient(135deg, #7ba3c0, #5a8db5);
+      border-radius: 50%;
+      z-index: 3;
+    }
+
+    /* Ribbon */
+    .bouquet-ribbon {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 8px;
+      background: #d4a574;
+      border-radius: 4px;
+      z-index: 4;
+    }
+
+    /* Stems */
+    .lily-stem {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      width: 2px;
+      background: linear-gradient(to top, #6e8455, #8a9e6e);
+      z-index: 1;
+      transform-origin: bottom center;
+    }
+
+    /* Individual lily flower */
+    .lily {
+      position: absolute;
+      z-index: 3;
+    }
+
+    .lily-petal {
+      position: absolute;
+      width: 18px;
+      height: 40px;
+      background: linear-gradient(to top, #f5f0eb, #ffffff);
+      border-radius: 50% 50% 45% 45%;
+      transform-origin: bottom center;
+      border: 1px solid rgba(200, 195, 188, 0.3);
+    }
+
+    .lily-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, #e8c547 30%, #d4a030 100%);
+      border-radius: 50%;
+      z-index: 5;
+    }
+
+    /* Stamen dots */
+    .lily-stamen {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #c4956a;
+      border-radius: 50%;
+    }
+
+    /* Floating petals animation */
+    .floating-petal {
+      position: absolute;
+      width: 12px;
+      height: 24px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(245,240,235,0.6));
+      border-radius: 50% 50% 45% 45%;
+      opacity: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .floating-petal.falling {
+      animation: petalFall var(--petal-dur, 4s) var(--petal-delay, 0s) ease-in-out forwards;
+    }
+
+    @keyframes petalFall {
+      0% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(0deg);
+      }
+      10% { opacity: 0.8; }
+      100% {
+        opacity: 0;
+        transform:
+          translate(var(--petal-x, 60px), var(--petal-y, 400px))
+          rotate(var(--petal-rot, 200deg));
+      }
+    }
+
+    .flowers-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.3rem, 5vw, 2rem);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0.06em;
+    }
+
+    .flowers-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 3vw, 1.15rem);
+      font-style: italic;
+      color: var(--ink-light);
+      max-width: 360px;
+      line-height: 1.7;
+    }
+
+    .flowers-reveal {
+      padding: 20px 28px;
+      border: 1.5px solid var(--accent);
+      max-width: 380px;
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 0.7s ease 2s forwards;
+    }
+
+    .flowers-reveal p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    .flowers-reveal .reveal-hint {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-top: 8px;
+    }
+
+    .bouquet-wrap {
+      animation: bouquetFloat 4s ease-in-out infinite;
+    }
+    @keyframes bouquetFloat {
+      0%, 100% { transform: translateY(0) rotate(-0.5deg); }
+      50% { transform: translateY(-6px) rotate(0.5deg); }
+    }
+
     /* ─── SCREEN SHAKE ─── */
     .shake { animation: shakeIt 0.35s ease-in-out; }
     @keyframes shakeIt {
@@ -1180,6 +1362,11 @@
         <span class="book-number">V</span>
         <span class="book-title">Care Guide</span>
         <span class="book-desc">because I care about you</span>
+      </div>
+      <div class="book book-6" onclick="openFlowers()">
+        <span class="book-number">VI</span>
+        <span class="book-title">Flowers</span>
+        <span class="book-desc">for you</span>
       </div>
     </div>
     <div class="shelf-line fade-in" style="animation-delay:0.4s"></div>
@@ -1410,6 +1597,35 @@ You mean more to me than I've let on. And this is me letting on.</p>
     </div>
 
     <button class="btn-back fade-in" style="animation-delay:0.6s" onclick="goTo('adventure')">back to shelf</button>
+  </section>
+
+  <!-- ═══════ BOOK 6 — FLOWERS ═══════ -->
+  <section class="screen book-screen" id="book-flowers">
+    <div class="bouquet-wrap fade-in" id="bouquetWrap">
+      <!-- Stems -->
+      <div class="lily-stem" style="height:160px; margin-left:-20px; transform:rotate(-8deg)"></div>
+      <div class="lily-stem" style="height:180px; margin-left:0px; transform:rotate(0deg)"></div>
+      <div class="lily-stem" style="height:170px; margin-left:18px; transform:rotate(6deg)"></div>
+      <div class="lily-stem" style="height:150px; margin-left:-10px; transform:rotate(-3deg)"></div>
+      <div class="lily-stem" style="height:140px; margin-left:10px; transform:rotate(10deg)"></div>
+
+      <!-- Lilies built by JS -->
+      <div id="lilyContainer"></div>
+
+      <!-- Wrapping -->
+      <div class="bouquet-paper"></div>
+      <div class="bouquet-ribbon"></div>
+    </div>
+
+    <h2 class="flowers-title fade-in" style="animation-delay:0.4s">white lilies</h2>
+    <p class="flowers-sub fade-in" style="animation-delay:0.6s">your favorite.</p>
+
+    <div class="flowers-reveal">
+      <p>these aren't staying on a screen.</p>
+      <p class="reveal-hint">check your door soon.</p>
+    </div>
+
+    <button class="btn-back fade-in" style="animation-delay:0.8s" onclick="goTo('adventure')">back to shelf</button>
   </section>
 
   <!-- ═══════ BOOK 5 — CARE GUIDE ═══════ -->
@@ -1911,6 +2127,139 @@ You mean more to me than I've let on. And this is me letting on.</p>
       if (embed.src !== newSrc) {
         embed.src = newSrc;
       }
+    }
+
+    // ═══════════════════════════════════════
+    //  BOOK 6: FLOWERS — LILY BOUQUET
+    // ═══════════════════════════════════════
+    // Build CSS lilies in the bouquet
+    (function buildLilies() {
+      const container = document.getElementById('lilyContainer');
+      // 5 lily positions matching the 5 stems
+      const lilyPositions = [
+        { x: -20, y: -258, rot: -8, scale: 0.9 },
+        { x: 0, y: -278, rot: 0, scale: 1 },
+        { x: 18, y: -268, rot: 6, scale: 0.95 },
+        { x: -10, y: -248, rot: -3, scale: 0.85 },
+        { x: 10, y: -238, rot: 10, scale: 0.88 },
+      ];
+
+      lilyPositions.forEach((pos) => {
+        const lily = document.createElement('div');
+        lily.className = 'lily';
+        lily.style.left = `calc(50% + ${pos.x}px)`;
+        lily.style.bottom = `${100 + (-pos.y - 140)}px`;
+        lily.style.transform = `translate(-50%, 0) scale(${pos.scale})`;
+
+        // 6 petals arranged radially
+        for (let i = 0; i < 6; i++) {
+          const petal = document.createElement('div');
+          petal.className = 'lily-petal';
+          const angle = i * 60;
+          petal.style.left = '50%';
+          petal.style.top = '50%';
+          petal.style.marginLeft = '-9px';
+          petal.style.marginTop = '-40px';
+          petal.style.transform = `rotate(${angle}deg)`;
+          petal.style.transformOrigin = 'center bottom';
+          lily.appendChild(petal);
+        }
+
+        // Gold center
+        const center = document.createElement('div');
+        center.className = 'lily-center';
+        lily.appendChild(center);
+
+        // Stamens — 5 small dots around center
+        for (let i = 0; i < 5; i++) {
+          const stamen = document.createElement('div');
+          stamen.className = 'lily-stamen';
+          const sAngle = (i / 5) * Math.PI * 2;
+          const sx = Math.cos(sAngle) * 10;
+          const sy = Math.sin(sAngle) * 10;
+          stamen.style.left = `calc(50% + ${sx}px - 1.5px)`;
+          stamen.style.top = `calc(50% + ${sy}px - 1.5px)`;
+          lily.appendChild(stamen);
+        }
+
+        container.appendChild(lily);
+      });
+    })();
+
+    // Open flowers screen with floating petal animation
+    let flowersOpened = false;
+    function openFlowers() {
+      goTo('book-flowers');
+
+      if (flowersOpened) return;
+      flowersOpened = true;
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) return;
+
+      // Create floating petals that fall across the screen
+      const screen = document.getElementById('book-flowers');
+      const petalCount = 20;
+
+      for (let i = 0; i < petalCount; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'floating-petal';
+
+        // Random start position across the top
+        petal.style.left = (Math.random() * 100) + '%';
+        petal.style.top = (-10 - Math.random() * 20) + '%';
+
+        // Random fall path
+        const xDrift = (Math.random() - 0.5) * 200;
+        const yFall = 500 + Math.random() * 400;
+        const rotation = 120 + Math.random() * 240;
+        const duration = 4 + Math.random() * 4;
+        const delay = Math.random() * 5;
+
+        petal.style.setProperty('--petal-x', xDrift + 'px');
+        petal.style.setProperty('--petal-y', yFall + 'px');
+        petal.style.setProperty('--petal-rot', rotation + 'deg');
+        petal.style.setProperty('--petal-dur', duration + 's');
+        petal.style.setProperty('--petal-delay', delay + 's');
+
+        screen.appendChild(petal);
+
+        // Trigger animation
+        requestAnimationFrame(() => {
+          petal.classList.add('falling');
+        });
+
+        // Remove after animation completes
+        setTimeout(() => {
+          petal.remove();
+        }, (duration + delay + 1) * 1000);
+      }
+
+      // Second wave of petals for a longer-lasting effect
+      setTimeout(() => {
+        for (let i = 0; i < 12; i++) {
+          const petal = document.createElement('div');
+          petal.className = 'floating-petal';
+          petal.style.left = (Math.random() * 100) + '%';
+          petal.style.top = (-10 - Math.random() * 20) + '%';
+
+          const xDrift = (Math.random() - 0.5) * 200;
+          const yFall = 500 + Math.random() * 400;
+          const rotation = 120 + Math.random() * 240;
+          const duration = 4 + Math.random() * 4;
+          const delay = Math.random() * 3;
+
+          petal.style.setProperty('--petal-x', xDrift + 'px');
+          petal.style.setProperty('--petal-y', yFall + 'px');
+          petal.style.setProperty('--petal-rot', rotation + 'deg');
+          petal.style.setProperty('--petal-dur', duration + 's');
+          petal.style.setProperty('--petal-delay', delay + 's');
+
+          screen.appendChild(petal);
+          requestAnimationFrame(() => petal.classList.add('falling'));
+          setTimeout(() => petal.remove(), (duration + delay + 1) * 1000);
+        }
+      }, 3000);
     }
 
     function shuffleConfession() {
