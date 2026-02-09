@@ -1231,136 +1231,10 @@
       opacity: 0.7;
     }
 
-    .coffee-mug-wrap {
-      position: relative;
-      width: 180px;
-      height: 220px;
-      margin: 0.5rem auto;
-    }
-    .mug-body {
-      position: absolute;
-      top: 10px;
-      left: 25px;
-      width: 110px;
-      height: 150px;
-      background: #fff;
-      border: 2.5px solid var(--accent);
-      border-radius: 4px 4px 16px 16px;
-      overflow: hidden;
-    }
-    .mug-handle {
-      position: absolute;
-      top: 45px;
-      right: 8px;
-      width: 28px;
-      height: 50px;
-      border: 2.5px solid var(--accent);
-      border-left: none;
-      border-radius: 0 16px 16px 0;
-    }
-    .mug-saucer {
-      position: absolute;
-      bottom: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 160px;
-      height: 16px;
-      background: var(--accent);
-      border-radius: 50%;
-      opacity: 0.7;
-    }
-    .mug-saucer::before {
-      content: '';
-      position: absolute;
-      top: -3px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 140px;
-      height: 10px;
-      background: #d4b08a;
-      border-radius: 50%;
-    }
-
-    .coffee-liquid {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 0%;
-      border-radius: 0 0 14px 14px;
-      transition: height 1.4s ease, background-color 1s ease 0.4s;
-    }
-    .coffee-liquid.step1 {
-      height: 40%;
-      background: #4a2c17;
-    }
-    .coffee-liquid.step2 {
-      height: 82%;
-      background: #c4956a;
-    }
-    .coffee-liquid.step3 {
-      height: 82%;
-      background: #c4956a;
-    }
-
-    .coffee-foam {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 0%;
-      background: #f0e6d6;
-      border-radius: 4px 4px 0 0;
-      opacity: 0;
-      transition: height 1s ease, opacity 0.8s ease;
-    }
-    .coffee-foam.show {
-      height: 12%;
-      opacity: 1;
-    }
-
-    .latte-heart {
-      position: absolute;
-      top: 22%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0;
-      color: #8B5E3C;
-      opacity: 0;
-      transition: opacity 1s ease, font-size 0.6s ease;
-      z-index: 2;
-      line-height: 1;
-    }
-    .latte-heart.show {
-      font-size: 24px;
-      opacity: 1;
-    }
-
-    .steam-wrap {
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 12px;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-    .steam-wrap.active { opacity: 1; }
-    .steam {
-      width: 3px;
-      height: 24px;
-      background: rgba(180,170,160,0.4);
-      border-radius: 50%;
-      filter: blur(1.5px);
-    }
-    .steam.s1 { animation: steamRise 2.2s 0s ease-in-out infinite; }
-    .steam.s2 { animation: steamRise 2s 0.4s ease-in-out infinite; }
-    .steam.s3 { animation: steamRise 2.4s 0.8s ease-in-out infinite; }
-    @keyframes steamRise {
-      0% { opacity: 0; transform: translateY(0) scaleX(1); }
-      40% { opacity: 0.7; }
-      100% { opacity: 0; transform: translateY(-35px) scaleX(2); }
+    #coffeeCanvas {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
     }
 
     .coffee-btn {
@@ -1598,20 +1472,7 @@
     <h2 class="coffee-title fade-in">but first...</h2>
     <p class="coffee-sub fade-in" style="animation-delay:0.2s">she needs her coffee</p>
 
-    <div class="coffee-mug-wrap fade-in" style="animation-delay:0.4s">
-      <div class="steam-wrap" id="cSteam">
-        <div class="steam s1"></div>
-        <div class="steam s2"></div>
-        <div class="steam s3"></div>
-      </div>
-      <div class="mug-body">
-        <div class="coffee-liquid" id="cLiquid"></div>
-        <div class="coffee-foam" id="cFoam"></div>
-        <div class="latte-heart" id="cHeart">&hearts;</div>
-      </div>
-      <div class="mug-handle"></div>
-      <div class="mug-saucer"></div>
-    </div>
+    <canvas class="fade-in" style="animation-delay:0.4s" id="coffeeCanvas" width="144" height="160"></canvas>
 
     <button class="coffee-btn fade-in" style="animation-delay:0.6s" id="coffeeBtn" onclick="coffeeStep()">add espresso</button>
     <p class="coffee-done" id="coffeeDone">perfect. now she's ready.</p>
@@ -2741,39 +2602,113 @@ You mean more to me than I've let on. And this is me letting on.</p>
     drawPreviews();
 
     // ═══════════════════════════════════════
-    //  COFFEE QUEST
+    //  COFFEE QUEST — PIXEL ART
     // ═══════════════════════════════════════
-    let cStep = 0;
+    const CG = 8; // pixel grid size
+    const cupC = {1:'#f0ebe4',2:'#7a5a3a',3:'#5c3d22',4:'#a07850',5:'#c4956a',6:'#3d1e0c',7:'#b8845a',8:'#ede0d0',9:'#6d3a20'};
+    const cupG = [
+      [0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0],
+      [0,0,2,3,1,1,1,1,1,1,1,1,1,3,2,0,0,0],
+      [0,0,2,1,1,1,1,1,1,1,1,1,1,1,2,2,2,0],
+      [0,0,2,1,1,1,1,1,1,1,1,1,1,1,2,0,2,0],
+      [0,0,2,1,1,1,1,1,1,1,1,1,1,1,2,0,2,0],
+      [0,0,2,1,1,1,1,1,1,1,1,1,1,1,2,0,2,0],
+      [0,0,2,1,1,1,1,1,1,1,1,1,1,1,2,2,2,0],
+      [0,0,2,1,1,1,1,1,1,1,1,1,1,1,2,0,0,0],
+      [0,0,2,1,1,1,1,1,1,1,1,1,1,1,2,0,0,0],
+      [0,0,2,1,1,1,1,1,1,1,1,1,1,1,2,0,0,0],
+      [0,0,0,2,1,1,1,1,1,1,1,1,1,2,0,0,0,0],
+      [0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,0],
+      [4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],
+    ];
+    // Interior rows bottom→top: indices for fill animation
+    const FILL_ORDER = [10,9,8,7,6,5,4,3,2,1];
+    const STEAM_Y = 40; // px above cup for steam
+    let cFill = 0, cColor = 6, cFoamOn = false, cHeartOn = false;
+    let cSteamP = [], cSteamT = null, cStep = 0;
+
+    function drawCup() {
+      const cvs = document.getElementById('coffeeCanvas');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      for (let r = 0; r < cupG.length; r++) {
+        for (let c = 0; c < cupG[r].length; c++) {
+          let v = cupG[r][c];
+          if (!v) continue;
+          if (v === 1) {
+            const fi = FILL_ORDER.indexOf(r);
+            if (fi !== -1 && fi < cFill) {
+              v = (cFoamOn && fi === cFill - 1) ? 8 : cColor;
+            }
+          }
+          ctx.fillStyle = (typeof v === 'number') ? cupC[v] : v;
+          ctx.fillRect(c * CG, STEAM_Y + r * CG, CG, CG);
+        }
+      }
+      // Heart overlay
+      if (cHeartOn) {
+        const h = [[0,1,0,1,0],[1,1,1,1,1],[0,1,1,1,0],[0,0,1,0,0]];
+        ctx.fillStyle = cupC[9];
+        for (let hr = 0; hr < h.length; hr++)
+          for (let hc = 0; hc < h[hr].length; hc++)
+            if (h[hr][hc]) ctx.fillRect((6+hc)*CG, STEAM_Y+(2+hr)*CG, CG, CG);
+      }
+      // Steam particles
+      cSteamP.forEach(p => {
+        ctx.fillStyle = `rgba(170,160,150,${0.5*(1-p.a/5)})`;
+        ctx.fillRect(p.c * CG, p.r * CG, CG, CG);
+      });
+    }
+
+    function pourTo(target, color, foam, cb) {
+      cColor = color;
+      cFoamOn = foam;
+      const iv = setInterval(() => {
+        cFill++;
+        drawCup();
+        if (cFill >= target) { clearInterval(iv); if (cb) cb(); }
+      }, 180);
+    }
+
+    function startCoffeeSteam() {
+      cSteamT = setInterval(() => {
+        if (cSteamP.length < 5 && Math.random() > 0.3)
+          cSteamP.push({ c: 5+Math.floor(Math.random()*7), r: Math.floor(STEAM_Y/CG)-1, a: 0 });
+        cSteamP.forEach(p => {
+          p.r--;
+          if (Math.random() > 0.6) p.c += Math.random() > 0.5 ? 1 : -1;
+          p.a++;
+        });
+        cSteamP = cSteamP.filter(p => p.r >= 0 && p.a < 5);
+        drawCup();
+      }, 280);
+    }
+
     function coffeeStep() {
       cStep++;
       const btn = document.getElementById('coffeeBtn');
-      const liquid = document.getElementById('cLiquid');
-      const foam = document.getElementById('cFoam');
-      const heart = document.getElementById('cHeart');
-      const steam = document.getElementById('cSteam');
-      const done = document.getElementById('coffeeDone');
-      const cont = document.getElementById('coffeeContinue');
-
       if (cStep === 1) {
-        liquid.classList.add('step1');
-        btn.textContent = 'add oat milk';
+        btn.style.pointerEvents = 'none';
+        pourTo(4, 6, false, () => { btn.textContent = 'add oat milk'; btn.style.pointerEvents = ''; });
       } else if (cStep === 2) {
-        liquid.classList.remove('step1');
-        liquid.classList.add('step2');
-        foam.classList.add('show');
-        btn.textContent = 'add a little love';
+        btn.style.pointerEvents = 'none';
+        pourTo(9, 7, true, () => { btn.textContent = 'add a little love'; btn.style.pointerEvents = ''; });
       } else if (cStep === 3) {
-        liquid.classList.remove('step2');
-        liquid.classList.add('step3');
-        heart.classList.add('show');
-        steam.classList.add('active');
+        btn.style.pointerEvents = 'none';
+        cHeartOn = true;
+        drawCup();
+        startCoffeeSteam();
         btn.style.display = 'none';
         setTimeout(() => {
-          done.classList.add('show');
-          cont.style.display = '';
+          document.getElementById('coffeeDone').classList.add('show');
+          document.getElementById('coffeeContinue').style.display = '';
         }, 900);
       }
     }
+    drawCup();
 
     function selectChar(ch) {
       selChar = ch;
