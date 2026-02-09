@@ -1264,6 +1264,61 @@
     }
     .coffee-done.show { opacity: 1; }
 
+    /* ─── SNACK QUEST ─── */
+    #snack-quest {
+      background: var(--bg);
+      gap: 1rem;
+    }
+    .snack-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.3rem, 5vw, 2rem);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0.06em;
+    }
+    .snack-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 3vw, 1.15rem);
+      color: var(--ink);
+      opacity: 0.7;
+    }
+    #snackCanvas {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+    .snack-btns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .snack-btn {
+      background: none;
+      border: 1.5px solid var(--accent);
+      color: var(--ink);
+      padding: 10px 20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, transform 0.2s;
+    }
+    .snack-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .snack-btn:active { transform: translateY(0); }
+    .snack-done {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 3vw, 1.15rem);
+      color: var(--ink);
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    .snack-done.show { opacity: 1; }
+
     /* ─── MINI GAME ─── */
     #game-select {
       background: var(--bg-cool);
@@ -1512,9 +1567,26 @@
   <section class="screen" id="game-over">
     <h2 class="go-score fade-in">you ran <span id="finalDist">0</span>m</h2>
     <p class="go-hearts fade-in" style="animation-delay:0.3s">and collected <span id="finalHearts">0</span> hearts along the way</p>
-    <p class="go-msg" style="animation-delay:1.2s">you came all this way...</p>
-    <p class="go-msg2" style="animation-delay:2.5s">because I had something to ask you</p>
-    <button class="btn-primary fade-in" style="animation-delay:3.5s" onclick="goTo('ask')">Continue</button>
+    <p class="go-msg" style="animation-delay:1.2s">not bad at all...</p>
+    <p class="go-msg2" style="animation-delay:2.5s">but all that running made someone hungry</p>
+    <button class="btn-primary fade-in" style="animation-delay:3.5s" onclick="goTo('snack-quest')">Continue</button>
+  </section>
+
+  <!-- ═══════ SIDE QUEST — SNACK CART ═══════ -->
+  <section class="screen" id="snack-quest">
+    <h2 class="snack-title fade-in">finishing touches</h2>
+    <p class="snack-sub fade-in" style="animation-delay:0.2s">pick a snack from the cart</p>
+
+    <canvas class="fade-in" style="animation-delay:0.4s" id="snackCanvas" width="260" height="130"></canvas>
+
+    <div class="snack-btns fade-in" style="animation-delay:0.6s" id="snackBtns">
+      <button class="snack-btn" onclick="pickSnack(0)">telur gulung</button>
+      <button class="snack-btn" onclick="pickSnack(1)">sate ayam</button>
+      <button class="snack-btn" onclick="pickSnack(2)">cilok</button>
+    </div>
+
+    <p class="snack-done" id="snackDone">yum! okay, one more thing...</p>
+    <button class="btn-primary" id="snackContinue" style="display:none" onclick="goTo('ask')">Continue</button>
   </section>
 
   <!-- ═══════ SCREEN 3 — THE ASK ═══════ -->
@@ -2132,6 +2204,8 @@ You mean more to me than I've let on. And this is me letting on.</p>
 
       // Initialize No button position when Ask screen opens
       if (screenId === 'ask') initNoButton();
+      // Draw snack scene when navigating to it
+      if (screenId === 'snack-quest') setTimeout(drawSnackScene, 50);
     }
 
     // ═══════════════════════════════════════
@@ -2709,6 +2783,142 @@ You mean more to me than I've let on. And this is me letting on.</p>
       }
     }
     drawCup();
+
+    // ═══════════════════════════════════════
+    //  SNACK QUEST — PIXEL ART CART
+    // ═══════════════════════════════════════
+    const SG = 5; // snack grid pixel size
+    const cartColors = {1:'#c0392b',2:'#e74c3c',3:'#5c3d22',4:'#8B7355',5:'#a09080',6:'#4a3520',7:'#7a5a3a'};
+    const cartG = [
+      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+      [0,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,0],
+      [0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0],
+      [0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0],
+      [3,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,3],
+      [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],
+      [3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3],
+      [3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3],
+      [3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3],
+      [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],
+      [0,0,0,7,7,7,0,0,0,0,0,0,0,0,0,7,7,7,0,0,0,0],
+      [0,0,7,6,6,6,7,0,0,0,0,0,0,0,7,6,6,6,7,0,0,0],
+      [0,0,0,7,7,7,0,0,0,0,0,0,0,0,0,7,7,7,0,0,0,0],
+    ];
+    // Snack sprites: telur gulung, sate ayam, cilok
+    const snackC = [
+      {1:'#8B6914',2:'#e8c547',3:'#d4a030'},
+      {1:'#8B6914',2:'#8B5E3C',3:'#3d2010'},
+      {1:'#8B6914',2:'#f0e6d0',3:'#d6cbb8'},
+    ];
+    const snackG = [
+      [[0,1,0],[0,1,0],[2,2,2],[2,3,2],[2,2,2],[2,3,2],[2,2,2],[0,1,0]],
+      [[0,1,0],[2,2,2],[2,3,2],[2,2,2],[0,1,0],[2,2,2],[2,3,2],[0,1,0]],
+      [[0,1,0],[2,2,2],[2,3,2],[2,2,2],[0,1,0],[2,2,2],[2,3,2],[0,1,0]],
+    ];
+    const snackNames = ['telur gulung','sate ayam','cilok'];
+    let snackPicked = -1;
+    let snackHearts = [];
+
+    function drawPixGrid(ctx, grid, colors, px, py, gp) {
+      for (let r = 0; r < grid.length; r++)
+        for (let c = 0; c < grid[r].length; c++) {
+          const v = grid[r][c];
+          if (v && colors[v]) {
+            ctx.fillStyle = colors[v];
+            ctx.fillRect(px + c * gp, py + r * gp, gp, gp);
+          }
+        }
+    }
+
+    function drawSnackScene() {
+      const cvs = document.getElementById('snackCanvas');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+      // Ground line
+      ctx.fillStyle = '#d4c4b0';
+      ctx.fillRect(0, 122, 260, 8);
+
+      // Draw character (selected from game) at left
+      const ch = SP[selChar];
+      const charGrid = ch.f[0]; // standing frame
+      for (let r = 0; r < charGrid.length; r++)
+        for (let c = 0; c < charGrid[r].length; c++) {
+          const v = charGrid[r][c];
+          if (v && ch.c[v]) {
+            ctx.fillStyle = ch.c[v];
+            ctx.fillRect(15 + c * SG, 62 + r * SG, SG, SG);
+          }
+        }
+
+      // Draw cart at right
+      const cartX = 110, cartY = 57;
+      drawPixGrid(ctx, cartG, cartColors, cartX, cartY, SG);
+
+      // Draw snacks on cart counter (sticking up above)
+      const snackPositions = [cartX + 15, cartX + 40, cartX + 65];
+      for (let i = 0; i < 3; i++) {
+        const sx = snackPositions[i];
+        const sy = cartY + 4 * SG - 8 * SG; // above counter
+        drawPixGrid(ctx, snackG[i], snackC[i], sx, sy, SG);
+        // Highlight selected snack
+        if (snackPicked === i) {
+          ctx.strokeStyle = '#FFD700';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(sx - 2, sy - 2, 3 * SG + 4, 8 * SG + 4);
+        }
+      }
+
+      // Draw floating hearts if any
+      ctx.globalAlpha = 1;
+      snackHearts.forEach(h => {
+        const hc = SP.heart.c;
+        const hg = SP.heart.s;
+        const alpha = 1 - h.age / 20;
+        if (alpha <= 0) return;
+        ctx.globalAlpha = alpha;
+        for (let r = 0; r < hg.length; r++)
+          for (let c = 0; c < hg[r].length; c++) {
+            const v = hg[r][c];
+            if (v && hc[v]) {
+              ctx.fillStyle = hc[v];
+              ctx.fillRect(h.x + c * 3, h.y + r * 3, 3, 3);
+            }
+          }
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function pickSnack(idx) {
+      if (snackPicked >= 0) return;
+      snackPicked = idx;
+      drawSnackScene();
+
+      // Spawn hearts above character
+      for (let i = 0; i < 4; i++) {
+        snackHearts.push({
+          x: 20 + Math.random() * 30,
+          y: 50 - i * 12,
+          age: i * 3,
+        });
+      }
+
+      // Animate hearts floating up
+      const hAnim = setInterval(() => {
+        snackHearts.forEach(h => { h.y -= 1.5; h.age++; });
+        snackHearts = snackHearts.filter(h => h.age < 20);
+        drawSnackScene();
+        if (snackHearts.length === 0) clearInterval(hAnim);
+      }, 60);
+
+      // Show completion
+      document.getElementById('snackBtns').style.display = 'none';
+      setTimeout(() => {
+        document.getElementById('snackDone').classList.add('show');
+        document.getElementById('snackContinue').style.display = '';
+      }, 800);
+    }
 
     function selectChar(ch) {
       selChar = ch;
