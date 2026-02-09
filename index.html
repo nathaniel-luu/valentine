@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>For Aamira</title>
 
   <!-- Cinematic Fonts -->
@@ -459,15 +462,17 @@
       margin-top: 10px;
     }
 
-    .envelope-icon {
-      font-size: 1.8rem;
-      display: inline-block;
-      animation: envelopeFloat 3s ease-in-out infinite;
+    .foreshadow-gif {
+      width: 120px;
+      height: 120px;
+      overflow: hidden;
+      border-radius: 50%;
+      margin: 0 auto 12px;
     }
-
-    @keyframes envelopeFloat {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-4px) rotate(3deg); }
+    .foreshadow-gif img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     /* ─── CODE ENTRY ─── */
@@ -852,7 +857,7 @@
 
     /* ─── REDUCED MOTION ─── */
     @media (prefers-reduced-motion: reduce) {
-      .particle, .seed.blown, .celeb-sticker, .envelope-icon { animation: none !important; }
+      .particle, .seed.blown, .celeb-sticker { animation: none !important; }
       .fade-in { animation: none !important; opacity: 1; transform: none; }
     }
   </style>
@@ -927,10 +932,11 @@
     </p>
 
     <div class="celeb-foreshadow fade-in" style="animation-delay:0.6s">
-      <p>
-        <span class="envelope-icon">&#x1F48C;</span><br>
-        there are more surprises coming...
-      </p>
+      <div class="foreshadow-gif">
+        <img src="https://media.tenor.com/tLsYTSNv11IAAAAi/tkthao219-bubududu.gif"
+             alt="Dudu being cute" loading="lazy">
+      </div>
+      <p>there are more surprises coming...</p>
       <div class="code-entry">
         <input type="text" id="secretCode" class="code-input" placeholder="enter the code" maxlength="10" autocomplete="off" spellcheck="false">
         <p class="code-error" id="codeError">hmm, that's not it</p>
