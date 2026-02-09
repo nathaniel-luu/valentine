@@ -312,94 +312,7 @@
     .btn-primary:active { transform: translateY(0); }
 
     /* ────────────────────────────────────────
-       SCREEN 3 — MEMES / MEMORIES
-    ──────────────────────────────────────── */
-    #memories {
-      background: var(--bg-cool);
-      gap: 2rem;
-    }
-
-    .memories-title {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(1.3rem, 4.5vw, 2rem);
-      font-weight: 400;
-      color: var(--ink);
-      letter-spacing: 0.08em;
-    }
-
-    .meme-carousel {
-      display: flex;
-      gap: 1.2rem;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      max-width: 100%;
-      padding: 1rem 0.5rem;
-      scrollbar-width: none;
-    }
-    .meme-carousel::-webkit-scrollbar { display: none; }
-
-    .meme-card {
-      flex: 0 0 260px;
-      scroll-snap-align: center;
-      background: var(--white);
-      border: 1px solid rgba(42, 35, 32, 0.08);
-      overflow: hidden;
-      transition: transform 0.3s;
-    }
-    .meme-card:hover { transform: translateY(-4px); }
-
-    .meme-card img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .placeholder-img {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 220px;
-      background: var(--bg);
-      color: var(--ink-faint);
-      font-size: 0.85rem;
-      padding: 1rem;
-    }
-
-    .meme-caption {
-      padding: 14px 16px;
-      font-size: 1rem;
-      color: var(--ink-light);
-      font-weight: 400;
-      font-style: italic;
-    }
-
-    .scroll-hint {
-      font-size: 0.85rem;
-      color: var(--ink-faint);
-      letter-spacing: 0.1em;
-      animation: pulse 2.5s ease-in-out infinite;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--ink);
-      border: 1.5px solid var(--ink);
-      padding: 12px 36px;
-      font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .btn-secondary:hover { background: var(--ink); color: var(--white); }
-
-    /* ────────────────────────────────────────
-       SCREEN 4 — THE ASK
+       SCREEN 3 — THE ASK
     ──────────────────────────────────────── */
     #ask {
       background: var(--bg);
@@ -626,41 +539,12 @@
     <p class="intro-sub fade-in" style="animation-delay:0.3s">
       I made something for you. It'll only take a minute.
     </p>
-    <button class="btn-primary fade-in" style="animation-delay:0.6s" onclick="goTo('memories')">
+    <button class="btn-primary fade-in" style="animation-delay:0.6s" onclick="goTo('ask')">
       Continue
     </button>
   </section>
 
-  <!-- ═══════ SCREEN 3 — MEMES / MEMORIES ═══════ -->
-  <section class="screen" id="memories">
-    <h2 class="memories-title fade-in">Some of us</h2>
-
-    <div class="meme-carousel fade-in" style="animation-delay:0.2s">
-      <div class="meme-card">
-        <div class="placeholder-img">Your photo / meme here</div>
-        <p class="meme-caption">Caption for photo 1</p>
-      </div>
-      <div class="meme-card">
-        <div class="placeholder-img">Your photo / meme here</div>
-        <p class="meme-caption">Caption for photo 2</p>
-      </div>
-      <div class="meme-card">
-        <div class="placeholder-img">Your photo / meme here</div>
-        <p class="meme-caption">Caption for photo 3</p>
-      </div>
-      <div class="meme-card">
-        <div class="placeholder-img">Your photo / meme here</div>
-        <p class="meme-caption">Caption for photo 4</p>
-      </div>
-    </div>
-
-    <p class="scroll-hint fade-in" style="animation-delay:0.4s">swipe &rarr;</p>
-    <button class="btn-secondary fade-in" style="animation-delay:0.5s" onclick="goTo('ask')">
-      Now the real question
-    </button>
-  </section>
-
-  <!-- ═══════ SCREEN 4 — THE ASK ═══════ -->
+  <!-- ═══════ SCREEN 3 — THE ASK ═══════ -->
   <section class="screen" id="ask">
     <div class="ask-sticker" id="askSticker">
       <img id="askGif"
@@ -732,33 +616,24 @@
     // ═══════════════════════════════════════
     //  DANDELION
     // ═══════════════════════════════════════
-    const SEED_COUNT = 36;
+    const SEED_COUNT = 24;
     const dandelionWrap = document.getElementById('dandelionWrap');
     const dandelionHead = document.getElementById('dandelionHead');
     let dandelionBlown = false;
 
-    // Build seeds in a spherical pattern with varied lengths
+    // Build seeds — perfectly uniform radial pattern, no random jitter
     (function buildDandelion() {
+      const stalkLen = 50;
       for (let i = 0; i < SEED_COUNT; i++) {
-        const angle = (i / SEED_COUNT) * 360 + (Math.random() * 6 - 3);
-        // Vary stalk length — shorter at sides, longer at top = round shape
+        const angle = (i / SEED_COUNT) * 360;
         const angleRad = (angle * Math.PI) / 180;
-        const baseLen = 45;
-        // Seeds pointing up are longer, sides shorter — creates dome shape
-        const verticalFactor = 0.7 + Math.abs(Math.sin(angleRad)) * 0.5;
-        const stalkLen = baseLen * verticalFactor + Math.random() * 12;
 
         const seed = document.createElement('div');
         seed.className = 'seed';
         seed.style.transform = `rotate(${angle}deg)`;
 
-        // Build: pappus on top, stalk below
         const pappus = document.createElement('div');
         pappus.className = 'seed-pappus';
-        // Slightly vary pappus size
-        const pSize = 18 + Math.random() * 6;
-        pappus.style.width = pSize + 'px';
-        pappus.style.height = pSize + 'px';
 
         const stalk = document.createElement('div');
         stalk.className = 'seed-stalk';
@@ -767,7 +642,7 @@
         seed.appendChild(pappus);
         seed.appendChild(stalk);
 
-        // Pre-compute flight path for when blown
+        // Flight path randomness only applies to blow animation
         const distance = 200 + Math.random() * 400;
         const tx = Math.cos(angleRad) * distance * (0.5 + Math.random() * 0.8);
         const ty = -Math.abs(Math.sin(angleRad) * distance) - 80 - Math.random() * 250;
