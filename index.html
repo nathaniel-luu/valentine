@@ -1422,12 +1422,12 @@
       <div class="char-card" onclick="selectChar('dudu')">
         <canvas class="char-preview" id="previewDudu" width="60" height="72"></canvas>
         <span class="char-name">Dudu</span>
-        <span class="char-label">the brown one</span>
+        <span class="char-label">bear</span>
       </div>
       <div class="char-card" onclick="selectChar('bubu')">
         <canvas class="char-preview" id="previewBubu" width="60" height="72"></canvas>
         <span class="char-name">Bubu</span>
-        <span class="char-label">the white one</span>
+        <span class="char-label">panda</span>
       </div>
     </div>
   </section>
@@ -2432,7 +2432,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
     // ═══════════════════════════════════════
     //  MINI GAME — PIXEL RUNNER
     // ═══════════════════════════════════════
-    const GP = 4; // game pixel size
+    const GP = 4;
     let gm = null, gCanvas, gCtx, selChar = 'dudu';
 
     // Sprite data: 0=clear, 1=body, 2=dark, 3=eyes, 4=cheeks
@@ -2474,7 +2474,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
         ]]
       },
       heart: {
-        c: { 1:'#c4956a', 2:'#d4b594' },
+        c: { 1:'#ff4d6d', 2:'#ff8fa3' },
         s: [[0,1,1,0,1,1,0],[1,2,1,1,1,2,1],[1,1,1,1,1,1,1],
             [0,1,1,1,1,1,0],[0,0,1,1,1,0,0],[0,0,0,1,0,0,0]]
       },
@@ -2483,8 +2483,21 @@ You mean more to me than I've let on. And this is me letting on.</p>
         s: [[1,1,1,1,1,1,1,1],[1,2,1,1,1,1,2,1],[1,1,2,1,1,2,1,1],
             [1,1,1,2,2,1,1,1],[1,1,1,2,2,1,1,1],[1,1,2,1,1,2,1,1],
             [1,2,1,1,1,1,2,1],[1,1,1,1,1,1,1,1]]
+      },
+      barrier: {
+        c: { 1:'#e07050', 2:'#b84535' },
+        s: [[1,1,1,1,1,1,1,1],[1,2,2,2,2,2,2,1],[1,2,1,1,1,1,2,1],
+            [1,2,1,1,1,1,2,1],[1,2,1,1,1,1,2,1],[1,2,1,1,1,1,2,1],
+            [1,2,2,2,2,2,2,1],[1,1,1,1,1,1,1,1]]
+      },
+      gem: {
+        c: { 1:'#9b7dc8', 2:'#7b5db0' },
+        s: [[0,0,1,1,1,1,0,0],[0,1,2,1,1,2,1,0],[1,2,1,1,1,1,2,1],
+            [1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,2,1,1,1,1,2,1],
+            [0,1,2,1,1,2,1,0],[0,0,1,1,1,1,0,0]]
       }
     };
+    const obsTypes = ['crate','barrier','gem'];
 
     function drawSpr(ctx, spr, colors, gx, gy) {
       for (let r = 0; r < spr.length; r++)
@@ -2529,19 +2542,35 @@ You mean more to me than I've let on. And this is me letting on.</p>
 
       const maxW = Math.min(window.innerWidth - 32, 400);
       const maxH = Math.min(window.innerHeight - 120, 600);
-      const lw = Math.floor(maxW / (3 * GP)) * GP;
-      gCanvas.width = lw * 3;
+      // Layout: grass | 3 lanes | grass
+      const grassW = 6;
+      const laneGW = Math.floor((maxW / GP - grassW * 2) / 3);
+      const trackW = laneGW * 3;
+      const totalGW = grassW * 2 + trackW;
+      gCanvas.width = totalGW * GP;
       gCanvas.height = Math.floor(maxH / GP) * GP;
+      const gw = totalGW, gh = gCanvas.height / GP;
 
-      const gw = gCanvas.width / GP, gh = gCanvas.height / GP;
+      // Pre-generate flower decorations for grass
+      const fColors = ['#ff6b9d','#ffd93d','#ffffff','#ff9ecd','#ffb347','#87ceeb'];
+      const flowers = [];
+      for (let i = 0; i < 30; i++) {
+        flowers.push({
+          x: i < 15
+            ? 1 + ((i * 3.7) % (grassW - 2))
+            : gw - grassW + 1 + (((i - 15) * 2.9) % (grassW - 2)),
+          baseY: (i * 11.3) % gh,
+          c: fColors[i % fColors.length]
+        });
+      }
 
       gm = {
-        gw: gw, gh: gh, lw: gw / 3,
+        gw, gh, grassW, trackW, lw: laneGW, tx: grassW,
         lane: 1, laneX: 1,
         pY: gh - 16,
-        obs: [], hearts: [],
+        obs: [], hearts: [], sparkles: [], flowers,
         score: 0, hc: 0,
-        spd: 2, frame: 0, scrollY: 0,
+        spd: 2, frame: 0, scrollY: 0, totalScroll: 0,
         running: false, anim: 0
       };
 
@@ -2606,17 +2635,20 @@ You mean more to me than I've let on. And this is me letting on.</p>
       gm.frame++;
       gm.score += gm.spd * 0.1;
       gm.spd += 0.002;
-      gm.scrollY = (gm.scrollY + gm.spd) % 16;
+      gm.totalScroll += gm.spd;
+      gm.scrollY = gm.totalScroll % 16;
       if (gm.frame % 8 === 0) gm.anim = 1 - gm.anim;
 
       // Smooth lane slide
       gm.laneX += (gm.lane - gm.laneX) * 0.15;
 
-      // Spawn obstacles (none for first 2 seconds)
+      // Spawn obstacles with random color types
       if (gm.frame > 120 && Math.random() < 0.012 + gm.spd * 0.002) {
         const ln = Math.floor(Math.random() * 3);
-        if (!gm.obs.some(o => o.l === ln && o.y < 20))
-          gm.obs.push({ l: ln, y: -10 });
+        if (!gm.obs.some(o => o.l === ln && o.y < 20)) {
+          const t = obsTypes[Math.floor(Math.random() * obsTypes.length)];
+          gm.obs.push({ l: ln, y: -10, t });
+        }
       }
 
       // Spawn hearts
@@ -2632,25 +2664,39 @@ You mean more to me than I've let on. And this is me letting on.</p>
       gm.hearts.forEach(h => h.y += gm.spd);
       gm.hearts = gm.hearts.filter(h => h.y < gm.gh + 10);
 
-      // Player center for collision
-      const px = gm.laneX * gm.lw + gm.lw / 2;
+      // Update sparkles
+      gm.sparkles.forEach(s => { s.x += s.vx; s.y += s.vy; s.life--; });
+      gm.sparkles = gm.sparkles.filter(s => s.life > 0);
+
+      // Player center (offset by track start)
+      const px = gm.tx + gm.laneX * gm.lw + gm.lw / 2;
       const py = gm.pY + 6;
 
       // Obstacle collision
       for (const o of gm.obs) {
-        const ox = o.l * gm.lw + gm.lw / 2;
+        const ox = gm.tx + o.l * gm.lw + gm.lw / 2;
         const oy = o.y + 4;
         if (Math.abs(px - ox) < 7 && Math.abs(py - oy) < 8) {
           endGame(); return;
         }
       }
 
-      // Heart collection
+      // Heart collection with sparkles
+      const spkColors = ['#ffd700','#ff6b9d','#ffffff','#ff9ecd'];
       gm.hearts = gm.hearts.filter(h => {
-        const hx = h.l * gm.lw + gm.lw / 2;
+        const hx = gm.tx + h.l * gm.lw + gm.lw / 2;
         const hy = h.y + 3;
         if (Math.abs(px - hx) < 7 && Math.abs(py - hy) < 7) {
           gm.hc++;
+          for (let i = 0; i < 8; i++) {
+            gm.sparkles.push({
+              x: hx, y: hy,
+              vx: (Math.random() - 0.5) * 3.5,
+              vy: (Math.random() - 0.5) * 3.5,
+              life: 12 + Math.floor(Math.random() * 8),
+              c: spkColors[Math.floor(Math.random() * spkColors.length)]
+            });
+          }
           return false;
         }
         return true;
@@ -2667,48 +2713,83 @@ You mean more to me than I've let on. And this is me letting on.</p>
     function drawFrame() {
       const ctx = gCtx, W = gCanvas.width, H = gCanvas.height;
 
-      // Track background
-      ctx.fillStyle = '#e8e3dc';
+      // Sky gradient background
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, '#c8dae8');
+      grad.addColorStop(0.4, '#d8d0e0');
+      grad.addColorStop(1, '#e8ddd0');
+      ctx.fillStyle = grad;
       ctx.fillRect(0, 0, W, H);
 
-      // Side borders
-      ctx.fillStyle = '#c4bfb8';
-      ctx.fillRect(0, 0, GP*2, H);
-      ctx.fillRect(W - GP*2, 0, GP*2, H);
+      // Green grass borders
+      ctx.fillStyle = '#6ebb3f';
+      ctx.fillRect(0, 0, gm.grassW * GP, H);
+      ctx.fillRect((gm.gw - gm.grassW) * GP, 0, gm.grassW * GP, H);
 
-      // Scrolling lane dividers
-      ctx.fillStyle = '#d4cfc8';
-      for (let lane = 1; lane < 3; lane++) {
-        const x = lane * gm.lw * GP - GP/2;
-        for (let y = -16*GP + gm.scrollY*GP; y < H; y += 16*GP)
-          ctx.fillRect(x, y, GP, 8*GP);
-      }
+      // Darker grass edge
+      ctx.fillStyle = '#5aa832';
+      ctx.fillRect((gm.grassW - 1) * GP, 0, GP, H);
+      ctx.fillRect((gm.gw - gm.grassW) * GP, 0, GP, H);
 
-      // Obstacles
-      gm.obs.forEach(o => {
-        const bx = o.l * gm.lw + (gm.lw - 8) / 2;
-        drawSpr(ctx, SP.crate.s, SP.crate.c, bx, o.y);
+      // Scrolling flowers in grass
+      gm.flowers.forEach(f => {
+        const fy = ((f.baseY + gm.totalScroll * 0.8) % gm.gh + gm.gh) % gm.gh;
+        ctx.fillStyle = f.c;
+        ctx.fillRect(Math.round(f.x * GP), Math.round(fy * GP), GP, GP);
       });
 
-      // Hearts (with subtle bob)
+      // Track surface (warm pink)
+      ctx.fillStyle = '#e8d0c4';
+      ctx.fillRect(gm.tx * GP, 0, gm.trackW * GP, H);
+
+      // White lane dividers (scrolling dashes)
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      for (let lane = 1; lane < 3; lane++) {
+        const x = (gm.tx + lane * gm.lw) * GP - GP / 2;
+        for (let y = -16 * GP + gm.scrollY * GP; y < H; y += 16 * GP)
+          ctx.fillRect(x, y, GP, 8 * GP);
+      }
+
+      // Obstacles (colored by type)
+      gm.obs.forEach(o => {
+        const spr = SP[o.t];
+        const bx = gm.tx + o.l * gm.lw + (gm.lw - 8) / 2;
+        drawSpr(ctx, spr.s, spr.c, bx, o.y);
+      });
+
+      // Hearts with glow
       gm.hearts.forEach(h => {
-        const bx = h.l * gm.lw + (gm.lw - 7) / 2;
+        const bx = gm.tx + h.l * gm.lw + (gm.lw - 7) / 2;
         const bob = Math.sin(gm.frame * 0.08 + h.y) * 0.8;
+        // Glow circle
+        const hcx = (bx + 3.5) * GP, hcy = (h.y + bob + 3) * GP;
+        ctx.fillStyle = 'rgba(255,77,109,0.15)';
+        ctx.beginPath();
+        ctx.arc(hcx, hcy, GP * 5, 0, Math.PI * 2);
+        ctx.fill();
         drawSpr(ctx, SP.heart.s, SP.heart.c, bx, h.y + bob);
       });
 
+      // Sparkle particles
+      gm.sparkles.forEach(s => {
+        ctx.globalAlpha = Math.max(0, s.life / 20);
+        ctx.fillStyle = s.c;
+        ctx.fillRect(Math.round(s.x * GP), Math.round(s.y * GP), GP, GP);
+      });
+      ctx.globalAlpha = 1;
+
       // Player shadow
-      const plx = (gm.laneX * gm.lw + gm.lw / 2) * GP;
+      const plx = (gm.tx + gm.laneX * gm.lw + gm.lw / 2) * GP;
       const ply = (gm.pY + 12.5) * GP;
-      ctx.fillStyle = 'rgba(42,35,32,0.12)';
+      ctx.fillStyle = 'rgba(42,35,32,0.15)';
       ctx.beginPath();
-      ctx.ellipse(plx, ply, 5*GP, 1.5*GP, 0, 0, Math.PI*2);
+      ctx.ellipse(plx, ply, 5 * GP, 1.5 * GP, 0, 0, Math.PI * 2);
       ctx.fill();
 
       // Player
       const ch = SP[selChar];
       const frame = ch.f[gm.anim];
-      const ppx = gm.laneX * gm.lw + (gm.lw - 10) / 2;
+      const ppx = gm.tx + gm.laneX * gm.lw + (gm.lw - 10) / 2;
       drawSpr(ctx, frame, ch.c, ppx, gm.pY);
     }
 
