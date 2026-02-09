@@ -723,6 +723,17 @@
     }
     .song-item:last-child { border-bottom: none; }
     .song-item:hover { background: rgba(168, 158, 148, 0.08); }
+    .song-item.active {
+      background: rgba(196, 149, 106, 0.08);
+    }
+    .song-item.active .song-num,
+    .song-item.active .song-play-icon {
+      color: var(--accent);
+    }
+    .song-item[data-track=""] {
+      opacity: 0.35;
+      pointer-events: none;
+    }
 
     .song-num {
       font-family: 'Cinzel', serif;
@@ -752,12 +763,24 @@
       font-style: italic;
     }
 
+    .song-play-icon {
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+      transition: color 0.2s;
+    }
+
     .songs-note {
       font-family: 'Cormorant Garamond', serif;
       font-size: 0.9rem;
       font-style: italic;
       color: var(--ink-faint);
       max-width: 300px;
+      margin-top: 0.5rem;
+    }
+
+    .spotify-player {
+      max-width: 380px;
+      width: 100%;
       margin-top: 0.5rem;
     }
 
@@ -997,48 +1020,67 @@ You mean more to me than I've let on. And this is me letting on.</p>
     <p class="songs-note fade-in" style="animation-delay:0.2s">songs that remind me of you</p>
 
     <div class="songs-list fade-in" style="animation-delay:0.4s">
-      <div class="song-item">
+      <div class="song-item active" data-track="5WOSNVChcadlsCRiqXE45K" onclick="playSong(this)">
         <span class="song-num">01</span>
         <div class="song-info">
-          <span class="song-name">Song Name</span>
-          <span class="song-artist">Artist</span>
+          <span class="song-name">Everything U Are</span>
+          <span class="song-artist">Hindia</span>
         </div>
+        <span class="song-play-icon">&#9654;</span>
       </div>
-      <div class="song-item">
+      <div class="song-item" data-track="" onclick="playSong(this)">
         <span class="song-num">02</span>
         <div class="song-info">
           <span class="song-name">Song Name</span>
           <span class="song-artist">Artist</span>
         </div>
+        <span class="song-play-icon">&#9654;</span>
       </div>
-      <div class="song-item">
+      <div class="song-item" data-track="" onclick="playSong(this)">
         <span class="song-num">03</span>
         <div class="song-info">
           <span class="song-name">Song Name</span>
           <span class="song-artist">Artist</span>
         </div>
+        <span class="song-play-icon">&#9654;</span>
       </div>
-      <div class="song-item">
+      <div class="song-item" data-track="" onclick="playSong(this)">
         <span class="song-num">04</span>
         <div class="song-info">
           <span class="song-name">Song Name</span>
           <span class="song-artist">Artist</span>
         </div>
+        <span class="song-play-icon">&#9654;</span>
       </div>
-      <div class="song-item">
+      <div class="song-item" data-track="" onclick="playSong(this)">
         <span class="song-num">05</span>
         <div class="song-info">
           <span class="song-name">Song Name</span>
           <span class="song-artist">Artist</span>
         </div>
+        <span class="song-play-icon">&#9654;</span>
       </div>
-      <div class="song-item">
+      <div class="song-item" data-track="" onclick="playSong(this)">
         <span class="song-num">06</span>
         <div class="song-info">
           <span class="song-name">Song Name</span>
           <span class="song-artist">Artist</span>
         </div>
+        <span class="song-play-icon">&#9654;</span>
       </div>
+    </div>
+
+    <div class="spotify-player fade-in" style="animation-delay:0.5s" id="spotifyPlayer">
+      <iframe
+        id="spotifyEmbed"
+        style="border-radius:12px"
+        src="https://open.spotify.com/embed/track/5WOSNVChcadlsCRiqXE45K?utm_source=generator&theme=0"
+        width="100%"
+        height="152"
+        frameBorder="0"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy">
+      </iframe>
     </div>
 
     <button class="btn-back fade-in" style="animation-delay:0.6s" onclick="goTo('adventure')">back to shelf</button>
@@ -1411,6 +1453,25 @@ You mean more to me than I've let on. And this is me letting on.</p>
       for (let i = shuffledOrder.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffledOrder[i], shuffledOrder[j]] = [shuffledOrder[j], shuffledOrder[i]];
+      }
+    }
+
+    // ═══════════════════════════════════════
+    //  SPOTIFY PLAYER
+    // ═══════════════════════════════════════
+    function playSong(el) {
+      const trackId = el.dataset.track;
+      if (!trackId) return;
+
+      // Update active state
+      document.querySelectorAll('.song-item').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+
+      // Swap Spotify embed src
+      const embed = document.getElementById('spotifyEmbed');
+      const newSrc = 'https://open.spotify.com/embed/track/' + trackId + '?utm_source=generator&theme=0';
+      if (embed.src !== newSrc) {
+        embed.src = newSrc;
       }
     }
 
