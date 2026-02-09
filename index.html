@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>For Aamira</title>
+
+  <!-- Cinematic Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f0eb;
+      --bg-warm: #f0ebe4;
+      --bg-cool: #edeae6;
+      --ink: #2a2320;
+      --ink-light: #6b5e54;
+      --ink-faint: #a89e94;
+      --accent: #c4956a;
+      --accent-warm: #d4a574;
+      --white: #faf8f5;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Cormorant Garamond', serif;
+      background: var(--bg);
+      color: var(--ink);
+      overflow-x: hidden;
+      min-height: 100dvh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ─── SCREENS ─── */
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      padding: 2rem 1.5rem;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    .screen.active { display: flex; }
+
+    /* ─── FADE ─── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeIn 0.7s ease forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ────────────────────────────────────────
+       SCREEN 1 — DANDELION WISH
+    ──────────────────────────────────────── */
+    #dandelion-screen {
+      background: var(--bg);
+      gap: 2rem;
+      cursor: default;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    .dandelion-prompt {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+      font-weight: 400;
+      color: var(--ink-light);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .dandelion-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      font-style: italic;
+      color: var(--ink-faint);
+      margin-top: -0.8rem;
+    }
+
+    /* Dandelion Container */
+    .dandelion-wrap {
+      position: relative;
+      width: 280px;
+      height: 360px;
+      cursor: pointer;
+    }
+
+    /* Stem */
+    .dandelion-stem {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px;
+      height: 180px;
+      background: linear-gradient(to top, #8a9a6b, #a8b88c);
+      border-radius: 2px;
+    }
+
+    /* Seed head center */
+    .dandelion-head {
+      position: absolute;
+      bottom: 175px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 14px;
+      background: #c8c0b4;
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    /* Seeds */
+    .seed {
+      position: absolute;
+      bottom: 180px;
+      left: 50%;
+      transform-origin: bottom center;
+      transition: none;
+      z-index: 3;
+    }
+
+    .seed-line {
+      width: 1.5px;
+      height: 40px;
+      background: linear-gradient(to top, #b8b0a4, #d4cec4);
+      margin: 0 auto;
+    }
+
+    .seed-puff {
+      width: 12px;
+      height: 12px;
+      position: relative;
+      margin: 0 auto;
+      margin-top: -2px;
+    }
+
+    .seed-puff::before,
+    .seed-puff::after {
+      content: '';
+      position: absolute;
+      background: rgba(200, 194, 184, 0.7);
+      border-radius: 50%;
+    }
+    .seed-puff::before {
+      width: 8px; height: 8px;
+      top: 0; left: 2px;
+    }
+    .seed-puff::after {
+      width: 6px; height: 6px;
+      top: -3px; left: 4px;
+    }
+
+    /* Blown seed animation */
+    .seed.blown {
+      animation: seedFloat var(--duration, 4s) var(--delay, 0s) ease-out forwards;
+    }
+
+    @keyframes seedFloat {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(0deg) scale(1);
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform:
+          translate(var(--tx, 200px), var(--ty, -400px))
+          rotate(var(--rot, 180deg))
+          scale(0.3);
+      }
+    }
+
+    /* Bare dandelion after blow */
+    .dandelion-wrap.blown .dandelion-head {
+      background: #b0a898;
+    }
+
+    .blow-hint {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--ink-faint);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    .dandelion-wrap.blown ~ .blow-hint {
+      display: none;
+    }
+
+    /* ────────────────────────────────────────
+       SCREEN 2 — INTRO
+    ──────────────────────────────────────── */
+    #intro {
+      background: var(--bg-warm);
+      gap: 2rem;
+    }
+
+    .intro-sticker {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--ink-faint);
+    }
+
+    .sticker-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-cool);
+      font-size: 3.5rem;
+    }
+
+    .intro-greeting {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 6vw, 3rem);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0.06em;
+    }
+
+    .intro-sub {
+      font-size: clamp(1.05rem, 3vw, 1.25rem);
+      color: var(--ink-light);
+      max-width: 360px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--white);
+      border: none;
+      padding: 14px 44px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover { background: #3d3530; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ────────────────────────────────────────
+       SCREEN 3 — MEMES / MEMORIES
+    ──────────────────────────────────────── */
+    #memories {
+      background: var(--bg-cool);
+      gap: 2rem;
+    }
+
+    .memories-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.3rem, 4.5vw, 2rem);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0.08em;
+    }
+
+    .meme-carousel {
+      display: flex;
+      gap: 1.2rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+      padding: 1rem 0.5rem;
+      scrollbar-width: none;
+    }
+    .meme-carousel::-webkit-scrollbar { display: none; }
+
+    .meme-card {
+      flex: 0 0 260px;
+      scroll-snap-align: center;
+      background: var(--white);
+      border: 1px solid rgba(42, 35, 32, 0.08);
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+    .meme-card:hover { transform: translateY(-4px); }
+
+    .meme-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .placeholder-img {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 220px;
+      background: var(--bg);
+      color: var(--ink-faint);
+      font-size: 0.85rem;
+      padding: 1rem;
+    }
+
+    .meme-caption {
+      padding: 14px 16px;
+      font-size: 1rem;
+      color: var(--ink-light);
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .scroll-hint {
+      font-size: 0.85rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.1em;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      padding: 12px 36px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-secondary:hover { background: var(--ink); color: var(--white); }
+
+    /* ────────────────────────────────────────
+       SCREEN 4 — THE ASK
+    ──────────────────────────────────────── */
+    #ask {
+      background: var(--bg);
+      gap: 1.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ask-sticker {
+      width: 180px;
+      height: 180px;
+      overflow: hidden;
+      border-radius: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .sticker-placeholder-sq {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-cool);
+      font-size: 4rem;
+      transition: font-size 0.3s;
+    }
+
+    .ask-question {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.4rem, 5.5vw, 2.4rem);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0.04em;
+      line-height: 1.4;
+      max-width: 480px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+      position: relative;
+      min-height: 80px;
+    }
+
+    .btn-yes {
+      background: var(--ink);
+      color: var(--white);
+      border: none;
+      padding: 14px 40px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 5;
+    }
+    .btn-yes:hover { background: #3d3530; transform: translateY(-2px); }
+
+    .btn-no {
+      position: absolute;
+      background: transparent;
+      color: var(--ink-faint);
+      border: 1.5px solid var(--ink-faint);
+      padding: 14px 40px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: left 0.4s ease, top 0.4s ease, opacity 0.3s, font-size 0.3s;
+      z-index: 4;
+      white-space: nowrap;
+    }
+
+    /* ────────────────────────────────────────
+       SCREEN 5 — CELEBRATION
+    ──────────────────────────────────────── */
+    #celebration {
+      background: var(--bg-warm);
+      gap: 2rem;
+    }
+
+    .celeb-sticker {
+      width: 200px;
+      height: 200px;
+      overflow: hidden;
+      border-radius: 20px;
+      animation: celebFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes celebFloat {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+
+    .celeb-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 6vw, 2.8rem);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0.06em;
+    }
+
+    .celeb-message {
+      font-size: clamp(1.05rem, 3vw, 1.2rem);
+      color: var(--ink-light);
+      max-width: 400px;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    .celeb-foreshadow {
+      margin-top: 0.5rem;
+      padding: 24px 32px;
+      border: 1.5px solid var(--ink-faint);
+      max-width: 400px;
+    }
+
+    .celeb-foreshadow p {
+      font-size: 1rem;
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    .celeb-foreshadow .hint {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-top: 10px;
+    }
+
+    .envelope-icon {
+      font-size: 1.8rem;
+      display: inline-block;
+      animation: envelopeFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes envelopeFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(3deg); }
+    }
+
+    /* ─── SCREEN SHAKE ─── */
+    .shake { animation: shakeIt 0.35s ease-in-out; }
+    @keyframes shakeIt {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-4px); }
+    }
+
+    /* ─── FLOATING PARTICLES BG ─── */
+    .particles-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      bottom: -20px;
+      opacity: 0;
+      animation: particleRise linear infinite;
+    }
+
+    @keyframes particleRise {
+      0%   { opacity: 0; transform: translateY(0) translateX(0); }
+      15%  { opacity: 0.4; }
+      85%  { opacity: 0.2; }
+      100% { opacity: 0; transform: translateY(-105dvh) translateX(var(--drift, 30px)); }
+    }
+
+    /* ─── REDUCED MOTION ─── */
+    @media (prefers-reduced-motion: reduce) {
+      .particle, .seed.blown, .celeb-sticker, .envelope-icon { animation: none !important; }
+      .fade-in { animation: none !important; opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Subtle floating particles -->
+  <div class="particles-bg" id="particlesBg"></div>
+
+  <!-- ═══════ SCREEN 1 — DANDELION WISH ═══════ -->
+  <section class="screen active" id="dandelion-screen">
+    <p class="dandelion-prompt fade-in">Make a wish</p>
+    <p class="dandelion-sub fade-in" style="animation-delay:0.3s">then blow</p>
+
+    <div class="dandelion-wrap" id="dandelionWrap" onclick="blowDandelion()">
+      <!-- Seeds generated by JS -->
+      <div class="dandelion-head" id="dandelionHead"></div>
+      <div class="dandelion-stem"></div>
+    </div>
+
+    <p class="blow-hint fade-in" style="animation-delay:0.6s" id="blowHint">tap the dandelion</p>
+  </section>
+
+  <!-- ═══════ SCREEN 2 — INTRO ═══════ -->
+  <section class="screen" id="intro">
+    <div class="intro-sticker">
+      <!-- REPLACE: Bubu & Dudu sticker -->
+      <div class="sticker-placeholder"><span>&#x1F43B;</span></div>
+    </div>
+    <h1 class="intro-greeting fade-in">Hey, Aamira</h1>
+    <p class="intro-sub fade-in" style="animation-delay:0.3s">
+      I made something for you. It'll only take a minute.
+    </p>
+    <button class="btn-primary fade-in" style="animation-delay:0.6s" onclick="goTo('memories')">
+      Continue
+    </button>
+  </section>
+
+  <!-- ═══════ SCREEN 3 — MEMES / MEMORIES ═══════ -->
+  <section class="screen" id="memories">
+    <h2 class="memories-title fade-in">Some of us</h2>
+
+    <div class="meme-carousel fade-in" style="animation-delay:0.2s">
+      <div class="meme-card">
+        <div class="placeholder-img">Your photo / meme here</div>
+        <p class="meme-caption">Caption for photo 1</p>
+      </div>
+      <div class="meme-card">
+        <div class="placeholder-img">Your photo / meme here</div>
+        <p class="meme-caption">Caption for photo 2</p>
+      </div>
+      <div class="meme-card">
+        <div class="placeholder-img">Your photo / meme here</div>
+        <p class="meme-caption">Caption for photo 3</p>
+      </div>
+      <div class="meme-card">
+        <div class="placeholder-img">Your photo / meme here</div>
+        <p class="meme-caption">Caption for photo 4</p>
+      </div>
+    </div>
+
+    <p class="scroll-hint fade-in" style="animation-delay:0.4s">swipe &rarr;</p>
+    <button class="btn-secondary fade-in" style="animation-delay:0.5s" onclick="goTo('ask')">
+      Now the real question
+    </button>
+  </section>
+
+  <!-- ═══════ SCREEN 4 — THE ASK ═══════ -->
+  <section class="screen" id="ask">
+    <div class="ask-sticker" id="askSticker">
+      <!-- REPLACE: Bubu & Dudu hopeful sticker -->
+      <div class="sticker-placeholder-sq" id="askStickerInner">
+        <span id="askEmoji">&#x1F43B;&#x1F49D;</span>
+      </div>
+    </div>
+
+    <h2 class="ask-question fade-in">Aamira, do you want to be my Valentine?</h2>
+
+    <div class="btn-group fade-in" style="animation-delay:0.3s" id="btnGroup">
+      <button class="btn-yes" id="btnYes" onclick="handleYes()">Yes</button>
+      <button class="btn-no" id="btnNo">No</button>
+    </div>
+  </section>
+
+  <!-- ═══════ SCREEN 5 — CELEBRATION ═══════ -->
+  <section class="screen" id="celebration">
+    <div class="celeb-sticker">
+      <!-- REPLACE: Bubu & Dudu celebration sticker -->
+      <div class="sticker-placeholder-sq"><span>&#x1F43B;&#x1F496;</span></div>
+    </div>
+
+    <h2 class="celeb-title fade-in">I knew you would</h2>
+
+    <p class="celeb-message fade-in" style="animation-delay:0.3s">
+      You just made me the happiest person.
+      I can't stop smiling right now.
+      This Valentine's Day is going to be ours, Aamira.
+    </p>
+
+    <div class="celeb-foreshadow fade-in" style="animation-delay:0.6s">
+      <p>
+        <span class="envelope-icon">&#x1F48C;</span><br>
+        This isn't your only surprise.
+      </p>
+      <p class="hint">February 14th &mdash; check your hands.</p>
+    </div>
+  </section>
+
+  <script>
+    // ═══════════════════════════════════════
+    //  SUBTLE FLOATING PARTICLES
+    // ═══════════════════════════════════════
+    (function initParticles() {
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) return;
+
+      const bg = document.getElementById('particlesBg');
+      const count = window.innerWidth < 600 ? 8 : 14;
+      const chars = ['\u2727', '\u00B7', '\u2022', '\u2726'];
+
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('span');
+        p.className = 'particle';
+        p.textContent = chars[Math.floor(Math.random() * chars.length)];
+        p.style.left = Math.random() * 100 + '%';
+        p.style.fontSize = (8 + Math.random() * 10) + 'px';
+        p.style.color = 'rgba(42,35,32,' + (0.08 + Math.random() * 0.1) + ')';
+        p.style.animationDuration = (14 + Math.random() * 16) + 's';
+        p.style.animationDelay = (Math.random() * 18) + 's';
+        p.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+        bg.appendChild(p);
+      }
+    })();
+
+    // ═══════════════════════════════════════
+    //  DANDELION
+    // ═══════════════════════════════════════
+    const SEED_COUNT = 28;
+    const dandelionWrap = document.getElementById('dandelionWrap');
+    const dandelionHead = document.getElementById('dandelionHead');
+    let dandelionBlown = false;
+
+    // Build seeds in a radial pattern
+    (function buildDandelion() {
+      for (let i = 0; i < SEED_COUNT; i++) {
+        const angle = (i / SEED_COUNT) * 360;
+        const seed = document.createElement('div');
+        seed.className = 'seed';
+        seed.style.transform = `rotate(${angle}deg)`;
+        seed.innerHTML = '<div class="seed-puff"></div><div class="seed-line"></div>';
+
+        // Pre-compute flight path for when blown
+        const radians = (angle * Math.PI) / 180;
+        const distance = 250 + Math.random() * 350;
+        const tx = Math.cos(radians) * distance * (0.6 + Math.random() * 0.8);
+        const ty = -Math.abs(Math.sin(radians) * distance) - 100 - Math.random() * 200;
+        const rot = (Math.random() * 360 - 180);
+        const duration = 2.5 + Math.random() * 2.5;
+        const delay = Math.random() * 0.8;
+
+        seed.style.setProperty('--tx', tx + 'px');
+        seed.style.setProperty('--ty', ty + 'px');
+        seed.style.setProperty('--rot', rot + 'deg');
+        seed.style.setProperty('--duration', duration + 's');
+        seed.style.setProperty('--delay', delay + 's');
+
+        dandelionWrap.insertBefore(seed, dandelionHead);
+      }
+    })();
+
+    function blowDandelion() {
+      if (dandelionBlown) return;
+      dandelionBlown = true;
+      dandelionWrap.classList.add('blown');
+
+      // Blow all seeds
+      const seeds = dandelionWrap.querySelectorAll('.seed');
+      seeds.forEach(s => s.classList.add('blown'));
+
+      // Hide hint
+      document.getElementById('blowHint').style.display = 'none';
+
+      // Transition to intro after seeds scatter
+      setTimeout(() => goTo('intro'), 3200);
+    }
+
+    // ═══════════════════════════════════════
+    //  NAVIGATION
+    // ═══════════════════════════════════════
+    function goTo(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      target.classList.add('active');
+
+      target.querySelectorAll('.fade-in').forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = '';
+      });
+      window.scrollTo(0, 0);
+
+      // Initialize No button position when Ask screen opens
+      if (screenId === 'ask') initNoButton();
+    }
+
+    // ═══════════════════════════════════════
+    //  NO BUTTON — DODGES CURSOR
+    // ═══════════════════════════════════════
+    let noCount = 0;
+    const btnYes = document.getElementById('btnYes');
+    const btnNo = document.getElementById('btnNo');
+    const btnGroup = document.getElementById('btnGroup');
+    const askScreen = document.getElementById('ask');
+    const askEmoji = document.getElementById('askEmoji');
+    const askSticker = document.getElementById('askSticker');
+
+    const noMessages = [
+      'No',
+      'Are you sure?',
+      'Really sure?',
+      'Think again',
+      'Pretty please?',
+      'With ice cream on top?',
+      'I\'ll cook for you',
+      'I\'ll let you pick the movie',
+      'PLEASE AAMIRA',
+      'I\'m going to cry',
+      'ok I\'m crying now',
+      'actually I\'m fine',
+      '...no I\'m not fine',
+      'JUST SAY YES',
+      'I\'ll ask again tomorrow',
+      'and the day after that',
+    ];
+
+    const askEmojis = [
+      '\u{1F43B}\u{1F49D}',
+      '\u{1F979}',
+      '\u{1F97A}',
+      '\u{1F622}',
+      '\u{1F62D}',
+      '\u{1F636}\u200D\u{1F32B}\uFE0F',
+      '\u{1F480}',
+      '\u{1F47B}',
+      '\u{1F62D}',
+      '\u{1F622}',
+      '\u{1F62D}',
+      '\u{1F972}',
+      '\u{1F62D}',
+      '\u{1F621}',
+      '\u{1F634}',
+      '\u{1F634}',
+    ];
+
+    function initNoButton() {
+      // Start No button to the right of Yes
+      const groupRect = btnGroup.getBoundingClientRect();
+      btnNo.style.left = '60%';
+      btnNo.style.top = '0px';
+    }
+
+    function dodgeNo() {
+      noCount++;
+      const idx = Math.min(noCount, noMessages.length - 1);
+
+      // Update text
+      btnNo.textContent = noMessages[idx];
+
+      // Grow Yes button
+      const yesFontSize = 0.9 + noCount * 0.1;
+      const yesPad = 14 + noCount * 3;
+      btnYes.style.fontSize = yesFontSize + 'rem';
+      btnYes.style.padding = `${yesPad}px ${yesPad + 26}px`;
+
+      // Update emoji
+      askEmoji.textContent = askEmojis[Math.min(noCount, askEmojis.length - 1)];
+
+      // Grow sticker
+      const size = 180 + noCount * 4;
+      askSticker.style.width = size + 'px';
+      askSticker.style.height = size + 'px';
+
+      // Screen shake
+      askScreen.classList.remove('shake');
+      void askScreen.offsetHeight;
+      askScreen.classList.add('shake');
+
+      // Move No button to random position within the screen
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const btnW = btnNo.offsetWidth;
+      const btnH = btnNo.offsetHeight;
+      const margin = 20;
+
+      const maxLeft = vw - btnW - margin;
+      const maxTop = vh - btnH - margin;
+      const newLeft = margin + Math.random() * (maxLeft - margin);
+      const newTop = margin + Math.random() * (maxTop - margin);
+
+      // Move relative to the ask screen
+      const askRect = askScreen.getBoundingClientRect();
+      btnNo.style.position = 'fixed';
+      btnNo.style.left = newLeft + 'px';
+      btnNo.style.top = newTop + 'px';
+
+      // Shrink No over time
+      const noScale = Math.max(0.55, 1 - noCount * 0.04);
+      btnNo.style.fontSize = (0.9 * noScale) + 'rem';
+    }
+
+    // Desktop: dodge on hover
+    btnNo.addEventListener('mouseenter', dodgeNo);
+    // Mobile: dodge on touch
+    btnNo.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      dodgeNo();
+    }, { passive: false });
+
+    // ═══════════════════════════════════════
+    //  YES — CELEBRATION
+    // ═══════════════════════════════════════
+    function handleYes() {
+      // Reset No button
+      btnNo.style.position = '';
+      btnNo.style.left = '';
+      btnNo.style.top = '';
+      goTo('celebration');
+      fireCelebration();
+    }
+
+    function fireCelebration() {
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) return;
+
+      const heart = confetti.shapeFromText({ text: '\u2764\uFE0F', scalar: 2 });
+      const pink = confetti.shapeFromText({ text: '\u{1F497}', scalar: 2 });
+      const sparkle = confetti.shapeFromText({ text: '\u2728', scalar: 2 });
+      const rose = confetti.shapeFromText({ text: '\u{1F339}', scalar: 2 });
+
+      // Big initial burst
+      setTimeout(() => {
+        confetti({
+          particleCount: 80,
+          spread: 100,
+          origin: { x: 0.5, y: 0.45 },
+          colors: ['#c4956a', '#d4a574', '#2a2320', '#a89e94', '#f5f0eb'],
+          shapes: [heart, pink, sparkle, 'circle'],
+          scalar: 2.2,
+          gravity: 0.8,
+          disableForReducedMotion: true,
+        });
+      }, 200);
+
+      // Sustained stream
+      const end = Date.now() + 3500;
+      (function frame() {
+        confetti({
+          particleCount: 2,
+          angle: 60,
+          spread: 50,
+          origin: { x: 0, y: 0.6 },
+          colors: ['#c4956a', '#d4a574', '#a89e94'],
+          shapes: [heart, rose, sparkle, 'circle'],
+          scalar: 2,
+          disableForReducedMotion: true,
+        });
+        confetti({
+          particleCount: 2,
+          angle: 120,
+          spread: 50,
+          origin: { x: 1, y: 0.6 },
+          colors: ['#c4956a', '#d4a574', '#a89e94'],
+          shapes: [heart, rose, sparkle, 'circle'],
+          scalar: 2,
+          disableForReducedMotion: true,
+        });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+    }
+  </script>
+</body>
+</html>
