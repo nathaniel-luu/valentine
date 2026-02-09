@@ -561,15 +561,16 @@
 
     .bookshelf {
       display: flex;
-      gap: 14px;
+      gap: 12px;
+      flex-wrap: wrap;
       align-items: flex-end;
       justify-content: center;
       padding: 24px 16px 0;
     }
 
     .book {
-      width: 105px;
-      height: 170px;
+      width: 95px;
+      height: 160px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -601,6 +602,7 @@
     .book-2 { background: #ede8e1; }
     .book-3 { background: #eae6df; }
     .book-4 { background: #e8e3dc; }
+    .book-5 { background: #e5e0d8; }
 
     .book-number {
       font-family: 'Cinzel', serif;
@@ -934,6 +936,98 @@
       opacity: 0.6;
     }
 
+    /* ─── BOOK 5: CARE GUIDE ─── */
+    #book-care {
+      justify-content: flex-start;
+      padding-top: 3rem;
+      padding-bottom: 2rem;
+      overflow-y: auto;
+    }
+
+    .care-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--ink-faint);
+      margin-bottom: 0.5rem;
+    }
+
+    .care-tabs {
+      display: flex;
+      gap: 0;
+      max-width: 420px;
+      width: 100%;
+      border-bottom: 1px solid rgba(168, 158, 148, 0.3);
+    }
+
+    .care-tab {
+      flex: 1;
+      padding: 10px 8px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .care-tab:hover {
+      color: var(--ink-light);
+    }
+    .care-tab.active {
+      color: var(--ink);
+      border-bottom-color: var(--accent);
+    }
+
+    .care-panel {
+      display: none;
+      max-width: 420px;
+      width: 100%;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 1rem;
+    }
+    .care-panel.active {
+      display: flex;
+    }
+
+    .tip-card {
+      text-align: left;
+      padding: 20px;
+      border: 1px solid rgba(168, 158, 148, 0.25);
+      background: var(--white);
+    }
+
+    .tip-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .tip-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--ink-light);
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .tip-source {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.78rem;
+      font-style: italic;
+      color: var(--ink-faint);
+      line-height: 1.4;
+    }
+
     /* ─── SCREEN SHAKE ─── */
     .shake { animation: shakeIt 0.35s ease-in-out; }
     @keyframes shakeIt {
@@ -1081,6 +1175,11 @@
         <span class="book-number">IV</span>
         <span class="book-title">Memories</span>
         <span class="book-desc">our moments</span>
+      </div>
+      <div class="book book-5" onclick="goTo('book-care')">
+        <span class="book-number">V</span>
+        <span class="book-title">Care Guide</span>
+        <span class="book-desc">because I care about you</span>
       </div>
     </div>
     <div class="shelf-line fade-in" style="animation-delay:0.4s"></div>
@@ -1308,6 +1407,122 @@ You mean more to me than I've let on. And this is me letting on.</p>
         </div>
       </div>
 
+    </div>
+
+    <button class="btn-back fade-in" style="animation-delay:0.6s" onclick="goTo('adventure')">back to shelf</button>
+  </section>
+
+  <!-- ═══════ BOOK 5 — CARE GUIDE ═══════ -->
+  <section class="screen book-screen" id="book-care">
+    <h2 class="book-screen-title fade-in">Care Guide</h2>
+    <p class="care-sub fade-in" style="animation-delay:0.2s">researched with love</p>
+
+    <div class="care-tabs fade-in" style="animation-delay:0.3s">
+      <button class="care-tab active" onclick="switchCareTab('sleep', this)">Sleep</button>
+      <button class="care-tab" onclick="switchCareTab('comfort', this)">Comfort</button>
+      <button class="care-tab" onclick="switchCareTab('period', this)">Period</button>
+    </div>
+
+    <!-- SLEEP PANEL -->
+    <div class="care-panel active" id="care-sleep">
+      <div class="tip-card">
+        <p class="tip-title">Keep a Consistent Schedule</p>
+        <p class="tip-text">Go to bed and wake up at the same time every day — even weekends. Your body's internal clock loves routine, and consistency is one of the strongest predictors of good sleep.</p>
+        <p class="tip-source">Irish et al., 2015 — Sleep Medicine Reviews</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Cool Your Room Down</p>
+        <p class="tip-text">Set your bedroom to around 18-20°C (65-68°F). Your core body temperature naturally drops at night to initiate sleep, and a cool room helps that process along.</p>
+        <p class="tip-source">Okamoto-Mizuno & Mizuno, 2012 — Journal of Physiological Anthropology</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Screens Off Before Bed</p>
+        <p class="tip-text">Put away phones and laptops at least 30-60 minutes before sleep. Blue light suppresses melatonin production and tricks your brain into thinking it's still daytime.</p>
+        <p class="tip-source">Chang et al., 2015 — Proceedings of the National Academy of Sciences</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Try 4-7-8 Breathing</p>
+        <p class="tip-text">Breathe in for 4 seconds, hold for 7, exhale slowly for 8. This activates your parasympathetic nervous system and helps your body shift into rest mode.</p>
+        <p class="tip-source">Jerath et al., 2015 — Medical Hypotheses</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Consider Magnesium</p>
+        <p class="tip-text">Magnesium supplements (~500mg) improve sleep quality by regulating neurotransmitters that calm the nervous system. Especially helpful if you're not getting enough from food.</p>
+        <p class="tip-source">Abbasi et al., 2012 — Journal of Research in Medical Sciences</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Write Down Your Worries</p>
+        <p class="tip-text">Spend 5 minutes before bed writing a to-do list for tomorrow. Offloading thoughts onto paper significantly reduces the time it takes to fall asleep.</p>
+        <p class="tip-source">Scullin et al., 2018 — Journal of Experimental Psychology</p>
+      </div>
+    </div>
+
+    <!-- COMFORT PANEL -->
+    <div class="care-panel" id="care-comfort">
+      <div class="tip-card">
+        <p class="tip-title">Chicken Soup Actually Works</p>
+        <p class="tip-text">Not just comfort food — chicken soup has mild anti-inflammatory properties that help reduce upper respiratory symptoms. Your grandma was scientifically right.</p>
+        <p class="tip-source">Rennard et al., 2000 — CHEST Journal</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Honey for Sore Throats</p>
+        <p class="tip-text">A spoonful of honey (especially buckwheat) soothes a sore throat and calms a cough — studies show it works as well as some over-the-counter cough suppressants.</p>
+        <p class="tip-source">Paul et al., 2007 — Archives of Pediatrics & Adolescent Medicine</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Stay Hydrated (Seriously)</p>
+        <p class="tip-text">When you're sick, your body loses fluids faster through fever and congestion. Warm fluids like tea or broth also loosen congestion and soothe irritated airways.</p>
+        <p class="tip-source">Sanu & Eccles, 2008 — Rhinology</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Ginger for Nausea</p>
+        <p class="tip-text">If your stomach is upset, ginger genuinely works. About 1-1.5g of ginger has been shown to significantly reduce nausea from multiple causes.</p>
+        <p class="tip-source">Ernst & Pittler, 2000 — British Journal of Anaesthesia</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Prioritize Sleep and Rest</p>
+        <p class="tip-text">Sleep is when your immune system does its heaviest work. Sleep deprivation measurably reduces your body's ability to fight infection — so rest guilt-free.</p>
+        <p class="tip-source">Prather et al., 2015 — Sleep</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Zinc Within 24 Hours</p>
+        <p class="tip-text">If you catch a cold early, zinc lozenges taken within the first 24 hours can reduce how long you're sick by about a day. Timing is everything here.</p>
+        <p class="tip-source">Singh & Das, 2013 — Cochrane Database of Systematic Reviews</p>
+      </div>
+    </div>
+
+    <!-- PERIOD PANEL -->
+    <div class="care-panel" id="care-period">
+      <div class="tip-card">
+        <p class="tip-title">Heat Therapy Really Works</p>
+        <p class="tip-text">A heating pad on your lower abdomen is clinically proven to be as effective as ibuprofen for cramp relief. Keep one nearby — it's not placebo, it's science.</p>
+        <p class="tip-source">Akin et al., 2001 — Journal of Reproductive Medicine</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Magnesium Eases Cramps</p>
+        <p class="tip-text">Magnesium relaxes uterine smooth muscle and reduces pain intensity. Around 250-360mg daily in the days before and during your period can genuinely help.</p>
+        <p class="tip-source">Parazzini et al., 2017 — Magnesium Research</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Gentle Movement Helps</p>
+        <p class="tip-text">Light exercise — walking, stretching, yoga — releases endorphins that act as natural painkillers. Even 20-30 minutes of low-intensity movement makes a difference.</p>
+        <p class="tip-source">Matthewman et al., 2018 — BMC Women's Health</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Ginger Tea for Pain</p>
+        <p class="tip-text">750-2000mg of ginger powder per day during the first 3-4 days of your period reduces menstrual pain as effectively as ibuprofen. Make it a warm tea.</p>
+        <p class="tip-source">Ozgoli et al., 2009 — Journal of Alternative and Complementary Medicine</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Dark Chocolate (Yes, Really)</p>
+        <p class="tip-text">Dark chocolate (70%+ cacao) is rich in magnesium and triggers endorphin release. There's real science behind the craving — and it may genuinely help with cramps and mood.</p>
+        <p class="tip-source">Davinelli et al., 2014 — Nutrition Reviews; Bruinsma & Taren, 1999 — JADA</p>
+      </div>
+      <div class="tip-card">
+        <p class="tip-title">Anti-Inflammatory Foods</p>
+        <p class="tip-text">Omega-3s from fish, flaxseed, or walnuts reduce prostaglandins — the compound directly responsible for uterine cramping. Add these in the days before your period.</p>
+        <p class="tip-source">Harel et al., 1996 — American Journal of Obstetrics and Gynecology</p>
+      </div>
     </div>
 
     <button class="btn-back fade-in" style="animation-delay:0.6s" onclick="goTo('adventure')">back to shelf</button>
@@ -1667,6 +1882,16 @@ You mean more to me than I've let on. And this is me letting on.</p>
         const j = Math.floor(Math.random() * (i + 1));
         [shuffledOrder[i], shuffledOrder[j]] = [shuffledOrder[j], shuffledOrder[i]];
       }
+    }
+
+    // ═══════════════════════════════════════
+    //  CARE GUIDE TABS
+    // ═══════════════════════════════════════
+    function switchCareTab(panelId, tabEl) {
+      document.querySelectorAll('.care-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.care-panel').forEach(p => p.classList.remove('active'));
+      tabEl.classList.add('active');
+      document.getElementById('care-' + panelId).classList.add('active');
     }
 
     // ═══════════════════════════════════════
