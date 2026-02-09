@@ -1133,13 +1133,14 @@
     /* Floating petals animation */
     .floating-petal {
       position: absolute;
-      width: 12px;
-      height: 24px;
-      background: linear-gradient(to bottom, rgba(244,160,181,0.9), rgba(232,140,160,0.5));
+      width: 16px;
+      height: 28px;
+      background: #e8a0b0;
       border-radius: 50% 50% 45% 45%;
       opacity: 0;
       z-index: 10;
       pointer-events: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
 
     .floating-petal.falling {
@@ -1151,7 +1152,8 @@
         opacity: 0;
         transform: translate(0, 0) rotate(0deg);
       }
-      10% { opacity: 0.9; }
+      10% { opacity: 1; }
+      85% { opacity: 0.7; }
       100% {
         opacity: 0;
         transform:
@@ -1837,7 +1839,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
 
     <div class="flowers-reveal">
       <p>these aren't staying on a screen.</p>
-      <p class="reveal-hint">check your door soon.</p>
+      <p class="reveal-hint">real ones are on the way.</p>
     </div>
 
     <button class="btn-back fade-in" style="animation-delay:0.8s" onclick="goTo('adventure')">back to shelf</button>
@@ -2365,11 +2367,11 @@ You mean more to me than I've let on. And this is me letting on.</p>
       const screen = document.getElementById('book-flowers');
       const petalCount = 20;
       const petalColors = [
-        'linear-gradient(to bottom, rgba(244,160,181,0.9), rgba(232,140,160,0.5))',
-        'linear-gradient(to bottom, rgba(232,185,190,0.9), rgba(220,165,170,0.5))',
-        'linear-gradient(to bottom, rgba(200,176,212,0.85), rgba(180,155,195,0.5))',
-        'linear-gradient(to bottom, rgba(232,201,122,0.85), rgba(212,175,100,0.5))',
-        'linear-gradient(to bottom, rgba(255,210,220,0.9), rgba(244,180,190,0.5))',
+        '#e8a0b0', // rose pink
+        '#d4a0c0', // mauve
+        '#b8a0d0', // lavender
+        '#e0c090', // warm gold
+        '#f0b0b8', // blush
       ];
 
       for (let i = 0; i < petalCount; i++) {
