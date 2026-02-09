@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
 
   <!-- Preload critical GIFs -->
-  <link rel="preload" as="image" href="https://media.tenor.com/1XuHllkjoM4AAAAx/hug-bubu.webp">
+  <link rel="preload" as="image" href="https://media.tenor.com/Re3rcuBu4hIAAAAi/love-couple.gif">
 
   <!-- Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
@@ -571,8 +571,8 @@
   <!-- ═══════ SCREEN 2 — INTRO ═══════ -->
   <section class="screen" id="intro">
     <div class="intro-sticker">
-      <img src="https://media.tenor.com/1XuHllkjoM4AAAAx/hug-bubu.webp"
-           alt="Bubu and Dudu hugging">
+      <img src="https://media.tenor.com/Re3rcuBu4hIAAAAi/love-couple.gif"
+           alt="Bubu and Dudu hugging with hearts">
     </div>
     <h1 class="intro-greeting fade-in">Hey, Aamira</h1>
     <p class="intro-sub fade-in" style="animation-delay:0.3s">
@@ -616,8 +616,8 @@
   <section class="screen" id="ask">
     <div class="ask-sticker" id="askSticker">
       <img id="askGif"
-           src="https://media.tenor.com/e7S1Y510BSEAAAAx/bubu-dudu-valentine%27s-day-happy-valentine%27s-day-bubu.webp"
-           alt="Bubu giving Dudu flowers">
+           src="https://media.tenor.com/0cNM_9li440AAAAi/dudu-giving-flowers-bubu-flowers.gif"
+           alt="Dudu giving Bubu flowers">
     </div>
 
     <h2 class="ask-question fade-in">Aamira, do you want to be my Valentine?</h2>
@@ -633,8 +633,8 @@
   <!-- ═══════ SCREEN 5 — CELEBRATION ═══════ -->
   <section class="screen" id="celebration">
     <div class="celeb-sticker">
-      <img src="https://media.tenor.com/ZP9TmRmovFAAAAAx/bubu-dudu.webp"
-           alt="Bubu and Dudu kissing"
+      <img src="https://media.tenor.com/D1CAg1rBD6wAAAAi/tkthao219-bubududu.gif"
+           alt="Bubu and Dudu kissing with hearts"
            loading="lazy">
     </div>
 
@@ -756,7 +756,6 @@
     //  NO BUTTON — DODGES CURSOR
     // ═══════════════════════════════════════
     let noCount = 0;
-    let dodgeCooldown = false;
     const btnYes = document.getElementById('btnYes');
     const btnNo = document.getElementById('btnNo');
     const noZone = document.getElementById('noZone');
@@ -783,33 +782,42 @@
       'and the day after that',
     ];
 
-    // GIF stages: hopeful → pleading → sad → crying
+    // GIF stages — all transparent/white backgrounds
     const askGifs = [
-      'https://media.tenor.com/e7S1Y510BSEAAAAx/bubu-dudu-valentine%27s-day-happy-valentine%27s-day-bubu.webp',
-      'https://media.tenor.com/XFYEWpH5LxwAAAAx/bear-panda.webp',
-      'https://media.tenor.com/XFYEWpH5LxwAAAAx/bear-panda.webp',
-      'https://media.tenor.com/BOLqQTbf9QgAAAAx/dudu-sad.webp',
-      'https://media.tenor.com/BOLqQTbf9QgAAAAx/dudu-sad.webp',
-      'https://media.tenor.com/WRRnrnJBMWMAAAAx/bubu-miss-dudu-bubu-cry.webp',
-      'https://media.tenor.com/WxEGOknUnHMAAAAx/bubu-cry.webp',
-      'https://media.tenor.com/WxEGOknUnHMAAAAx/bubu-cry.webp',
-      'https://media.tenor.com/WRRnrnJBMWMAAAAx/bubu-miss-dudu-bubu-cry.webp',
-      'https://media.tenor.com/WxEGOknUnHMAAAAx/bubu-cry.webp',
-      'https://media.tenor.com/WRRnrnJBMWMAAAAx/bubu-miss-dudu-bubu-cry.webp',
-      'https://media.tenor.com/BOLqQTbf9QgAAAAx/dudu-sad.webp',
-      'https://media.tenor.com/WxEGOknUnHMAAAAx/bubu-cry.webp',
-      'https://media.tenor.com/WRRnrnJBMWMAAAAx/bubu-miss-dudu-bubu-cry.webp',
-      'https://media.tenor.com/WxEGOknUnHMAAAAx/bubu-cry.webp',
-      'https://media.tenor.com/WxEGOknUnHMAAAAx/bubu-cry.webp',
+      // 0: hopeful — dudu giving flowers
+      'https://media.tenor.com/0cNM_9li440AAAAi/dudu-giving-flowers-bubu-flowers.gif',
+      // 1: shy — dudu shy with flowers
+      'https://media.tenor.com/-HF7-xdOAAwAAAAx/bubu-dudu-bubu-dudu-shy.webp',
+      // 2: still pleading — panda shy
+      'https://media.tenor.com/XFYEWpH5LxwAAAAi/bear-panda.gif',
+      // 3: getting sad — bubu sad face
+      'https://media.tenor.com/-D3LBHnOy-8AAAAi/bubu-sad-bubu-crying.gif',
+      // 4: sad — bubu sad face
+      'https://media.tenor.com/-D3LBHnOy-8AAAAi/bubu-sad-bubu-crying.gif',
+      // 5: crying — panda with tissues
+      'https://media.tenor.com/9gBByPt6k4oAAAAi/bubu-dudu-twitter.gif',
+      // 6: crying harder — big tears
+      'https://media.tenor.com/HUJyzO0WfM4AAAAi/bubu-dudu.gif',
+      // 7: brown bear crying
+      'https://media.tenor.com/yZoKXA08ZyYAAAAi/bubu-bubu-dudu.gif',
+      // 8: not happy — pouty
+      'https://media.tenor.com/iszesSNWYY4AAAAi/bubu-not-happy-not-now.gif',
+      // 9: angry walk
+      'https://media.tenor.com/zyud8rY84swAAAAi/bubu-bubu-angry.gif',
+      // 10+: cycle through crying/sad
+      'https://media.tenor.com/9gBByPt6k4oAAAAi/bubu-dudu-twitter.gif',
+      'https://media.tenor.com/HUJyzO0WfM4AAAAi/bubu-dudu.gif',
+      'https://media.tenor.com/yZoKXA08ZyYAAAAi/bubu-bubu-dudu.gif',
+      'https://media.tenor.com/9gBByPt6k4oAAAAi/bubu-dudu-twitter.gif',
+      'https://media.tenor.com/HUJyzO0WfM4AAAAi/bubu-dudu.gif',
+      'https://media.tenor.com/9gBByPt6k4oAAAAi/bubu-dudu-twitter.gif',
     ];
 
     // Preload all GIF stages
     askGifs.forEach(src => { const img = new Image(); img.src = src; });
 
     function initNoButton() {
-      // Reset position to center of no-zone
       noCount = 0;
-      dodgeCooldown = false;
       btnNo.textContent = 'No';
       btnNo.style.transform = 'translate(-50%, -50%)';
       btnYes.style.fontSize = '';
@@ -820,11 +828,6 @@
     }
 
     function dodgeNo() {
-      // Cooldown prevents rapid-fire triggering
-      if (dodgeCooldown) return;
-      dodgeCooldown = true;
-      setTimeout(() => { dodgeCooldown = false; }, 500);
-
       noCount++;
       const idx = Math.min(noCount, noMessages.length - 1);
 
@@ -858,13 +861,9 @@
       btnNo.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
     }
 
-    // Desktop: dodge on hover (fires once, then cooldown prevents spam)
-    btnNo.addEventListener('mouseenter', dodgeNo);
-    // Mobile: dodge on touch
-    btnNo.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      dodgeNo();
-    }, { passive: false });
+    // Click-based dodge — she can see the button, aim for it, click it,
+    // and THEN it runs away. She sees the text change each time.
+    btnNo.addEventListener('click', dodgeNo);
 
     // ═══════════════════════════════════════
     //  YES — CELEBRATION
