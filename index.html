@@ -385,12 +385,11 @@
       max-width: 480px;
     }
 
-    .btn-group {
+    .btn-area {
       display: flex;
-      gap: 1.2rem;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
+      gap: 1.5rem;
       margin-top: 0.5rem;
     }
 
@@ -406,11 +405,21 @@
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.3s ease;
-      z-index: 5;
     }
     .btn-yes:hover { background: #3d3530; transform: translateY(-2px); }
 
+    /* No button lives in a bounded container so it never disappears */
+    .no-zone {
+      position: relative;
+      width: 320px;
+      height: 70px;
+    }
+
     .btn-no {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       background: transparent;
       color: var(--ink);
       border: 1.5px solid var(--ink);
@@ -421,8 +430,7 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: transform 0.35s ease, left 0.35s ease, top 0.35s ease;
-      z-index: 4;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       white-space: nowrap;
     }
 
@@ -614,9 +622,11 @@
 
     <h2 class="ask-question fade-in">Aamira, do you want to be my Valentine?</h2>
 
-    <div class="btn-group fade-in" style="animation-delay:0.3s" id="btnGroup">
+    <div class="btn-area fade-in" style="animation-delay:0.3s">
       <button class="btn-yes" id="btnYes" onclick="handleYes()">Yes</button>
-      <button class="btn-no" id="btnNo">No</button>
+      <div class="no-zone" id="noZone">
+        <button class="btn-no" id="btnNo">No</button>
+      </div>
     </div>
   </section>
 
@@ -746,9 +756,10 @@
     //  NO BUTTON — DODGES CURSOR
     // ═══════════════════════════════════════
     let noCount = 0;
+    let dodgeCooldown = false;
     const btnYes = document.getElementById('btnYes');
     const btnNo = document.getElementById('btnNo');
-    const btnGroup = document.getElementById('btnGroup');
+    const noZone = document.getElementById('noZone');
     const askScreen = document.getElementById('ask');
     const askGif = document.getElementById('askGif');
     const askSticker = document.getElementById('askSticker');
@@ -772,23 +783,17 @@
       'and the day after that',
     ];
 
-    // GIF stages: hopeful → pleading → sad → crying → devastated
+    // GIF stages: hopeful → pleading → sad → crying
     const askGifs = [
-      // 0: hopeful — giving flowers
       'https://media.tenor.com/e7S1Y510BSEAAAAx/bubu-dudu-valentine%27s-day-happy-valentine%27s-day-bubu.webp',
-      // 1: shy/pleading — sitting with flowers
       'https://media.tenor.com/XFYEWpH5LxwAAAAx/bear-panda.webp',
-      // 2-3: starting to get sad
       'https://media.tenor.com/XFYEWpH5LxwAAAAx/bear-panda.webp',
       'https://media.tenor.com/BOLqQTbf9QgAAAAx/dudu-sad.webp',
-      // 4-5: sad
       'https://media.tenor.com/BOLqQTbf9QgAAAAx/dudu-sad.webp',
       'https://media.tenor.com/WRRnrnJBMWMAAAAx/bubu-miss-dudu-bubu-cry.webp',
-      // 6-8: crying
       'https://media.tenor.com/WxEGOknUnHMAAAAx/bubu-cry.webp',
       'https://media.tenor.com/WxEGOknUnHMAAAAx/bubu-cry.webp',
       'https://media.tenor.com/WRRnrnJBMWMAAAAx/bubu-miss-dudu-bubu-cry.webp',
-      // 9+: cycling between crying
       'https://media.tenor.com/WxEGOknUnHMAAAAx/bubu-cry.webp',
       'https://media.tenor.com/WRRnrnJBMWMAAAAx/bubu-miss-dudu-bubu-cry.webp',
       'https://media.tenor.com/BOLqQTbf9QgAAAAx/dudu-sad.webp',
@@ -798,21 +803,32 @@
       'https://media.tenor.com/WxEGOknUnHMAAAAx/bubu-cry.webp',
     ];
 
-    // Preload all GIF stages so swaps are instant
+    // Preload all GIF stages
     askGifs.forEach(src => { const img = new Image(); img.src = src; });
 
     function initNoButton() {
-      // Reset to normal flow position
-      btnNo.style.position = '';
-      btnNo.style.left = '';
-      btnNo.style.top = '';
+      // Reset position to center of no-zone
+      noCount = 0;
+      dodgeCooldown = false;
+      btnNo.textContent = 'No';
+      btnNo.style.transform = 'translate(-50%, -50%)';
+      btnYes.style.fontSize = '';
+      btnYes.style.padding = '';
+      askSticker.style.width = '';
+      askSticker.style.height = '';
+      askGif.src = askGifs[0];
     }
 
     function dodgeNo() {
+      // Cooldown prevents rapid-fire triggering
+      if (dodgeCooldown) return;
+      dodgeCooldown = true;
+      setTimeout(() => { dodgeCooldown = false; }, 500);
+
       noCount++;
       const idx = Math.min(noCount, noMessages.length - 1);
 
-      // Update text
+      // Update No button text
       btnNo.textContent = noMessages[idx];
 
       // Grow Yes button
@@ -835,22 +851,14 @@
       void askScreen.offsetHeight;
       askScreen.classList.add('shake');
 
-      // Dodge — move to a random position but stay fully visible
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const btnW = btnNo.offsetWidth;
-      const btnH = btnNo.offsetHeight;
-      const pad = 30;
-
-      const newLeft = pad + Math.random() * (vw - btnW - pad * 2);
-      const newTop = pad + Math.random() * (vh - btnH - pad * 2);
-
-      btnNo.style.position = 'fixed';
-      btnNo.style.left = newLeft + 'px';
-      btnNo.style.top = newTop + 'px';
+      // Dodge within the no-zone bounds using transform
+      // Random offset from center: +-100px horizontal, +-10px vertical
+      const offsetX = (Math.random() - 0.5) * 200;
+      const offsetY = (Math.random() - 0.5) * 20;
+      btnNo.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
     }
 
-    // Desktop: dodge on hover
+    // Desktop: dodge on hover (fires once, then cooldown prevents spam)
     btnNo.addEventListener('mouseenter', dodgeNo);
     // Mobile: dodge on touch
     btnNo.addEventListener('touchstart', function(e) {
@@ -862,10 +870,6 @@
     //  YES — CELEBRATION
     // ═══════════════════════════════════════
     function handleYes() {
-      // Reset No button
-      btnNo.style.position = '';
-      btnNo.style.left = '';
-      btnNo.style.top = '';
       goTo('celebration');
       fireCelebration();
     }
