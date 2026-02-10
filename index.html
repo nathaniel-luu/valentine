@@ -74,7 +74,7 @@
     ──────────────────────────────────────── */
     #dandelion-screen {
       background: var(--bg);
-      gap: 2rem;
+      gap: 1.5rem;
       cursor: default;
       user-select: none;
       overflow: hidden;
@@ -89,160 +89,10 @@
       text-transform: uppercase;
     }
 
-    .dandelion-sub {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1rem, 3vw, 1.2rem);
-      font-style: italic;
-      color: var(--ink-faint);
-      margin-top: -0.8rem;
-    }
-
-    /* Dandelion Container */
-    .dandelion-wrap {
-      position: relative;
-      width: 260px;
-      height: 380px;
+    #dandelionCanvas {
       cursor: pointer;
-      animation: dandelionSway 4s ease-in-out infinite;
-    }
-
-    @keyframes dandelionSway {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(1.5deg); }
-      75% { transform: rotate(-1.5deg); }
-    }
-
-    /* Stem */
-    .dandelion-stem {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 2.5px;
-      height: 200px;
-      background: linear-gradient(to top, #6e8455, #8a9e6e);
-      border-radius: 2px;
-    }
-
-    /* Small leaf on stem */
-    .dandelion-leaf {
-      position: absolute;
-      bottom: 80px;
-      left: calc(50% + 1px);
-      width: 22px;
-      height: 9px;
-      background: #7d9460;
-      border-radius: 0 70% 70% 0;
-      transform: rotate(-20deg);
-      transform-origin: left center;
-    }
-
-    /* Center bulb where seeds attach */
-    .dandelion-head {
-      position: absolute;
-      bottom: 196px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 10px;
-      height: 12px;
-      background: radial-gradient(circle, #b5ad9f 40%, #a09888 100%);
-      border-radius: 50% 50% 40% 40%;
-      z-index: 2;
-    }
-
-    /* Each seed — thin stalk + feathery pappus on top */
-    .seed {
-      position: absolute;
-      bottom: 202px;
-      left: 50%;
-      margin-left: -0.5px;
-      transform-origin: bottom center;
-      z-index: 3;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .seed-stalk {
-      width: 1.2px;
-      background: linear-gradient(to top, #b0a898, rgba(190, 182, 170, 0.5));
-      margin: 0 auto;
-    }
-
-    /* The feathery pappus (umbrella) */
-    .seed-pappus {
-      position: relative;
-      width: 20px;
-      height: 20px;
-    }
-
-    /* Radiating wisps — more visible */
-    .seed-pappus::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 3px;
-      height: 3px;
-      background: rgba(180, 172, 158, 0.95);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow:
-        0 -7px 0 0 rgba(175, 168, 155, 0.7),
-        0 7px 0 0 rgba(175, 168, 155, 0.7),
-        -7px 0 0 0 rgba(175, 168, 155, 0.7),
-        7px 0 0 0 rgba(175, 168, 155, 0.7),
-        -5px -5px 0 0 rgba(175, 168, 155, 0.6),
-        5px -5px 0 0 rgba(175, 168, 155, 0.6),
-        -5px 5px 0 0 rgba(175, 168, 155, 0.6),
-        5px 5px 0 0 rgba(175, 168, 155, 0.6),
-        0 -11px 0 -1px rgba(175, 168, 155, 0.35),
-        0 11px 0 -1px rgba(175, 168, 155, 0.35),
-        -11px 0 0 -1px rgba(175, 168, 155, 0.35),
-        11px 0 0 -1px rgba(175, 168, 155, 0.35);
-    }
-
-    /* Outer glow — visible fluffy haze */
-    .seed-pappus::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 24px;
-      height: 24px;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(195, 188, 175, 0.4) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-
-    /* Blown seed animation */
-    .seed.blown {
-      animation: seedFloat var(--duration, 4s) var(--delay, 0s) ease-out forwards;
-    }
-
-    @keyframes seedFloat {
-      0% {
-        opacity: 1;
-        transform: translate(0, 0) rotate(var(--start-rot, 0deg)) scale(1);
-      }
-      15% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0;
-        transform:
-          translate(var(--tx, 200px), var(--ty, -400px))
-          rotate(var(--rot, 180deg))
-          scale(0.4);
-      }
-    }
-
-    /* After blown — bare stem */
-    .dandelion-wrap.blown .dandelion-head {
-      background: radial-gradient(circle, #b5ad9f 40%, #a09888 100%);
-    }
-    .dandelion-wrap.blown {
-      animation: none;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
 
     .blow-hint {
@@ -255,10 +105,6 @@
     @keyframes pulse {
       0%, 100% { opacity: 0.4; }
       50% { opacity: 1; }
-    }
-
-    .dandelion-wrap.blown ~ .blow-hint {
-      display: none;
     }
 
     /* ────────────────────────────────────────
@@ -1494,15 +1340,9 @@
 
   <!-- ═══════ SCREEN 1 — DANDELION WISH ═══════ -->
   <section class="screen active" id="dandelion-screen">
-    <p class="dandelion-prompt fade-in">Make a wish</p>
-    <p class="dandelion-sub fade-in" style="animation-delay:0.3s">then blow</p>
+    <p class="dandelion-prompt fade-in">blow it, make a wish</p>
 
-    <div class="dandelion-wrap" id="dandelionWrap" onclick="blowDandelion()">
-      <!-- Seeds generated by JS -->
-      <div class="dandelion-head" id="dandelionHead"></div>
-      <div class="dandelion-stem"></div>
-      <div class="dandelion-leaf"></div>
-    </div>
+    <canvas class="fade-in" style="animation-delay:0.3s" id="dandelionCanvas" width="160" height="260" onclick="blowDandelion()"></canvas>
 
     <p class="blow-hint fade-in" style="animation-delay:0.6s" id="blowHint">tap the dandelion</p>
   </section>
@@ -1580,9 +1420,9 @@
     <canvas class="fade-in" style="animation-delay:0.4s" id="snackCanvas" width="260" height="130"></canvas>
 
     <div class="snack-btns fade-in" style="animation-delay:0.6s" id="snackBtns">
-      <button class="snack-btn" onclick="pickSnack(0)">telur gulung</button>
-      <button class="snack-btn" onclick="pickSnack(1)">sate ayam</button>
-      <button class="snack-btn" onclick="pickSnack(2)">cilok</button>
+      <button class="snack-btn" onclick="pickSnack(0)">mie ayam</button>
+      <button class="snack-btn" onclick="pickSnack(1)">papeda telur</button>
+      <button class="snack-btn" onclick="pickSnack(2)">nasi ayam bakar</button>
     </div>
 
     <p class="snack-done" id="snackDone">yum! okay, one more thing...</p>
@@ -2124,68 +1964,166 @@ You mean more to me than I've let on. And this is me letting on.</p>
     })();
 
     // ═══════════════════════════════════════
-    //  DANDELION
+    //  DANDELION — Pixel Art Canvas
     // ═══════════════════════════════════════
-    const SEED_COUNT = 24;
-    const dandelionWrap = document.getElementById('dandelionWrap');
-    const dandelionHead = document.getElementById('dandelionHead');
     let dandelionBlown = false;
 
-    // Build seeds — perfectly uniform radial pattern, no random jitter
-    (function buildDandelion() {
-      const stalkLen = 50;
+    (function initDandelion() {
+      const cvs = document.getElementById('dandelionCanvas');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+
+      const P = 4; // pixel size
+      const W = cvs.width;  // 160
+      const H = cvs.height; // 260
+      const cx = W / 2;     // center x
+
+      // Positions
+      const stemBottom = 230;
+      const stemTop = 120;
+      const headY = stemTop - P;
+
+      // Colors
+      const COL = {
+        stem: '#6e8455', stemDk: '#5a6e45', leaf: '#7d9460',
+        head: '#b5ad9f', headDk: '#a09888',
+        stalk: '#c0b8a8',
+        puff: '#ddd6c8', puffLt: '#e8e2d6', puffDk: '#c8c0b0',
+      };
+
+      // Generate seeds in radial pattern
+      const SEED_COUNT = 22;
+      const seeds = [];
       for (let i = 0; i < SEED_COUNT; i++) {
-        const angle = (i / SEED_COUNT) * 360;
-        const angleRad = (angle * Math.PI) / 180;
-
-        const seed = document.createElement('div');
-        seed.className = 'seed';
-        seed.style.transform = `rotate(${angle}deg)`;
-
-        const pappus = document.createElement('div');
-        pappus.className = 'seed-pappus';
-
-        const stalk = document.createElement('div');
-        stalk.className = 'seed-stalk';
-        stalk.style.height = stalkLen + 'px';
-
-        seed.appendChild(pappus);
-        seed.appendChild(stalk);
-
-        // Flight path randomness only applies to blow animation
-        const distance = 200 + Math.random() * 400;
-        const tx = Math.cos(angleRad) * distance * (0.5 + Math.random() * 0.8);
-        const ty = -Math.abs(Math.sin(angleRad) * distance) - 80 - Math.random() * 250;
-        const rot = (Math.random() * 360 - 180);
-        const duration = 2.5 + Math.random() * 3;
-        const delay = Math.random() * 1;
-
-        seed.style.setProperty('--start-rot', angle + 'deg');
-        seed.style.setProperty('--tx', tx + 'px');
-        seed.style.setProperty('--ty', ty + 'px');
-        seed.style.setProperty('--rot', rot + 'deg');
-        seed.style.setProperty('--duration', duration + 's');
-        seed.style.setProperty('--delay', delay + 's');
-
-        dandelionWrap.insertBefore(seed, dandelionHead);
+        const angle = (i / SEED_COUNT) * Math.PI * 2;
+        const ring = (i % 3 === 0) ? 36 : (i % 3 === 1) ? 28 : 44;
+        const bx = cx + Math.cos(angle) * ring;
+        const by = headY + Math.sin(angle) * ring;
+        const speed = 1.2 + Math.random() * 2.2;
+        seeds.push({
+          bx, by, x: bx, y: by, angle,
+          blown: false, opacity: 1,
+          vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 0.6,
+          vy: Math.sin(angle) * speed - 1.8 - Math.random() * 1.5,
+          delay: Math.floor(Math.random() * 18),
+        });
       }
+
+      // Snap-to-grid pixel draw
+      function px(x, y, col) {
+        ctx.fillStyle = col;
+        ctx.fillRect(Math.round(x / P) * P, Math.round(y / P) * P, P, P);
+      }
+
+      function drawStem() {
+        for (let y = stemTop; y <= stemBottom; y += P) {
+          px(cx - P, y, COL.stem);
+          px(cx, y, COL.stem);
+        }
+        // Right leaf
+        const ly = stemBottom - 56;
+        px(cx + P, ly, COL.leaf);
+        px(cx + P * 2, ly - P, COL.leaf);
+        px(cx + P * 3, ly - P * 2, COL.leaf);
+        px(cx + P * 2, ly, COL.leaf);
+        px(cx + P * 3, ly - P, COL.leaf);
+        // Left leaf
+        const ly2 = stemBottom - 88;
+        px(cx - P * 2, ly2, COL.leaf);
+        px(cx - P * 3, ly2 + P, COL.leaf);
+        px(cx - P * 2, ly2 + P, COL.leaf);
+      }
+
+      function drawHead() {
+        px(cx - P, headY, COL.head);
+        px(cx, headY, COL.head);
+        px(cx - P, headY - P, COL.headDk);
+        px(cx, headY - P, COL.headDk);
+        px(cx - P, headY + P, COL.headDk);
+        px(cx, headY + P, COL.head);
+      }
+
+      function drawSeedStalk(sx, sy) {
+        const dx = sx - cx, dy = sy - headY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const steps = Math.max(1, Math.floor(dist / P));
+        ctx.fillStyle = COL.stalk;
+        for (let s = 0; s <= steps; s++) {
+          const t = s / steps;
+          ctx.fillRect(
+            Math.round((cx + dx * t) / P) * P,
+            Math.round((headY + dy * t) / P) * P,
+            P * 0.5, P * 0.5
+          );
+        }
+      }
+
+      function drawSeedPuff(x, y, alpha) {
+        ctx.globalAlpha = alpha;
+        px(x, y, COL.puff);
+        px(x - P, y, COL.puffLt);
+        px(x + P, y, COL.puffLt);
+        px(x, y - P, COL.puffLt);
+        px(x, y + P, COL.puffDk);
+        ctx.globalAlpha = 1;
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        drawStem();
+        drawHead();
+        seeds.forEach(s => {
+          if (!s.blown) drawSeedStalk(s.x, s.y);
+          drawSeedPuff(s.x, s.y, s.opacity);
+        });
+      }
+
+      // Gentle sway before blow
+      let swayId, swayF = 0;
+      function sway() {
+        if (dandelionBlown) return;
+        swayF++;
+        seeds.forEach((s, i) => {
+          s.x = s.bx + Math.sin((swayF + i * 11) * 0.025) * 1.5;
+          s.y = s.by + Math.sin((swayF + i * 7) * 0.02) * 0.8;
+        });
+        draw();
+        swayId = requestAnimationFrame(sway);
+      }
+      draw();
+      sway();
+
+      // Blow animation
+      let frame = 0;
+      function animate() {
+        frame++;
+        let allGone = true;
+        seeds.forEach(s => {
+          if (!s.blown && frame > s.delay) s.blown = true;
+          if (s.blown && s.opacity > 0) {
+            allGone = false;
+            s.x += s.vx;
+            s.y += s.vy;
+            s.vy -= 0.025;
+            s.vx += (Math.random() - 0.5) * 0.08;
+            s.opacity -= 0.009;
+            if (s.opacity < 0) s.opacity = 0;
+          }
+        });
+        draw();
+        if (!allGone) requestAnimationFrame(animate);
+      }
+
+      window.blowDandelion = function() {
+        if (dandelionBlown) return;
+        dandelionBlown = true;
+        cancelAnimationFrame(swayId);
+        document.getElementById('blowHint').style.display = 'none';
+        animate();
+        setTimeout(() => goTo('intro'), 3200);
+      };
     })();
-
-    function blowDandelion() {
-      if (dandelionBlown) return;
-      dandelionBlown = true;
-      dandelionWrap.classList.add('blown');
-
-      // Blow all seeds
-      const seeds = dandelionWrap.querySelectorAll('.seed');
-      seeds.forEach(s => s.classList.add('blown'));
-
-      // Hide hint
-      document.getElementById('blowHint').style.display = 'none';
-
-      // Transition to intro after seeds scatter
-      setTimeout(() => goTo('intro'), 3200);
-    }
 
     // ═══════════════════════════════════════
     //  NAVIGATION
@@ -2766,10 +2704,10 @@ You mean more to me than I've let on. And this is me letting on.</p>
       const btn = document.getElementById('coffeeBtn');
       if (cStep === 1) {
         btn.style.pointerEvents = 'none';
-        pourTo(4, 6, false, () => { btn.textContent = 'add oat milk'; btn.style.pointerEvents = ''; });
+        pourTo(4, 6, false, () => { btn.textContent = 'add milk'; btn.style.pointerEvents = ''; });
       } else if (cStep === 2) {
         btn.style.pointerEvents = 'none';
-        pourTo(9, 7, true, () => { btn.textContent = 'add a little love'; btn.style.pointerEvents = ''; });
+        pourTo(9, 7, true, () => { btn.textContent = 'add sugar'; btn.style.pointerEvents = ''; });
       } else if (cStep === 3) {
         btn.style.pointerEvents = 'none';
         cHeartOn = true;
@@ -2804,18 +2742,18 @@ You mean more to me than I've let on. And this is me letting on.</p>
       [0,0,7,6,6,6,7,0,0,0,0,0,0,0,7,6,6,6,7,0,0,0],
       [0,0,0,7,7,7,0,0,0,0,0,0,0,0,0,7,7,7,0,0,0,0],
     ];
-    // Snack sprites: telur gulung, sate ayam, cilok
+    // Snack sprites: mie ayam, papeda telur, nasi ayam bakar
     const snackC = [
-      {1:'#8B6914',2:'#e8c547',3:'#d4a030'},
-      {1:'#8B6914',2:'#8B5E3C',3:'#3d2010'},
-      {1:'#8B6914',2:'#f0e6d0',3:'#d6cbb8'},
+      {1:'#8B4513',2:'#F0C850',3:'#6B3A1A'}, // mie ayam: brown bowl, yellow noodles, chicken
+      {1:'#A0784A',2:'#F0C040',3:'#D4A020'}, // papeda telur: bamboo stick, golden egg, shadow
+      {1:'#8B5E3C',2:'#F5F0E0',3:'#7B2E10'}, // nasi ayam bakar: brown plate, white rice, grilled chicken
     ];
     const snackG = [
-      [[0,1,0],[0,1,0],[2,2,2],[2,3,2],[2,2,2],[2,3,2],[2,2,2],[0,1,0]],
-      [[0,1,0],[2,2,2],[2,3,2],[2,2,2],[0,1,0],[2,2,2],[2,3,2],[0,1,0]],
-      [[0,1,0],[2,2,2],[2,3,2],[2,2,2],[0,1,0],[2,2,2],[2,3,2],[0,1,0]],
+      [[0,0,0],[0,2,0],[2,2,2],[2,3,2],[1,2,1],[1,3,1],[1,1,1],[0,1,0]], // mie ayam bowl
+      [[0,2,0],[2,3,2],[2,2,2],[2,3,2],[0,2,0],[0,1,0],[0,1,0],[0,1,0]], // papeda telur on stick
+      [[0,0,0],[0,3,0],[3,3,3],[2,3,2],[1,2,1],[1,2,1],[1,1,1],[0,1,0]], // nasi ayam bakar
     ];
-    const snackNames = ['telur gulung','sate ayam','cilok'];
+    const snackNames = ['mie ayam','papeda telur','nasi ayam bakar'];
     let snackPicked = -1;
     let snackHearts = [];
 
