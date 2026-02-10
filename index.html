@@ -243,6 +243,29 @@
       white-space: nowrap;
     }
 
+    /* ─── COURAGE QUEST ─── */
+    #courageCanvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    .courage-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.05rem, 3vw, 1.2rem);
+      color: var(--ink);
+      opacity: 0.85;
+      transition: all 0.3s ease;
+      min-height: 1.5em;
+    }
+    .dont-press-hint {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      color: var(--ink-faint);
+      font-style: italic;
+      letter-spacing: 0.04em;
+      margin-top: 1.5rem;
+      opacity: 0.5;
+    }
+
     /* ────────────────────────────────────────
        SCREEN 5 — CELEBRATION
     ──────────────────────────────────────── */
@@ -1422,7 +1445,19 @@
     </div>
 
     <p class="snack-done" id="snackDone">yum! okay, one more thing...</p>
-    <button class="btn-primary" id="snackContinue" style="display:none" onclick="goTo('ask')">Continue</button>
+    <button class="btn-primary" id="snackContinue" style="display:none" onclick="goTo('courage-quest')">Continue</button>
+  </section>
+
+  <!-- ═══════ SIDE QUEST — COURAGE ═══════ -->
+  <section class="screen" id="courage-quest">
+    <h2 class="snack-title fade-in">almost there</h2>
+    <p class="snack-sub fade-in" style="animation-delay:0.2s">but first...</p>
+
+    <canvas class="fade-in" style="animation-delay:0.4s" id="courageCanvas" width="260" height="140"></canvas>
+
+    <p class="courage-text fade-in" style="animation-delay:0.6s" id="courageText">deep breath...</p>
+
+    <button class="snack-btn fade-in" style="animation-delay:0.8s" id="courageBtn" onclick="buildCourage()">build courage</button>
   </section>
 
   <!-- ═══════ SCREEN 3 — THE ASK ═══════ -->
@@ -1440,6 +1475,7 @@
       <div class="no-zone" id="noZone">
         <button class="btn-no" id="btnNo">No</button>
       </div>
+      <p class="dont-press-hint">definitely don't try pressing no</p>
     </div>
   </section>
 
@@ -2140,6 +2176,8 @@ You mean more to me than I've let on. And this is me letting on.</p>
       if (screenId === 'ask') initNoButton();
       // Draw snack scene when navigating to it
       if (screenId === 'snack-quest') setTimeout(drawSnackScene, 50);
+      // Draw courage scene
+      if (screenId === 'courage-quest') setTimeout(initCourageQuest, 50);
     }
 
     // ═══════════════════════════════════════
@@ -2892,6 +2930,183 @@ You mean more to me than I've let on. And this is me letting on.</p>
         document.getElementById('snackDone').classList.add('show');
         document.getElementById('snackContinue').style.display = '';
       }, 800);
+    }
+
+    // ═══════════════════════════════════════
+    //  COURAGE QUEST — BUILD UP COURAGE
+    // ═══════════════════════════════════════
+    let courage = 0;
+    const maxCourage = 5;
+    let courageSparkles = [];
+    let courageBounce = 0;
+    const courageTexts = [
+      'deep breath...',
+      'you got this...',
+      'she\'s gonna love it...',
+      'almost brave enough...',
+      'okay okay okay...',
+    ];
+
+    function initCourageQuest() {
+      courage = 0;
+      courageBounce = 0;
+      courageSparkles = [];
+      const btn = document.getElementById('courageBtn');
+      btn.style.display = '';
+      btn.textContent = 'build courage';
+      document.getElementById('courageText').textContent = 'deep breath...';
+      document.getElementById('courageText').style.fontWeight = '';
+      drawCourageScene();
+    }
+
+    function drawCourageScene() {
+      const cvs = document.getElementById('courageCanvas');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      const W = cvs.width, H = cvs.height;
+      ctx.clearRect(0, 0, W, H);
+
+      // Ground
+      ctx.fillStyle = '#d4c4b0';
+      ctx.fillRect(0, 122, W, 18);
+      ctx.fillStyle = '#c8b8a4';
+      for (let i = 0; i < 14; i++) ctx.fillRect(5 + i * 19, 125, 4, 4);
+
+      // Character (center-left, scale 7 for emphasis)
+      const ch = SP[selChar];
+      const frame = ch.f[courage % ch.f.length];
+      const cs = 7;
+      const charX = 30;
+      const charY = 50 - courageBounce;
+      for (let r = 0; r < frame.length; r++)
+        for (let c = 0; c < frame[r].length; c++) {
+          const v = frame[r][c];
+          if (v && ch.c[v]) {
+            ctx.fillStyle = ch.c[v];
+            ctx.fillRect(charX + c * cs, charY + r * cs, cs, cs);
+          }
+        }
+
+      // Sweat drops (when nervous — low courage)
+      if (courage < 3) {
+        ctx.fillStyle = '#7cb3d4';
+        ctx.fillRect(charX + 9 * cs + 2, charY + 2 * cs, 3, 6);
+        if (courage < 2) ctx.fillRect(charX + 9 * cs + 8, charY + 3 * cs, 3, 5);
+      }
+
+      // Courage meter bar
+      const mx = 120, my = 80, mw = 115, mh = 18;
+      // Border
+      ctx.fillStyle = '#5c3d22';
+      ctx.fillRect(mx - 3, my - 3, mw + 6, mh + 6);
+      // Background
+      ctx.fillStyle = '#e8e0d4';
+      ctx.fillRect(mx, my, mw, mh);
+      // Fill (color transitions red → yellow → green)
+      const fillW = (courage / maxCourage) * mw;
+      ctx.fillStyle = courage <= 1 ? '#e07050' : courage <= 3 ? '#F0C040' : '#4CAF50';
+      ctx.fillRect(mx, my, fillW, mh);
+      // Segment dividers
+      ctx.fillStyle = '#5c3d22';
+      for (let i = 1; i < maxCourage; i++) {
+        ctx.fillRect(mx + Math.floor((i / maxCourage) * mw) - 1, my, 2, mh);
+      }
+      // Label
+      ctx.fillStyle = '#8a7e70';
+      ctx.font = '600 9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('COURAGE', mx + mw / 2, my - 8);
+
+      // Thought bubble (above character)
+      if (courage >= 3) {
+        ctx.fillStyle = '#f0ebe4';
+        ctx.fillRect(charX + 50, charY - 8, 28, 18);
+        ctx.fillRect(charX + 48, charY - 5, 32, 12);
+        ctx.fillStyle = '#d4c4b0';
+        ctx.fillRect(charX + 48, charY - 8, 32, 1);
+        ctx.fillRect(charX + 48, charY + 10, 32, 1);
+        // Heart in bubble
+        const hc = SP.heart.c;
+        const hg = SP.heart.s;
+        for (let r = 0; r < hg.length; r++)
+          for (let c = 0; c < hg[r].length; c++) {
+            const v = hg[r][c];
+            if (v && hc[v]) {
+              ctx.fillStyle = hc[v];
+              ctx.fillRect(charX + 54 + c * 3, charY - 5 + r * 3, 3, 3);
+            }
+          }
+        // Bubble tail dots
+        ctx.fillStyle = '#f0ebe4';
+        ctx.fillRect(charX + 46, charY + 13, 4, 4);
+        ctx.fillRect(charX + 42, charY + 18, 3, 3);
+      }
+
+      // Pixel hearts when courage is high
+      if (courage >= 4) {
+        const hc = SP.heart.c;
+        const hg = SP.heart.s;
+        drawPixGrid(ctx, hg, hc, 200, 30, 4);
+        drawPixGrid(ctx, hg, hc, 220, 50, 3);
+      }
+
+      // Sparkles
+      ctx.globalAlpha = 1;
+      courageSparkles.forEach(s => {
+        const alpha = 1 - s.age / 15;
+        if (alpha <= 0) return;
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = s.color;
+        ctx.fillRect(s.x, s.y, 4, 4);
+        ctx.fillRect(s.x - 4, s.y, 4, 4);
+        ctx.fillRect(s.x + 4, s.y, 4, 4);
+        ctx.fillRect(s.x, s.y - 4, 4, 4);
+        ctx.fillRect(s.x, s.y + 4, 4, 4);
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function buildCourage() {
+      if (courage >= maxCourage) return;
+      courage++;
+
+      // Character bounce
+      courageBounce = 10;
+      drawCourageScene();
+      setTimeout(() => { courageBounce = 5; drawCourageScene(); }, 80);
+      setTimeout(() => { courageBounce = 0; drawCourageScene(); }, 160);
+
+      // Spawn sparkles near meter fill
+      const sparkColors = ['#FFD700', '#FF6B35', '#FF69B4'];
+      for (let i = 0; i < 3; i++) {
+        courageSparkles.push({
+          x: 120 + (courage / maxCourage) * 115 + Math.random() * 16 - 8,
+          y: 68 + Math.random() * 16,
+          age: 0,
+          color: sparkColors[i],
+        });
+      }
+      const sparkAnim = setInterval(() => {
+        courageSparkles.forEach(s => { s.y -= 1; s.age++; });
+        courageSparkles = courageSparkles.filter(s => s.age < 15);
+        drawCourageScene();
+        if (courageSparkles.length === 0) clearInterval(sparkAnim);
+      }, 50);
+
+      // Update text
+      const textEl = document.getElementById('courageText');
+      const btn = document.getElementById('courageBtn');
+      if (courage < maxCourage) {
+        textEl.textContent = courageTexts[courage];
+        if (courage === maxCourage - 1) btn.textContent = 'one more...';
+      } else {
+        textEl.textContent = 'HERE GOES NOTHING';
+        textEl.style.fontWeight = '600';
+        btn.style.display = 'none';
+        setTimeout(() => goTo('ask'), 1500);
+      }
+
+      drawCourageScene();
     }
 
     function selectChar(ch) {
