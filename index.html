@@ -243,12 +243,12 @@
       white-space: nowrap;
     }
 
-    /* ─── COURAGE QUEST ─── */
-    #courageCanvas {
+    /* ─── LOADING FEELINGS ─── */
+    #loadingCanvas {
       image-rendering: pixelated;
       image-rendering: crisp-edges;
     }
-    .courage-text {
+    .loading-text {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(1.05rem, 3vw, 1.2rem);
       color: var(--ink);
@@ -1484,16 +1484,16 @@
     <button class="btn-primary" id="snackContinue" style="display:none" onclick="goTo('courage-quest')">Continue</button>
   </section>
 
-  <!-- ═══════ SIDE QUEST — COURAGE ═══════ -->
+  <!-- ═══════ SIDE QUEST — LOADING FEELINGS ═══════ -->
   <section class="screen" id="courage-quest">
-    <h2 class="snack-title fade-in">almost there</h2>
-    <p class="snack-sub fade-in" style="animation-delay:0.2s">but first...</p>
+    <h2 class="snack-title fade-in">hold on...</h2>
+    <p class="snack-sub fade-in" style="animation-delay:0.2s">loading something important</p>
 
-    <canvas class="fade-in" style="animation-delay:0.4s" id="courageCanvas" width="260" height="140"></canvas>
+    <canvas class="fade-in" style="animation-delay:0.4s" id="loadingCanvas" width="260" height="150"></canvas>
 
-    <p class="courage-text fade-in" style="animation-delay:0.6s" id="courageText">deep breath...</p>
+    <p class="loading-text fade-in" style="animation-delay:0.6s" id="loadingText">loading butterflies...</p>
 
-    <button class="snack-btn fade-in" style="animation-delay:0.8s" id="courageBtn" onclick="buildCourage()">build courage</button>
+    <button class="snack-btn fade-in" style="animation-delay:0.8s" id="loadingBtn" onclick="advanceLoading()">tap to load</button>
   </section>
 
   <!-- ═══════ SCREEN 3 — THE ASK ═══════ -->
@@ -2223,8 +2223,8 @@ You mean more to me than I've let on. And this is me letting on.</p>
       if (screenId === 'ask') initNoButton();
       // Draw snack scene when navigating to it
       if (screenId === 'snack-quest') setTimeout(drawSnackScene, 50);
-      // Draw courage scene
-      if (screenId === 'courage-quest') setTimeout(initCourageQuest, 50);
+      // Loading feelings scene
+      if (screenId === 'courage-quest') setTimeout(initLoadingFeelings, 50);
     }
 
     // ═══════════════════════════════════════
@@ -2983,34 +2983,44 @@ You mean more to me than I've let on. And this is me letting on.</p>
     }
 
     // ═══════════════════════════════════════
-    //  COURAGE QUEST — BUILD UP COURAGE
+    //  LOADING FEELINGS — FAKE LOADING SCREEN
     // ═══════════════════════════════════════
-    let courage = 0;
-    const maxCourage = 5;
-    let courageSparkles = [];
-    let courageBounce = 0;
-    const courageTexts = [
-      'deep breath...',
-      'you got this...',
-      'she\'s gonna love it...',
-      'almost brave enough...',
-      'okay okay okay...',
+    let loadStep = 0;
+    const maxLoadSteps = 6;
+    let loadSparkles = [];
+    let loadBounce = 0;
+    let loadBarAnim = 0;
+    let loadAnimFrame = null;
+    const loadingMessages = [
+      'loading butterflies...',
+      'calibrating heartbeat...',
+      'warming up cheeks...',
+      'rehearsing words...',
+      'downloading confidence.exe...',
+      'compiling feelings...',
     ];
 
-    function initCourageQuest() {
-      courage = 0;
-      courageBounce = 0;
-      courageSparkles = [];
-      const btn = document.getElementById('courageBtn');
+    function initLoadingFeelings() {
+      loadStep = 0;
+      loadBounce = 0;
+      loadSparkles = [];
+      loadBarAnim = 0;
+      if (loadAnimFrame) cancelAnimationFrame(loadAnimFrame);
+      const btn = document.getElementById('loadingBtn');
       btn.style.display = '';
-      btn.textContent = 'build courage';
-      document.getElementById('courageText').textContent = 'deep breath...';
-      document.getElementById('courageText').style.fontWeight = '';
-      drawCourageScene();
+      btn.textContent = 'tap to load';
+      document.getElementById('loadingText').textContent = 'loading butterflies...';
+      document.getElementById('loadingText').style.fontWeight = '';
+      animateLoadingScene();
     }
 
-    function drawCourageScene() {
-      const cvs = document.getElementById('courageCanvas');
+    function animateLoadingScene() {
+      drawLoadingScene();
+      loadAnimFrame = requestAnimationFrame(animateLoadingScene);
+    }
+
+    function drawLoadingScene() {
+      const cvs = document.getElementById('loadingCanvas');
       if (!cvs) return;
       const ctx = cvs.getContext('2d');
       const W = cvs.width, H = cvs.height;
@@ -3018,16 +3028,16 @@ You mean more to me than I've let on. And this is me letting on.</p>
 
       // Ground
       ctx.fillStyle = '#d4c4b0';
-      ctx.fillRect(0, 122, W, 18);
+      ctx.fillRect(0, 130, W, 20);
       ctx.fillStyle = '#c8b8a4';
-      for (let i = 0; i < 14; i++) ctx.fillRect(5 + i * 19, 125, 4, 4);
+      for (let i = 0; i < 14; i++) ctx.fillRect(5 + i * 19, 133, 4, 4);
 
-      // Character (center-left, scale 7 for emphasis)
+      // Character (left side, scale 7)
       const ch = SP[selChar];
-      const frame = ch.f[courage % ch.f.length];
+      const frame = ch.f[loadStep % ch.f.length];
       const cs = 7;
-      const charX = 30;
-      const charY = 50 - courageBounce;
+      const charX = 20;
+      const charY = 58 - loadBounce;
       for (let r = 0; r < frame.length; r++)
         for (let c = 0; c < frame[r].length; c++) {
           const v = frame[r][c];
@@ -3037,126 +3047,147 @@ You mean more to me than I've let on. And this is me letting on.</p>
           }
         }
 
-      // Sweat drops (when nervous — low courage)
-      if (courage < 3) {
-        ctx.fillStyle = '#7cb3d4';
-        ctx.fillRect(charX + 9 * cs + 2, charY + 2 * cs, 3, 6);
-        if (courage < 2) ctx.fillRect(charX + 9 * cs + 8, charY + 3 * cs, 3, 5);
+      // Animated ellipsis dots above character (thinking...)
+      const dotTime = Date.now() / 400;
+      for (let d = 0; d < 3; d++) {
+        const alpha = (Math.sin(dotTime + d * 1.2) + 1) / 2;
+        ctx.globalAlpha = 0.3 + alpha * 0.7;
+        ctx.fillStyle = '#c4956a';
+        ctx.fillRect(charX + 30 + d * 10, charY - 12, 5, 5);
       }
+      ctx.globalAlpha = 1;
 
-      // Courage meter bar
-      const mx = 120, my = 80, mw = 115, mh = 18;
-      // Border
+      // Loading bar (retro pixel style)
+      const mx = 108, my = 70, mw = 130, mh = 22;
+
+      // Outer border (double pixel border like retro games)
       ctx.fillStyle = '#5c3d22';
-      ctx.fillRect(mx - 3, my - 3, mw + 6, mh + 6);
+      ctx.fillRect(mx - 4, my - 4, mw + 8, mh + 8);
+      ctx.fillStyle = '#8a7e70';
+      ctx.fillRect(mx - 2, my - 2, mw + 4, mh + 4);
+
       // Background
       ctx.fillStyle = '#e8e0d4';
       ctx.fillRect(mx, my, mw, mh);
-      // Fill (color transitions red → yellow → green)
-      const fillW = (courage / maxCourage) * mw;
-      ctx.fillStyle = courage <= 1 ? '#e07050' : courage <= 3 ? '#F0C040' : '#4CAF50';
-      ctx.fillRect(mx, my, fillW, mh);
-      // Segment dividers
+
+      // Fill — smooth animated fill toward target
+      const targetFill = (loadStep / maxLoadSteps) * mw;
+      loadBarAnim += (targetFill - loadBarAnim) * 0.08;
+      const fillW = Math.min(loadBarAnim, mw);
+
+      // Gradient fill using pixel blocks (retro style)
+      const blockSize = 4;
+      const filledBlocks = Math.floor(fillW / blockSize);
+      for (let b = 0; b < filledBlocks; b++) {
+        const progress = b / (mw / blockSize);
+        // Pink to warm coral gradient
+        const r = Math.floor(196 + progress * 40);
+        const g = Math.floor(149 - progress * 60);
+        const bl = Math.floor(106 - progress * 30);
+        ctx.fillStyle = `rgb(${Math.min(r,255)},${Math.max(g,80)},${Math.max(bl,70)})`;
+        ctx.fillRect(mx + b * blockSize, my, blockSize, mh);
+      }
+
+      // Scan line effect (subtle horizontal lines for retro feel)
+      ctx.fillStyle = 'rgba(0,0,0,0.06)';
+      for (let y = my; y < my + mh; y += 4) {
+        ctx.fillRect(mx, y, fillW, 1);
+      }
+
+      // Animated shimmer on the fill edge
+      if (fillW > 8 && loadStep < maxLoadSteps) {
+        const shimX = mx + fillW - 6;
+        const shimAlpha = (Math.sin(Date.now() / 200) + 1) / 4;
+        ctx.globalAlpha = shimAlpha;
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(shimX, my + 2, 4, mh - 4);
+        ctx.globalAlpha = 1;
+      }
+
+      // Percentage text
+      const pct = Math.min(Math.floor((loadStep / maxLoadSteps) * 100), 100);
       ctx.fillStyle = '#5c3d22';
-      for (let i = 1; i < maxCourage; i++) {
-        ctx.fillRect(mx + Math.floor((i / maxCourage) * mw) - 1, my, 2, mh);
-      }
-      // Label
-      ctx.fillStyle = '#8a7e70';
-      ctx.font = '600 9px monospace';
+      ctx.font = '600 10px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('COURAGE', mx + mw / 2, my - 8);
+      ctx.fillText(pct + '%', mx + mw / 2, my - 8);
 
-      // Thought bubble (above character)
-      if (courage >= 3) {
-        ctx.fillStyle = '#f0ebe4';
-        ctx.fillRect(charX + 50, charY - 8, 28, 18);
-        ctx.fillRect(charX + 48, charY - 5, 32, 12);
-        ctx.fillStyle = '#d4c4b0';
-        ctx.fillRect(charX + 48, charY - 8, 32, 1);
-        ctx.fillRect(charX + 48, charY + 10, 32, 1);
-        // Heart in bubble
+      // Hearts float up when progress > 50%
+      if (loadStep >= 3) {
         const hc = SP.heart.c;
         const hg = SP.heart.s;
-        for (let r = 0; r < hg.length; r++)
-          for (let c = 0; c < hg[r].length; c++) {
-            const v = hg[r][c];
-            if (v && hc[v]) {
-              ctx.fillStyle = hc[v];
-              ctx.fillRect(charX + 54 + c * 3, charY - 5 + r * 3, 3, 3);
-            }
-          }
-        // Bubble tail dots
-        ctx.fillStyle = '#f0ebe4';
-        ctx.fillRect(charX + 46, charY + 13, 4, 4);
-        ctx.fillRect(charX + 42, charY + 18, 3, 3);
-      }
-
-      // Pixel hearts when courage is high
-      if (courage >= 4) {
-        const hc = SP.heart.c;
-        const hg = SP.heart.s;
-        drawPixGrid(ctx, hg, hc, 200, 30, 4);
-        drawPixGrid(ctx, hg, hc, 220, 50, 3);
+        const floatY = Math.sin(Date.now() / 600) * 4;
+        drawPixGrid(ctx, hg, hc, 200, 20 + floatY, 3);
+        if (loadStep >= 5) {
+          const floatY2 = Math.sin(Date.now() / 500 + 1) * 3;
+          drawPixGrid(ctx, hg, hc, 220, 38 + floatY2, 2);
+        }
       }
 
       // Sparkles
-      ctx.globalAlpha = 1;
-      courageSparkles.forEach(s => {
-        const alpha = 1 - s.age / 15;
+      loadSparkles.forEach(s => {
+        const alpha = 1 - s.age / 20;
         if (alpha <= 0) return;
         ctx.globalAlpha = alpha;
         ctx.fillStyle = s.color;
-        ctx.fillRect(s.x, s.y, 4, 4);
-        ctx.fillRect(s.x - 4, s.y, 4, 4);
-        ctx.fillRect(s.x + 4, s.y, 4, 4);
-        ctx.fillRect(s.x, s.y - 4, 4, 4);
-        ctx.fillRect(s.x, s.y + 4, 4, 4);
+        ctx.fillRect(s.x, s.y, 3, 3);
+        ctx.fillRect(s.x - 3, s.y, 3, 3);
+        ctx.fillRect(s.x + 3, s.y, 3, 3);
+        ctx.fillRect(s.x, s.y - 3, 3, 3);
+        ctx.fillRect(s.x, s.y + 3, 3, 3);
       });
       ctx.globalAlpha = 1;
+
+      // Update sparkle physics
+      loadSparkles.forEach(s => { s.y -= 0.8; s.age++; });
+      loadSparkles = loadSparkles.filter(s => s.age < 20);
+
+      // Full bar glow effect
+      if (loadStep >= maxLoadSteps) {
+        const glowAlpha = (Math.sin(Date.now() / 300) + 1) / 6;
+        ctx.globalAlpha = glowAlpha;
+        ctx.fillStyle = '#ff69b4';
+        ctx.fillRect(mx - 2, my - 2, mw + 4, mh + 4);
+        ctx.globalAlpha = 1;
+      }
     }
 
-    function buildCourage() {
-      if (courage >= maxCourage) return;
-      courage++;
+    function advanceLoading() {
+      if (loadStep >= maxLoadSteps) return;
+      loadStep++;
 
       // Character bounce
-      courageBounce = 10;
-      drawCourageScene();
-      setTimeout(() => { courageBounce = 5; drawCourageScene(); }, 80);
-      setTimeout(() => { courageBounce = 0; drawCourageScene(); }, 160);
+      loadBounce = 8;
+      setTimeout(() => { loadBounce = 4; }, 80);
+      setTimeout(() => { loadBounce = 0; }, 160);
 
-      // Spawn sparkles near meter fill
-      const sparkColors = ['#FFD700', '#FF6B35', '#FF69B4'];
-      for (let i = 0; i < 3; i++) {
-        courageSparkles.push({
-          x: 120 + (courage / maxCourage) * 115 + Math.random() * 16 - 8,
-          y: 68 + Math.random() * 16,
+      // Spawn sparkles at fill edge
+      const sparkColors = ['#FFD700', '#ff69b4', '#c4956a'];
+      const fillX = 108 + (loadStep / maxLoadSteps) * 130;
+      for (let i = 0; i < 4; i++) {
+        loadSparkles.push({
+          x: fillX + Math.random() * 12 - 6,
+          y: 60 + Math.random() * 20,
           age: 0,
-          color: sparkColors[i],
+          color: sparkColors[i % sparkColors.length],
         });
       }
-      const sparkAnim = setInterval(() => {
-        courageSparkles.forEach(s => { s.y -= 1; s.age++; });
-        courageSparkles = courageSparkles.filter(s => s.age < 15);
-        drawCourageScene();
-        if (courageSparkles.length === 0) clearInterval(sparkAnim);
-      }, 50);
 
       // Update text
-      const textEl = document.getElementById('courageText');
-      const btn = document.getElementById('courageBtn');
-      if (courage < maxCourage) {
-        textEl.textContent = courageTexts[courage];
-        if (courage === maxCourage - 1) btn.textContent = 'one more...';
+      const textEl = document.getElementById('loadingText');
+      const btn = document.getElementById('loadingBtn');
+      if (loadStep < maxLoadSteps) {
+        textEl.textContent = loadingMessages[loadStep];
+        if (loadStep === maxLoadSteps - 1) btn.textContent = 'one more...';
       } else {
-        textEl.textContent = 'HERE GOES NOTHING';
+        textEl.textContent = 'ready. here goes everything.';
         textEl.style.fontWeight = '600';
         btn.style.display = 'none';
-        setTimeout(() => goTo('ask'), 1500);
+        // Let the full bar glow for a moment, then transition
+        setTimeout(() => {
+          if (loadAnimFrame) cancelAnimationFrame(loadAnimFrame);
+          goTo('ask');
+        }, 1800);
       }
-
-      drawCourageScene();
     }
 
     function selectChar(ch) {
