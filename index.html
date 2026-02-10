@@ -271,7 +271,8 @@
     ──────────────────────────────────────── */
     #celebration {
       background: var(--bg-warm);
-      gap: 2rem;
+      gap: 1rem;
+      padding: 1.2rem 1.5rem;
       animation: celebGlow 3s ease-in-out infinite;
     }
     @keyframes celebGlow {
@@ -281,23 +282,23 @@
 
     .celeb-gifs {
       display: flex;
-      gap: 1.2rem;
+      gap: 0.8rem;
       align-items: center;
       justify-content: center;
     }
 
     .celeb-sticker {
-      width: 240px;
-      height: 240px;
+      width: 170px;
+      height: 170px;
       overflow: hidden;
-      border-radius: 20px;
+      border-radius: 18px;
       animation: celebFloat 3s ease-in-out infinite;
     }
     .celeb-sticker-secondary {
-      width: 160px;
-      height: 160px;
+      width: 105px;
+      height: 105px;
       overflow: hidden;
-      border-radius: 16px;
+      border-radius: 14px;
       animation: celebFloat 3.5s ease-in-out infinite reverse;
     }
 
@@ -309,7 +310,7 @@
 
     @keyframes celebFloat {
       0%, 100% { transform: translateY(0) rotate(-1deg); }
-      50% { transform: translateY(-8px) rotate(1deg); }
+      50% { transform: translateY(-6px) rotate(1deg); }
     }
 
     .back-btn {
@@ -322,32 +323,33 @@
       cursor: pointer;
       opacity: 0.35;
       transition: opacity 0.3s;
-      margin-top: 2rem;
+      margin-top: 0.5rem;
       letter-spacing: 0.04em;
     }
     .back-btn:hover { opacity: 0.7; }
 
     .celeb-title {
       font-family: 'Cinzel', serif;
-      font-size: clamp(1.6rem, 6vw, 2.8rem);
+      font-size: clamp(1.5rem, 5.5vw, 2.5rem);
       font-weight: 400;
       color: var(--ink);
       letter-spacing: 0.06em;
     }
 
     .celeb-message {
-      font-size: clamp(1.05rem, 3vw, 1.2rem);
+      font-size: clamp(1rem, 2.8vw, 1.15rem);
       color: var(--ink-light);
-      max-width: 400px;
-      line-height: 1.8;
+      max-width: 380px;
+      line-height: 1.7;
       font-weight: 300;
+      text-align: center;
     }
 
     .celeb-foreshadow {
-      margin-top: 0.5rem;
-      padding: 24px 32px;
+      margin-top: 0.3rem;
+      padding: 18px 28px;
       border: 1.5px solid var(--ink-faint);
-      max-width: 400px;
+      max-width: 380px;
     }
 
     .celeb-foreshadow p {
@@ -366,11 +368,11 @@
     }
 
     .foreshadow-gif {
-      width: 120px;
-      height: 120px;
+      width: 90px;
+      height: 90px;
       overflow: hidden;
       border-radius: 50%;
-      margin: 0 auto 12px;
+      margin: 0 auto 8px;
     }
     .foreshadow-gif img {
       width: 100%;
@@ -1530,12 +1532,12 @@
       </div>
     </div>
 
-    <h2 class="celeb-title fade-in">I knew you would</h2>
+    <h2 class="celeb-title fade-in">she said yes</h2>
 
     <p class="celeb-message fade-in" style="animation-delay:0.3s">
-      You just made me the happiest person.
-      I can't stop smiling right now.
-      This Valentine's Day is going to be ours, Aamira.
+      My heart is so full right now.
+      I've wanted to ask you for the longest time —
+      and now this Valentine's Day is ours, Aamira.
     </p>
 
     <div class="celeb-foreshadow fade-in" style="animation-delay:0.6s">
