@@ -272,6 +272,18 @@
     #celebration {
       background: var(--bg-warm);
       gap: 2rem;
+      animation: celebGlow 3s ease-in-out infinite;
+    }
+    @keyframes celebGlow {
+      0%, 100% { background: var(--bg-warm); }
+      50% { background: #fdf5ed; }
+    }
+
+    .celeb-gifs {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      justify-content: center;
     }
 
     .celeb-sticker {
@@ -281,8 +293,15 @@
       border-radius: 20px;
       animation: celebFloat 3s ease-in-out infinite;
     }
+    .celeb-sticker-secondary {
+      width: 160px;
+      height: 160px;
+      overflow: hidden;
+      border-radius: 16px;
+      animation: celebFloat 3.5s ease-in-out infinite reverse;
+    }
 
-    .celeb-sticker img {
+    .celeb-sticker img, .celeb-sticker-secondary img {
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -292,6 +311,21 @@
       0%, 100% { transform: translateY(0) rotate(-1deg); }
       50% { transform: translateY(-8px) rotate(1deg); }
     }
+
+    .back-btn {
+      background: none;
+      border: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      color: var(--ink-faint);
+      font-style: italic;
+      cursor: pointer;
+      opacity: 0.35;
+      transition: opacity 0.3s;
+      margin-top: 2rem;
+      letter-spacing: 0.04em;
+    }
+    .back-btn:hover { opacity: 0.7; }
 
     .celeb-title {
       font-family: 'Cinzel', serif;
@@ -1481,10 +1515,19 @@
 
   <!-- ═══════ SCREEN 5 — CELEBRATION ═══════ -->
   <section class="screen" id="celebration">
-    <div class="celeb-sticker">
-      <img src="https://media.tenor.com/PZhfg9F3Dg8AAAAi/tkthao219-bubududu.gif"
-           alt="Dudu hugging Bubu"
-           loading="lazy">
+    <div class="celeb-gifs fade-in">
+      <div class="celeb-sticker-secondary">
+        <img src="https://media.tenor.com/Lgr_6-nkvnUAAAAi/casal-dudu.gif"
+             alt="Dudu and Bubu with hearts" loading="lazy">
+      </div>
+      <div class="celeb-sticker">
+        <img src="https://media.tenor.com/PZhfg9F3Dg8AAAAi/tkthao219-bubududu.gif"
+             alt="Dudu hugging Bubu" loading="lazy">
+      </div>
+      <div class="celeb-sticker-secondary">
+        <img src="https://media.tenor.com/9gBByPt6k4oAAAAi/bubu-dudu-twitter.gif"
+             alt="Bubu and Dudu together" loading="lazy">
+      </div>
     </div>
 
     <h2 class="celeb-title fade-in">I knew you would</h2>
@@ -1507,6 +1550,8 @@
       </div>
       <button class="btn-start" id="btnStart" onclick="tryCode()">Start</button>
     </div>
+
+    <button class="back-btn fade-in" style="animation-delay:1s" onclick="goTo('ask')">← go back</button>
   </section>
 
   <!-- ═══════ SCREEN 6 — BOOKSHELF HUB ═══════ -->
@@ -2309,46 +2354,49 @@ You mean more to me than I've let on. And this is me letting on.</p>
       const pink = confetti.shapeFromText({ text: '\u{1F497}', scalar: 2 });
       const sparkle = confetti.shapeFromText({ text: '\u2728', scalar: 2 });
       const rose = confetti.shapeFromText({ text: '\u{1F339}', scalar: 2 });
+      const party = confetti.shapeFromText({ text: '\u{1F389}', scalar: 2 });
+      const cols = ['#FF69B4', '#FFD700', '#FF6B35', '#c4956a', '#ff4d6d', '#f5a0c0'];
+      const dfrm = true;
 
-      // Big initial burst
+      // Phase 1: Big layered initial burst (3 layers for depth)
       setTimeout(() => {
-        confetti({
-          particleCount: 80,
-          spread: 100,
-          origin: { x: 0.5, y: 0.45 },
-          colors: ['#c4956a', '#d4a574', '#2a2320', '#a89e94', '#f5f0eb'],
-          shapes: [heart, pink, sparkle, 'circle'],
-          scalar: 2.2,
-          gravity: 0.8,
-          disableForReducedMotion: true,
-        });
+        confetti({ particleCount: 40, spread: 26, startVelocity: 55, origin: { x: 0.5, y: 0.45 }, colors: cols, shapes: [heart, pink, 'circle'], scalar: 2.2, gravity: 0.8, disableForReducedMotion: dfrm });
+        confetti({ particleCount: 30, spread: 60, origin: { x: 0.5, y: 0.45 }, colors: cols, shapes: [sparkle, rose, 'circle'], scalar: 2, disableForReducedMotion: dfrm });
+        confetti({ particleCount: 50, spread: 100, decay: 0.91, scalar: 1.5, origin: { x: 0.5, y: 0.45 }, colors: cols, shapes: [heart, 'circle'], disableForReducedMotion: dfrm });
       }, 200);
 
-      // Sustained stream
-      const end = Date.now() + 3500;
-      (function frame() {
-        confetti({
-          particleCount: 2,
-          angle: 60,
-          spread: 50,
-          origin: { x: 0, y: 0.6 },
-          colors: ['#c4956a', '#d4a574', '#a89e94'],
-          shapes: [heart, rose, sparkle, 'circle'],
-          scalar: 2,
-          disableForReducedMotion: true,
-        });
-        confetti({
-          particleCount: 2,
-          angle: 120,
-          spread: 50,
-          origin: { x: 1, y: 0.6 },
-          colors: ['#c4956a', '#d4a574', '#a89e94'],
-          shapes: [heart, rose, sparkle, 'circle'],
-          scalar: 2,
-          disableForReducedMotion: true,
-        });
-        if (Date.now() < end) requestAnimationFrame(frame);
+      // Phase 2: Firework-style random bursts from different positions
+      const fwEnd = Date.now() + 5000;
+      const fwInterval = setInterval(() => {
+        const timeLeft = fwEnd - Date.now();
+        if (timeLeft <= 0) { clearInterval(fwInterval); return; }
+        const count = Math.max(5, Math.floor(25 * (timeLeft / 5000)));
+        confetti({ particleCount: count, startVelocity: 30, spread: 360, ticks: 60, origin: { x: 0.1 + Math.random() * 0.25, y: Math.random() * 0.4 }, colors: cols, shapes: [heart, sparkle, 'circle'], scalar: 1.8, gravity: 0.6, disableForReducedMotion: dfrm });
+        confetti({ particleCount: count, startVelocity: 30, spread: 360, ticks: 60, origin: { x: 0.65 + Math.random() * 0.25, y: Math.random() * 0.4 }, colors: cols, shapes: [pink, rose, 'circle'], scalar: 1.8, gravity: 0.6, disableForReducedMotion: dfrm });
+      }, 300);
+
+      // Phase 3: Sustained side launchers (both edges)
+      const sideEnd = Date.now() + 4500;
+      (function sideFrame() {
+        confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0, y: 0.6 }, colors: cols, shapes: [heart, rose, sparkle, 'circle'], scalar: 2, disableForReducedMotion: dfrm });
+        confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1, y: 0.6 }, colors: cols, shapes: [heart, rose, sparkle, 'circle'], scalar: 2, disableForReducedMotion: dfrm });
+        if (Date.now() < sideEnd) requestAnimationFrame(sideFrame);
       })();
+
+      // Phase 4: Surprise second burst (at 2.5s)
+      setTimeout(() => {
+        confetti({ particleCount: 60, spread: 120, startVelocity: 45, origin: { x: 0.3, y: 0.5 }, colors: cols, shapes: [heart, party, sparkle], scalar: 2.5, gravity: 0.7, disableForReducedMotion: dfrm });
+        confetti({ particleCount: 60, spread: 120, startVelocity: 45, origin: { x: 0.7, y: 0.5 }, colors: cols, shapes: [pink, rose, sparkle], scalar: 2.5, gravity: 0.7, disableForReducedMotion: dfrm });
+      }, 2500);
+
+      // Phase 5: Gentle heart rain (final fade)
+      setTimeout(() => {
+        const rainEnd = Date.now() + 3000;
+        (function rainFrame() {
+          confetti({ particleCount: 1, startVelocity: 0, ticks: 300, gravity: 0.4, drift: (Math.random() - 0.5) * 0.4, origin: { x: Math.random(), y: 0 }, colors: ['#FF69B4', '#ff4d6d'], shapes: [heart], scalar: 2, disableForReducedMotion: dfrm });
+          if (Date.now() < rainEnd) requestAnimationFrame(rainFrame);
+        })();
+      }, 4000);
     }
     // ═══════════════════════════════════════
     //  SECRET CODE — unlocks adventure
