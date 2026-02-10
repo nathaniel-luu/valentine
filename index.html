@@ -1413,14 +1413,12 @@
   <!-- ═══════ SIDE QUEST — SNACK CART ═══════ -->
   <section class="screen" id="snack-quest">
     <h2 class="snack-title fade-in">finishing touches</h2>
-    <p class="snack-sub fade-in" style="animation-delay:0.2s">pick a snack from the cart</p>
+    <p class="snack-sub fade-in" style="animation-delay:0.2s">grab a snack from the cart</p>
 
-    <canvas class="fade-in" style="animation-delay:0.4s" id="snackCanvas" width="260" height="130"></canvas>
+    <canvas class="fade-in" style="animation-delay:0.4s" id="snackCanvas" width="340" height="170"></canvas>
 
     <div class="snack-btns fade-in" style="animation-delay:0.6s" id="snackBtns">
-      <button class="snack-btn" onclick="pickSnack(0)">mie ayam</button>
-      <button class="snack-btn" onclick="pickSnack(1)">papeda telur</button>
-      <button class="snack-btn" onclick="pickSnack(2)">nasi ayam bakar</button>
+      <button class="snack-btn" onclick="pickSnack()">papeda telur</button>
     </div>
 
     <p class="snack-done" id="snackDone">yum! okay, one more thing...</p>
@@ -2579,7 +2577,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
             [0,1,2,1,1,2,1,0],[0,0,1,1,1,1,0,0]]
       }
     };
-    const obsTypes = ['crate','barrier','gem'];
+    const obsTypes = ['crate','barrier'];
 
     function drawSpr(ctx, spr, colors, gx, gy) {
       for (let r = 0; r < spr.length; r++)
@@ -2740,18 +2738,18 @@ You mean more to me than I've let on. And this is me letting on.</p>
       [0,0,7,6,6,6,7,0,0,0,0,0,0,0,7,6,6,6,7,0,0,0],
       [0,0,0,7,7,7,0,0,0,0,0,0,0,0,0,7,7,7,0,0,0,0],
     ];
-    // Snack sprites: mie ayam, papeda telur, nasi ayam bakar (5 cols wide)
-    const snackC = [
-      {1:'#8B4513',2:'#F0C850',3:'#6B3A1A',4:'#4CAF50'}, // mie ayam: brown bowl, yellow noodles, chicken, green onion
-      {1:'#C4994A',2:'#F0C040',3:'#D4A020',4:'#F5D860'}, // papeda telur: bamboo stick, golden egg, shadow, highlight
-      {1:'#C0B0A0',2:'#F5F0E0',3:'#3D1A08',4:'#CC2222'}, // nasi ayam bakar: plate, white rice, dark grilled chicken, sambal
+    // Papeda telur sprite (5 cols x 8 rows)
+    const eggColors = {1:'#C4994A', 2:'#F0C040', 3:'#D4A020', 4:'#F5D860'};
+    const eggGrid = [
+      [0,0,4,0,0],[0,2,2,2,0],[2,2,3,2,2],[0,2,2,2,0],
+      [0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],
     ];
-    const snackG = [
-      [[0,0,4,0,0],[0,3,3,3,0],[2,2,2,2,2],[2,2,3,2,2],[1,2,2,2,1],[1,1,2,1,1],[0,1,1,1,0],[0,0,1,0,0]], // mie ayam
-      [[0,0,4,0,0],[0,2,2,2,0],[2,2,3,2,2],[0,2,2,2,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]], // papeda telur
-      [[0,3,3,3,0],[3,3,3,3,3],[2,2,3,2,2],[2,2,2,2,2],[1,2,4,2,1],[1,1,2,1,1],[0,1,1,1,0],[0,0,1,0,0]], // nasi ayam bakar
-    ];
-    const snackNames = ['mie ayam','papeda telur','nasi ayam bakar'];
+    // Lantern sprite (3 cols x 5 rows)
+    const lanternColors = {1:'#c0392b', 2:'#FF6B35', 3:'#FFD700'};
+    const lanternGrid = [[0,1,0],[1,2,1],[1,3,1],[1,2,1],[0,1,0]];
+    // Wooden crate sprite (4 cols x 4 rows)
+    const crateColors = {1:'#8B7355', 2:'#6b5e54'};
+    const crateGrid = [[1,1,1,1],[1,2,1,2],[1,1,2,1],[1,1,1,1]];
     let snackPicked = -1;
     let snackHearts = [];
 
@@ -2770,43 +2768,83 @@ You mean more to me than I've let on. And this is me letting on.</p>
       const cvs = document.getElementById('snackCanvas');
       if (!cvs) return;
       const ctx = cvs.getContext('2d');
-      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      const W = cvs.width, H = cvs.height;
+      ctx.clearRect(0, 0, W, H);
 
-      // Ground line
-      ctx.fillStyle = '#d4c4b0';
-      ctx.fillRect(0, 122, 260, 8);
+      const cartX = 120, cartY = 87;
 
-      // Draw character (selected from game) at left
+      // Pennant flags above awning
+      const flagCols = ['#c0392b','#F0C040','#4CAF50','#e07050','#F0C040','#c0392b','#4CAF50'];
+      ctx.fillStyle = '#8B7355';
+      ctx.fillRect(cartX + 8, cartY - 3, 96, 1);
+      for (let i = 0; i < 7; i++) {
+        const fx = cartX + 10 + i * 14;
+        ctx.fillStyle = flagCols[i];
+        ctx.fillRect(fx, cartY - 2, SG * 2, SG);
+        ctx.fillRect(fx + Math.floor(SG / 2), cartY - 2 + SG, SG, SG);
+      }
+
+      // Cart
+      drawPixGrid(ctx, cartG, cartColors, cartX, cartY, SG);
+
+      // 4 papeda telur on sticks (like real street cart display)
+      const eggY = cartY + 4 * SG - 8 * SG;
+      const eggs = [cartX + 14, cartX + 34, cartX + 54, cartX + 74];
+      eggs.forEach(ex => drawPixGrid(ctx, eggGrid, eggColors, ex, eggY, SG));
+
+      // Gold highlight on eggs when picked
+      if (snackPicked >= 0) {
+        ctx.strokeStyle = '#FFD700';
+        ctx.lineWidth = 2;
+        eggs.forEach(ex => ctx.strokeRect(ex - 1, eggY - 1, 5 * SG + 2, 8 * SG + 2));
+      }
+
+      // Lanterns hanging from awning sides
+      const awningBottom = cartY + 2 * SG;
+      const ly = awningBottom + 3;
+      // Left lantern + string
+      const ll = cartX + 3;
+      ctx.fillStyle = '#5c3d22';
+      ctx.fillRect(ll + SG, awningBottom, 1, 3);
+      drawPixGrid(ctx, lanternGrid, lanternColors, ll, ly, SG);
+      // Right lantern + string
+      const lr = cartX + 96;
+      ctx.fillStyle = '#5c3d22';
+      ctx.fillRect(lr + SG, awningBottom, 1, 3);
+      drawPixGrid(ctx, lanternGrid, lanternColors, lr, ly, SG);
+
+      // Character (slightly bigger scale)
       const ch = SP[selChar];
-      const charGrid = ch.f[0]; // standing frame
+      const charGrid = ch.f[0];
+      const cs = 6;
       for (let r = 0; r < charGrid.length; r++)
         for (let c = 0; c < charGrid[r].length; c++) {
           const v = charGrid[r][c];
           if (v && ch.c[v]) {
             ctx.fillStyle = ch.c[v];
-            ctx.fillRect(15 + c * SG, 62 + r * SG, SG, SG);
+            ctx.fillRect(20 + c * cs, 80 + r * cs, cs, cs);
           }
         }
 
-      // Draw cart at right
-      const cartX = 110, cartY = 57;
-      drawPixGrid(ctx, cartG, cartColors, cartX, cartY, SG);
+      // Small wooden crate on ground
+      drawPixGrid(ctx, crateGrid, crateColors, 88, 132, SG);
 
-      // Draw snacks on cart counter (sticking up above)
-      const snackPositions = [cartX + 8, cartX + 38, cartX + 68];
-      for (let i = 0; i < 3; i++) {
-        const sx = snackPositions[i];
-        const sy = cartY + 4 * SG - 8 * SG; // above counter
-        drawPixGrid(ctx, snackG[i], snackC[i], sx, sy, SG);
-        // Highlight selected snack
-        if (snackPicked === i) {
-          ctx.strokeStyle = '#FFD700';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(sx - 2, sy - 2, 5 * SG + 4, 8 * SG + 4);
-        }
-      }
+      // Ground (textured)
+      ctx.fillStyle = '#d4c4b0';
+      ctx.fillRect(0, 152, W, 18);
+      ctx.fillStyle = '#c8b8a4';
+      for (let i = 0; i < 18; i++) ctx.fillRect(5 + i * 19, 156, SG - 1, SG - 1);
 
-      // Draw floating hearts if any
+      // Steam wisps above food
+      ctx.fillStyle = 'rgba(180,170,160,0.35)';
+      const steamX = [cartX + 24, cartX + 44, cartX + 64];
+      steamX.forEach((sx, i) => {
+        const ofs = Math.sin(Date.now() / 600 + i * 2) * 2;
+        ctx.fillRect(sx + SG, eggY - 8 + ofs, SG, SG);
+        ctx.fillRect(sx, eggY - 14 + ofs, SG, SG);
+      });
+
+      // Floating hearts
       ctx.globalAlpha = 1;
       snackHearts.forEach(h => {
         const hc = SP.heart.c;
@@ -2819,23 +2857,23 @@ You mean more to me than I've let on. And this is me letting on.</p>
             const v = hg[r][c];
             if (v && hc[v]) {
               ctx.fillStyle = hc[v];
-              ctx.fillRect(h.x + c * 3, h.y + r * 3, 3, 3);
+              ctx.fillRect(h.x + c * 4, h.y + r * 4, 4, 4);
             }
           }
       });
       ctx.globalAlpha = 1;
     }
 
-    function pickSnack(idx) {
+    function pickSnack() {
       if (snackPicked >= 0) return;
-      snackPicked = idx;
+      snackPicked = 0;
       drawSnackScene();
 
       // Spawn hearts above character
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 5; i++) {
         snackHearts.push({
-          x: 20 + Math.random() * 30,
-          y: 50 - i * 12,
+          x: 25 + Math.random() * 35,
+          y: 65 - i * 12,
           age: i * 3,
         });
       }
