@@ -107,6 +107,21 @@
       50% { opacity: 1; }
     }
 
+    .dandelion-welcome {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 2.8vw, 1.15rem);
+      color: var(--ink-light);
+      font-style: italic;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+      position: absolute;
+      bottom: 18%;
+    }
+    .dandelion-welcome.visible {
+      opacity: 1;
+    }
+
     /* ────────────────────────────────────────
        SCREEN 2 — INTRO
     ──────────────────────────────────────── */
@@ -271,8 +286,10 @@
     ──────────────────────────────────────── */
     #celebration {
       background: var(--bg-warm);
-      gap: 1rem;
-      padding: 1.2rem 1.5rem;
+      gap: 0.8rem;
+      padding: 1.5rem 1.5rem 1.2rem;
+      justify-content: flex-start;
+      padding-top: max(3vh, 1.5rem);
       animation: celebGlow 3s ease-in-out infinite;
     }
     @keyframes celebGlow {
@@ -288,8 +305,8 @@
     }
 
     .celeb-sticker {
-      width: 170px;
-      height: 170px;
+      width: 140px;
+      height: 140px;
       overflow: hidden;
       border-radius: 18px;
       animation: celebFloat 3s ease-in-out infinite;
@@ -1404,13 +1421,15 @@
     <canvas class="fade-in" style="animation-delay:0.3s" id="dandelionCanvas" width="160" height="260" onclick="blowDandelion()"></canvas>
 
     <p class="blow-hint fade-in" style="animation-delay:0.6s" id="blowHint">tap the dandelion</p>
+
+    <p class="dandelion-welcome" id="dandelionWelcome">welcome to something i made for you</p>
   </section>
 
   <!-- ═══════ SCREEN 2 — INTRO ═══════ -->
   <section class="screen" id="intro">
     <div class="intro-sticker">
-      <img src="https://media.tenor.com/Lgr_6-nkvnUAAAAi/casal-dudu.gif"
-           alt="Dudu and Bubu with hearts">
+      <img src="https://media.tenor.com/JMyM1f8Vge4AAAAi/dudu-bubu.gif"
+           alt="Dudu and Bubu together">
     </div>
     <h1 class="intro-greeting fade-in">Hey, Aamira</h1>
     <p class="intro-sub fade-in" style="animation-delay:0.3s">
@@ -1533,7 +1552,7 @@
       and lily of the valley just a flower —<br>
       not reminders of you.<br><br>
       but we did meet.<br>
-      and now this Valentine's Day is ours, Aamira.
+      and you became my home.
     </p>
 
     <div class="celeb-foreshadow fade-in" style="animation-delay:0.6s">
@@ -2196,7 +2215,12 @@ You mean more to me than I've let on. And this is me letting on.</p>
         cancelAnimationFrame(swayId);
         document.getElementById('blowHint').style.display = 'none';
         animate();
-        setTimeout(() => goTo('intro'), 3200);
+        // Show welcome text after seeds scatter
+        setTimeout(() => {
+          document.getElementById('dandelionWelcome').classList.add('visible');
+        }, 1800);
+        // Transition after welcome text is visible
+        setTimeout(() => goTo('intro'), 4500);
       };
     })();
 
@@ -3079,15 +3103,19 @@ You mean more to me than I've let on. And this is me letting on.</p>
 
       // Gradient fill using pixel blocks (retro style)
       const blockSize = 4;
-      const filledBlocks = Math.floor(fillW / blockSize);
-      for (let b = 0; b < filledBlocks; b++) {
-        const progress = b / (mw / blockSize);
+      const totalBlocks = Math.ceil(mw / blockSize);
+      const filledPx = Math.round(fillW);
+      for (let b = 0; b < totalBlocks; b++) {
+        const bx = b * blockSize;
+        if (bx >= filledPx) break;
+        const bw = Math.min(blockSize, filledPx - bx);
+        const progress = b / totalBlocks;
         // Green gradient (soft sage → vibrant green)
         const r = Math.floor(100 - progress * 30);
         const g = Math.floor(170 + progress * 35);
         const bl = Math.floor(100 - progress * 20);
         ctx.fillStyle = `rgb(${Math.max(r,60)},${Math.min(g,205)},${Math.max(bl,75)})`;
-        ctx.fillRect(mx + b * blockSize, my, blockSize, mh);
+        ctx.fillRect(mx + bx, my, bw, mh);
       }
 
       // Scan line effect (subtle horizontal lines for retro feel)
