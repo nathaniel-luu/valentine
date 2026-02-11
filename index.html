@@ -243,6 +243,40 @@
       white-space: nowrap;
     }
 
+    /* ─── BADMINTON QUEST ─── */
+    #badminton-quest {
+      background: var(--bg);
+      gap: 0.8rem;
+    }
+    #badmintonCanvas {
+      border: 1.5px solid var(--ink-faint);
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      touch-action: none;
+      cursor: pointer;
+    }
+    .badminton-hud {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 340px;
+      padding: 0 4px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+    }
+    .badminton-msg {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 3vw, 1.15rem);
+      color: var(--ink);
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      min-height: 1.5em;
+    }
+    .badminton-msg.show { opacity: 1; }
+
     /* ─── LOADING FEELINGS ─── */
     #loadingCanvas {
       image-rendering: pixelated;
@@ -1483,7 +1517,21 @@
     </div>
 
     <p class="snack-done" id="snackDone">yum! okay, one more thing...</p>
-    <button class="btn-primary" id="snackContinue" style="display:none" onclick="goTo('courage-quest')">Continue</button>
+    <button class="btn-primary" id="snackContinue" style="display:none" onclick="goTo('badminton-quest')">Continue</button>
+  </section>
+
+  <!-- ═══════ SIDE QUEST — BADMINTON ═══════ -->
+  <section class="screen" id="badminton-quest">
+    <h2 class="snack-title fade-in">one more game</h2>
+    <p class="snack-sub fade-in" style="animation-delay:0.2s">rally to 5 — tap to swing</p>
+    <div class="badminton-hud fade-in" style="animation-delay:0.3s">
+      <span id="badRally">rally: 0</span>
+      <span id="badBest">best: 0</span>
+    </div>
+    <canvas class="fade-in" style="animation-delay:0.4s" id="badmintonCanvas" width="340" height="220"></canvas>
+    <p class="game-hint fade-in" style="animation-delay:0.6s" id="badHint">tap to start</p>
+    <p class="badminton-msg" id="badMsg"></p>
+    <button class="btn-primary" id="badContinue" style="display:none" onclick="goTo('courage-quest')">Continue</button>
   </section>
 
   <!-- ═══════ SIDE QUEST — LOADING FEELINGS ═══════ -->
@@ -2235,6 +2283,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
       if (screenId === 'ask') initNoButton();
       // Draw snack scene when navigating to it
       if (screenId === 'snack-quest') setTimeout(drawSnackScene, 50);
+      if (screenId === 'badminton-quest') setTimeout(initBadminton, 50);
       // Loading feelings scene
       if (screenId === 'courage-quest') setTimeout(initLoadingFeelings, 50);
     }
@@ -3198,6 +3247,281 @@ You mean more to me than I've let on. And this is me letting on.</p>
           goTo('ask');
         }, 1800);
       }
+    }
+
+    // ═══════════════════════════════════════
+    //  BADMINTON RALLY GAME
+    // ═══════════════════════════════════════
+    let badState = null;
+    let badAnimId = null;
+
+    function initBadminton() {
+      const cvs = document.getElementById('badmintonCanvas');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      const W = cvs.width, H = cvs.height;
+      const bp = 4; // pixel size matching GP
+
+      // Reset state
+      if (badAnimId) cancelAnimationFrame(badAnimId);
+      badState = {
+        phase: 'waiting', // waiting, playing, hit, miss, won
+        rally: 0, best: 0, frame: 0,
+        // Player (left side)
+        playerX: 50, playerY: 130, playerSwing: 0,
+        // Opponent (right side) — simple auto-player
+        oppX: 260, oppY: 130, oppSwing: 0,
+        // Shuttlecock
+        birdX: 270, birdY: 90, birdVx: -2.8, birdVy: -1.2,
+        birdGravity: 0.08, birdActive: false,
+        birdGoingRight: false, // toward opponent
+        // Net
+        netX: W / 2,
+        // Timing
+        hitWindow: false,
+      };
+
+      document.getElementById('badRally').textContent = 'rally: 0';
+      document.getElementById('badBest').textContent = 'best: 0';
+      document.getElementById('badHint').style.display = '';
+      document.getElementById('badHint').textContent = 'tap to start';
+      document.getElementById('badMsg').classList.remove('show');
+      document.getElementById('badMsg').textContent = '';
+      document.getElementById('badContinue').style.display = 'none';
+
+      // Click handler
+      cvs.onclick = function() {
+        if (badState.phase === 'waiting') {
+          badState.phase = 'playing';
+          badState.birdActive = true;
+          badState.birdX = badState.oppX - 10;
+          badState.birdY = 70;
+          badState.birdVx = -2.5;
+          badState.birdVy = -0.8;
+          badState.birdGoingRight = false;
+          document.getElementById('badHint').style.display = 'none';
+          return;
+        }
+        if (badState.phase === 'playing' && !badState.birdGoingRight) {
+          // Player trying to hit — check if bird is close enough
+          const dx = badState.birdX - badState.playerX;
+          const dy = badState.birdY - badState.playerY;
+          badState.playerSwing = 8; // swing animation
+          if (dx > -20 && dx < 50 && dy > -40 && dy < 30) {
+            // Successful hit!
+            badState.rally++;
+            badState.birdVx = 2.2 + Math.random() * 1.2;
+            badState.birdVy = -2.5 - Math.random() * 1.5;
+            badState.birdGoingRight = true;
+            document.getElementById('badRally').textContent = 'rally: ' + badState.rally;
+            if (badState.rally > badState.best) {
+              badState.best = badState.rally;
+              document.getElementById('badBest').textContent = 'best: ' + badState.best;
+            }
+            // Check win
+            if (badState.rally >= 5) {
+              badState.phase = 'won';
+              const msgEl = document.getElementById('badMsg');
+              msgEl.textContent = 'nice rally! you two make a great team';
+              msgEl.classList.add('show');
+              document.getElementById('badContinue').style.display = '';
+            }
+          }
+        }
+        if (badState.phase === 'miss') {
+          // Restart rally
+          badState.phase = 'playing';
+          badState.rally = 0;
+          badState.birdX = badState.oppX - 10;
+          badState.birdY = 70;
+          badState.birdVx = -2.5;
+          badState.birdVy = -0.8;
+          badState.birdGoingRight = false;
+          badState.birdActive = true;
+          document.getElementById('badRally').textContent = 'rally: 0';
+          document.getElementById('badHint').style.display = 'none';
+        }
+      };
+
+      function drawBadmintonFrame() {
+        const s = badState;
+        s.frame++;
+        ctx.clearRect(0, 0, W, H);
+
+        // Sky gradient (warm court feel)
+        ctx.fillStyle = '#e8e2d6';
+        ctx.fillRect(0, 0, W, H);
+
+        // Court floor
+        ctx.fillStyle = '#c8b8a4';
+        ctx.fillRect(0, 170, W, 50);
+        // Court lines
+        ctx.fillStyle = '#b0a090';
+        ctx.fillRect(0, 170, W, bp);
+        ctx.fillRect(40, 170, bp, 50);
+        ctx.fillRect(W - 44, 170, bp, 50);
+        // Center service line
+        ctx.fillStyle = '#b0a090';
+        ctx.fillRect(W / 2 - bp / 2, 174, bp, 46);
+        // Floor texture dots
+        ctx.fillStyle = '#bca888';
+        for (let i = 0; i < 20; i++) {
+          ctx.fillRect(12 + i * 17, 182, bp, bp);
+        }
+
+        // Net (center, pixel art)
+        const netX = W / 2;
+        ctx.fillStyle = '#8a7e70';
+        ctx.fillRect(netX - bp, 90, bp * 2, 84);
+        // Net mesh
+        ctx.fillStyle = '#a09888';
+        for (let ny = 94; ny < 170; ny += 8) {
+          ctx.fillRect(netX - 6, ny, 12, 1);
+        }
+        for (let nx = netX - 6; nx <= netX + 6; nx += 4) {
+          ctx.fillRect(nx, 92, 1, 78);
+        }
+        // Net top
+        ctx.fillStyle = '#f0ebe4';
+        ctx.fillRect(netX - 8, 88, 16, bp);
+
+        // Player character (left) — using selected sprite
+        const ch = SP[selChar];
+        const pFrame = ch.f[s.playerSwing > 0 ? 1 : 0];
+        const ps = 5; // pixel scale for characters
+        const py = s.playerY - (s.playerSwing > 4 ? 6 : 0);
+        for (let r = 0; r < pFrame.length; r++)
+          for (let c = 0; c < pFrame[r].length; c++) {
+            const v = pFrame[r][c];
+            if (v && ch.c[v]) {
+              ctx.fillStyle = ch.c[v];
+              ctx.fillRect(s.playerX + c * ps, py + r * ps, ps, ps);
+            }
+          }
+
+        // Player racket
+        const racketAngle = s.playerSwing > 0 ? -0.5 : 0.3;
+        const rx = s.playerX + 42;
+        const ry = py + 20 + (s.playerSwing > 0 ? -12 : 0);
+        // Racket handle
+        ctx.fillStyle = '#8B7355';
+        ctx.fillRect(rx, ry + 8, bp * 2, 14);
+        // Racket head (oval-ish)
+        ctx.fillStyle = '#5c3d22';
+        ctx.fillRect(rx - 4, ry - 4, 16, bp);
+        ctx.fillRect(rx - 6, ry, 20, 12);
+        ctx.fillRect(rx - 4, ry + 12, 16, bp);
+        // Racket strings
+        ctx.fillStyle = '#d4c4b0';
+        ctx.fillRect(rx - 2, ry + 2, 12, 8);
+
+        // Opponent character (right) — opposite of selected
+        const oppChar = selChar === 'dudu' ? 'bubu' : 'dudu';
+        const oc = SP[oppChar];
+        const oFrame = oc.f[s.oppSwing > 0 ? 1 : 0];
+        const oy = s.oppY - (s.oppSwing > 4 ? 6 : 0);
+        for (let r = 0; r < oFrame.length; r++)
+          for (let c = 0; c < oFrame[r].length; c++) {
+            const v = oFrame[r][c];
+            if (v && oc.c[v]) {
+              ctx.fillStyle = oc.c[v];
+              ctx.fillRect(s.oppX + c * ps, oy + r * ps, ps, ps);
+            }
+          }
+
+        // Opponent racket (mirrored)
+        const orx = s.oppX - 14;
+        const ory = oy + 20 + (s.oppSwing > 0 ? -12 : 0);
+        ctx.fillStyle = '#8B7355';
+        ctx.fillRect(orx, ory + 8, bp * 2, 14);
+        ctx.fillStyle = '#5c3d22';
+        ctx.fillRect(orx - 4, ory - 4, 16, bp);
+        ctx.fillRect(orx - 6, ory, 20, 12);
+        ctx.fillRect(orx - 4, ory + 12, 16, bp);
+        ctx.fillStyle = '#d4c4b0';
+        ctx.fillRect(orx - 2, ory + 2, 12, 8);
+
+        // Shuttlecock (pixel art birdie)
+        if (s.birdActive) {
+          // Feather trail (based on direction)
+          const tx = s.birdGoingRight ? -1 : 1;
+          ctx.fillStyle = '#f0ebe4';
+          ctx.fillRect(s.birdX + tx * 6, s.birdY - 2, bp, bp * 3);
+          ctx.fillRect(s.birdX + tx * 10, s.birdY - 4, bp, bp * 2);
+          ctx.fillRect(s.birdX + tx * 10, s.birdY + 4, bp, bp * 2);
+          ctx.fillRect(s.birdX + tx * 14, s.birdY - 2, bp, bp * 3);
+          // Cork tip
+          ctx.fillStyle = '#c4956a';
+          ctx.fillRect(s.birdX - 2, s.birdY - 2, bp + 2, bp + 2);
+          ctx.fillStyle = '#a07850';
+          ctx.fillRect(s.birdX, s.birdY, bp, bp);
+        }
+
+        // Shadow under shuttlecock
+        if (s.birdActive) {
+          ctx.globalAlpha = 0.15;
+          ctx.fillStyle = '#2a2320';
+          ctx.fillRect(s.birdX - 4, 168, 12, bp);
+          ctx.globalAlpha = 1;
+        }
+
+        // Rally count display (pixel hearts above net)
+        for (let h = 0; h < 5; h++) {
+          const hx = netX - 24 + h * 12;
+          const filled = h < s.rally;
+          ctx.fillStyle = filled ? '#ff4d6d' : '#d4c4b0';
+          // Mini heart
+          ctx.fillRect(hx, 20, bp, bp);
+          ctx.fillRect(hx + bp, 20, bp, bp);
+          ctx.fillRect(hx + bp * 2, 20 + bp, bp, bp);
+          ctx.fillRect(hx, 20 + bp, bp, bp);
+          ctx.fillRect(hx + bp, 20 + bp * 2, bp, bp);
+          if (filled) {
+            ctx.fillStyle = '#ff8fa3';
+            ctx.fillRect(hx + bp, 20, bp, bp);
+          }
+        }
+
+        // Update physics
+        if (s.birdActive && s.phase === 'playing') {
+          s.birdX += s.birdVx;
+          s.birdY += s.birdVy;
+          s.birdVy += s.birdGravity;
+
+          // Opponent auto-hit when bird reaches right side
+          if (s.birdGoingRight && s.birdX > s.oppX - 20) {
+            s.oppSwing = 8;
+            s.birdVx = -(2.2 + Math.random() * 1.0);
+            s.birdVy = -2.0 - Math.random() * 1.5;
+            s.birdGoingRight = false;
+          }
+
+          // Miss detection — bird hits ground
+          if (s.birdY > 165) {
+            s.birdActive = false;
+            s.phase = 'miss';
+            document.getElementById('badHint').style.display = '';
+            document.getElementById('badHint').textContent = 'tap to try again';
+          }
+
+          // Out of bounds left
+          if (s.birdX < -20) {
+            s.birdActive = false;
+            s.phase = 'miss';
+            document.getElementById('badHint').style.display = '';
+            document.getElementById('badHint').textContent = 'tap to try again';
+          }
+        }
+
+        // Decay swing animations
+        if (s.playerSwing > 0) s.playerSwing--;
+        if (s.oppSwing > 0) s.oppSwing--;
+
+        badAnimId = requestAnimationFrame(drawBadmintonFrame);
+      }
+
+      drawBadmintonFrame();
     }
 
     function selectChar(ch) {
