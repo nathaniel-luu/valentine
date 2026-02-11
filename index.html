@@ -1445,8 +1445,8 @@
   <!-- ═══════ SCREEN 2 — INTRO ═══════ -->
   <section class="screen" id="intro">
     <div class="intro-sticker">
-      <img src="https://media.tenor.com/FyJ4HCGsvacAAAAi/dudu-dudu-bear.gif"
-           alt="Dudu holding balloons">
+      <img src="https://media.tenor.com/vLKIu2aX88kAAAAi/dudu-bubu-walking-to-school-cute.gif"
+           alt="Dudu and Bubu walking together">
     </div>
     <h1 class="intro-greeting fade-in">Hey, Aamira</h1>
     <p class="intro-sub fade-in" style="animation-delay:0.3s">
@@ -1501,8 +1501,22 @@
     <h2 class="go-score fade-in">you ran <span id="finalDist">0</span>m</h2>
     <p class="go-hearts fade-in" style="animation-delay:0.3s">and collected <span id="finalHearts">0</span> hearts along the way</p>
     <p class="go-msg" style="animation-delay:1.2s">not bad at all...</p>
-    <p class="go-msg2" style="animation-delay:2.5s">but all that running made someone hungry</p>
-    <button class="btn-primary fade-in" style="animation-delay:3.5s" onclick="goTo('snack-quest')">Continue</button>
+    <p class="go-msg2" style="animation-delay:2.5s">nice warmup... ready for a real game?</p>
+    <button class="btn-primary fade-in" style="animation-delay:3.5s" onclick="goTo('badminton-quest')">Continue</button>
+  </section>
+
+  <!-- ═══════ SIDE QUEST — BADMINTON ═══════ -->
+  <section class="screen" id="badminton-quest">
+    <h2 class="snack-title fade-in">one more game</h2>
+    <p class="snack-sub fade-in" style="animation-delay:0.2s">rally to 5 — tap to swing</p>
+    <div class="badminton-hud fade-in" style="animation-delay:0.3s">
+      <span id="badRally">rally: 0</span>
+      <span id="badBest">best: 0</span>
+    </div>
+    <canvas class="fade-in" style="animation-delay:0.4s" id="badmintonCanvas" width="340" height="220"></canvas>
+    <p class="game-hint fade-in" style="animation-delay:0.6s" id="badHint">tap to start</p>
+    <p class="badminton-msg" id="badMsg"></p>
+    <button class="btn-primary" id="badContinue" style="display:none" onclick="goTo('snack-quest')">Continue</button>
   </section>
 
   <!-- ═══════ SIDE QUEST — SNACK CART ═══════ -->
@@ -1517,21 +1531,7 @@
     </div>
 
     <p class="snack-done" id="snackDone">yum! okay, one more thing...</p>
-    <button class="btn-primary" id="snackContinue" style="display:none" onclick="goTo('badminton-quest')">Continue</button>
-  </section>
-
-  <!-- ═══════ SIDE QUEST — BADMINTON ═══════ -->
-  <section class="screen" id="badminton-quest">
-    <h2 class="snack-title fade-in">one more game</h2>
-    <p class="snack-sub fade-in" style="animation-delay:0.2s">rally to 5 — tap to swing</p>
-    <div class="badminton-hud fade-in" style="animation-delay:0.3s">
-      <span id="badRally">rally: 0</span>
-      <span id="badBest">best: 0</span>
-    </div>
-    <canvas class="fade-in" style="animation-delay:0.4s" id="badmintonCanvas" width="340" height="220"></canvas>
-    <p class="game-hint fade-in" style="animation-delay:0.6s" id="badHint">tap to start</p>
-    <p class="badminton-msg" id="badMsg"></p>
-    <button class="btn-primary" id="badContinue" style="display:none" onclick="goTo('courage-quest')">Continue</button>
+    <button class="btn-primary" id="snackContinue" style="display:none" onclick="goTo('courage-quest')">Continue</button>
   </section>
 
   <!-- ═══════ SIDE QUEST — LOADING FEELINGS ═══════ -->
@@ -2125,18 +2125,18 @@ You mean more to me than I've let on. And this is me letting on.</p>
         const ring = (i % 3 === 0) ? 36 : (i % 3 === 1) ? 28 : 44;
         const bx = cx + Math.cos(angle) * ring;
         const by = headY + Math.sin(angle) * ring;
+        // Direction follows seed's natural radial angle + gentle rightward wind
+        const windAngle = angle - 0.3; // slight rightward bias
         seeds.push({
           bx, by, x: bx, y: by, angle,
           blown: false, opacity: 1, t: 0,
-          // Base direction: mostly rightward wind + slight upward
-          baseVx: 0.6 + Math.random() * 0.8,
-          baseVy: -0.8 - Math.random() * 0.6,
-          // Unique drift parameters for curved floating paths
-          driftFreq: 0.02 + Math.random() * 0.015,
-          driftAmp: 8 + Math.random() * 12,
+          baseVx: Math.cos(windAngle) * (0.5 + Math.random() * 0.6) + 0.2,
+          baseVy: Math.sin(windAngle) * (0.4 + Math.random() * 0.5) - 0.6,
+          driftFreq: 0.015 + Math.random() * 0.012,
+          driftAmp: 6 + Math.random() * 10,
           driftPhase: Math.random() * Math.PI * 2,
-          // Stagger: wave from left to right (wind direction)
-          delay: Math.floor(((bx - (cx - 50)) / 100) * 12 + Math.random() * 6),
+          // Short stagger — quick smooth wave, no freeze gap
+          delay: Math.floor(i * 0.6 + Math.random() * 3),
         });
       }
 
@@ -2258,9 +2258,11 @@ You mean more to me than I've let on. And this is me letting on.</p>
         if (dandelionBlown) return;
         dandelionBlown = true;
         cancelAnimationFrame(swayId);
+        // Lock each seed's current swayed position as its starting point
+        seeds.forEach(s => { s.bx = s.x; s.by = s.y; });
         document.getElementById('blowHint').style.display = 'none';
         animate();
-        setTimeout(() => goTo('intro'), 3200);
+        setTimeout(() => goTo('intro'), 3400);
       };
     })();
 
@@ -3273,8 +3275,8 @@ You mean more to me than I've let on. And this is me letting on.</p>
         // Opponent (right side) — simple auto-player
         oppX: 260, oppY: 130, oppSwing: 0,
         // Shuttlecock
-        birdX: 270, birdY: 90, birdVx: -2.8, birdVy: -1.2,
-        birdGravity: 0.08, birdActive: false,
+        birdX: 250, birdY: 80, birdVx: -1.5, birdVy: -2.2,
+        birdGravity: 0.035, birdActive: false,
         birdGoingRight: false, // toward opponent
         // Net
         netX: W / 2,
@@ -3296,9 +3298,9 @@ You mean more to me than I've let on. And this is me letting on.</p>
           badState.phase = 'playing';
           badState.birdActive = true;
           badState.birdX = badState.oppX - 10;
-          badState.birdY = 70;
-          badState.birdVx = -2.5;
-          badState.birdVy = -0.8;
+          badState.birdY = 80;
+          badState.birdVx = -1.5;
+          badState.birdVy = -2.2;
           badState.birdGoingRight = false;
           document.getElementById('badHint').style.display = 'none';
           return;
@@ -3308,11 +3310,11 @@ You mean more to me than I've let on. And this is me letting on.</p>
           const dx = badState.birdX - badState.playerX;
           const dy = badState.birdY - badState.playerY;
           badState.playerSwing = 8; // swing animation
-          if (dx > -20 && dx < 50 && dy > -40 && dy < 30) {
+          if (dx > -35 && dx < 70 && dy > -60 && dy < 40) {
             // Successful hit!
             badState.rally++;
-            badState.birdVx = 2.2 + Math.random() * 1.2;
-            badState.birdVy = -2.5 - Math.random() * 1.5;
+            badState.birdVx = 1.4 + Math.random() * 0.4;
+            badState.birdVy = -2.0 - Math.random() * 0.4;
             badState.birdGoingRight = true;
             document.getElementById('badRally').textContent = 'rally: ' + badState.rally;
             if (badState.rally > badState.best) {
@@ -3334,9 +3336,9 @@ You mean more to me than I've let on. And this is me letting on.</p>
           badState.phase = 'playing';
           badState.rally = 0;
           badState.birdX = badState.oppX - 10;
-          badState.birdY = 70;
-          badState.birdVx = -2.5;
-          badState.birdVy = -0.8;
+          badState.birdY = 80;
+          badState.birdVx = -1.5;
+          badState.birdVy = -2.2;
           badState.birdGoingRight = false;
           badState.birdActive = true;
           document.getElementById('badRally').textContent = 'rally: 0';
@@ -3490,10 +3492,10 @@ You mean more to me than I've let on. And this is me letting on.</p>
           s.birdVy += s.birdGravity;
 
           // Opponent auto-hit when bird reaches right side
-          if (s.birdGoingRight && s.birdX > s.oppX - 20) {
+          if (s.birdGoingRight && s.birdX > s.oppX - 30) {
             s.oppSwing = 8;
-            s.birdVx = -(2.2 + Math.random() * 1.0);
-            s.birdVy = -2.0 - Math.random() * 1.5;
+            s.birdVx = -(1.4 + Math.random() * 0.3);
+            s.birdVy = -2.0 - Math.random() * 0.3;
             s.birdGoingRight = false;
           }
 
@@ -3505,8 +3507,8 @@ You mean more to me than I've let on. And this is me letting on.</p>
             document.getElementById('badHint').textContent = 'tap to try again';
           }
 
-          // Out of bounds left
-          if (s.birdX < -20) {
+          // Out of bounds
+          if (s.birdX < -20 || s.birdX > W + 20) {
             s.birdActive = false;
             s.phase = 'miss';
             document.getElementById('badHint').style.display = '';
