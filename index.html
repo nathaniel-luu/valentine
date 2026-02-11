@@ -107,21 +107,6 @@
       50% { opacity: 1; }
     }
 
-    .dandelion-welcome {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1rem, 2.8vw, 1.15rem);
-      color: var(--ink-light);
-      font-style: italic;
-      letter-spacing: 0.04em;
-      opacity: 0;
-      transition: opacity 1.2s ease;
-      position: absolute;
-      bottom: 18%;
-    }
-    .dandelion-welcome.visible {
-      opacity: 1;
-    }
-
     /* ────────────────────────────────────────
        SCREEN 2 — INTRO
     ──────────────────────────────────────── */
@@ -1421,15 +1406,13 @@
     <canvas class="fade-in" style="animation-delay:0.3s" id="dandelionCanvas" width="160" height="260" onclick="blowDandelion()"></canvas>
 
     <p class="blow-hint fade-in" style="animation-delay:0.6s" id="blowHint">tap the dandelion</p>
-
-    <p class="dandelion-welcome" id="dandelionWelcome">welcome to something i made for you</p>
   </section>
 
   <!-- ═══════ SCREEN 2 — INTRO ═══════ -->
   <section class="screen" id="intro">
     <div class="intro-sticker">
-      <img src="https://media.tenor.com/JMyM1f8Vge4AAAAi/dudu-bubu.gif"
-           alt="Dudu and Bubu together">
+      <img src="https://media.tenor.com/FyJ4HCGsvacAAAAi/dudu-dudu-bear.gif"
+           alt="Dudu holding balloons">
     </div>
     <h1 class="intro-greeting fade-in">Hey, Aamira</h1>
     <p class="intro-sub fade-in" style="animation-delay:0.3s">
@@ -2215,12 +2198,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
         cancelAnimationFrame(swayId);
         document.getElementById('blowHint').style.display = 'none';
         animate();
-        // Show welcome text after seeds scatter
-        setTimeout(() => {
-          document.getElementById('dandelionWelcome').classList.add('visible');
-        }, 1800);
-        // Transition after welcome text is visible
-        setTimeout(() => goTo('intro'), 4500);
+        setTimeout(() => goTo('intro'), 3200);
       };
     })();
 
