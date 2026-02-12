@@ -1483,8 +1483,8 @@
   <!-- ═══════ SCREEN 2 — INTRO ═══════ -->
   <section class="screen" id="intro">
     <div class="intro-sticker">
-      <img src="https://media1.tenor.com/m/JMyM1f8Vge4AAAAd/dudu-bubu.gif"
-           alt="Dudu and Bubu standing together">
+      <img src="https://media1.tenor.com/m/0cNM_9li440AAAAd/dudu-giving-flowers-bubu-flowers.gif"
+           alt="Dudu giving flowers to Bubu">
     </div>
     <h1 class="intro-greeting fade-in">Hey, Aamira</h1>
     <p class="intro-sub fade-in" style="animation-delay:0.3s">
@@ -2331,7 +2331,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
       'and the day after that',
     ];
 
-    // GIF stages — all transparent/white backgrounds
+    // GIF stages — all transparent stickers, each unique
     const askGifs = [
       // 0: hopeful — dudu giving flowers
       'https://media.tenor.com/0cNM_9li440AAAAi/dudu-giving-flowers-bubu-flowers.gif',
@@ -2339,31 +2339,45 @@ You mean more to me than I've let on. And this is me letting on.</p>
       'https://media.tenor.com/-HF7-xdOAAwAAAAx/bubu-dudu-bubu-dudu-shy.webp',
       // 2: still pleading — panda shy
       'https://media.tenor.com/XFYEWpH5LxwAAAAi/bear-panda.gif',
-      // 3: getting sad — bubu sad face
+      // 3: think again — bubu pouty sad face
+      'https://media.tenor.com/SZt29KhAQ8kAAAAi/bubu-yier.gif',
+      // 4: pretty please — bubu sad sitting crying
+      'https://media.tenor.com/GaX7wejaJGAAAAAi/bubu-sad.gif',
+      // 5: ice cream — bubu sad face
       'https://media.tenor.com/-D3LBHnOy-8AAAAi/bubu-sad-bubu-crying.gif',
-      // 4: sad — bubu sad face
-      'https://media.tenor.com/-D3LBHnOy-8AAAAi/bubu-sad-bubu-crying.gif',
-      // 5: crying — panda with tissues
+      // 6: cook for you — panda with tissues
       'https://media.tenor.com/9gBByPt6k4oAAAAi/bubu-dudu-twitter.gif',
-      // 6: crying harder — big tears
+      // 7: pick the movie — crying harder big tears
       'https://media.tenor.com/HUJyzO0WfM4AAAAi/bubu-dudu.gif',
-      // 7: brown bear crying
+      // 8: PLEASE AAMIRA — shocked with exclamation marks
+      'https://media.tenor.com/UJCnZ5Naw74AAAAi/bubu-yier-iklog.gif',
+      // 9: going to cry — brown bear crying
       'https://media.tenor.com/yZoKXA08ZyYAAAAi/bubu-bubu-dudu.gif',
-      // 8: not happy — pouty
+      // 10: ok crying now — teddy bear crying with tear
+      'https://media.tenor.com/-npOS96NResAAAAi/bubu-dudu-seeyall.gif',
+      // 11: actually I'm fine — arms crossed cheeky
+      'https://media.tenor.com/WZyHt5hOIKsAAAAi/bubu-bubu-dudu.gif',
+      // 12: no I'm not fine — bubu sad sitting
+      'https://media.tenor.com/GaX7wejaJGAAAAAi/bubu-sad.gif',
+      // 13: JUST SAY YES — dudu angry with fire (480px)
+      'https://media.tenor.com/mX64AbW856EAAAAi/dudu-dudu-angry.gif',
+      // 14: ask again tomorrow — not happy pouty
       'https://media.tenor.com/iszesSNWYY4AAAAi/bubu-not-happy-not-now.gif',
-      // 9: angry walk
+      // 15: day after that — angry walk
       'https://media.tenor.com/zyud8rY84swAAAAi/bubu-bubu-angry.gif',
-      // 10+: cycle through crying/sad
+    ];
+    // Cycle pool for clicks beyond the main sequence
+    const askGifsCycle = [
       'https://media.tenor.com/9gBByPt6k4oAAAAi/bubu-dudu-twitter.gif',
+      'https://media.tenor.com/mX64AbW856EAAAAi/dudu-dudu-angry.gif',
+      'https://media.tenor.com/-npOS96NResAAAAi/bubu-dudu-seeyall.gif',
       'https://media.tenor.com/HUJyzO0WfM4AAAAi/bubu-dudu.gif',
-      'https://media.tenor.com/yZoKXA08ZyYAAAAi/bubu-bubu-dudu.gif',
-      'https://media.tenor.com/9gBByPt6k4oAAAAi/bubu-dudu-twitter.gif',
-      'https://media.tenor.com/HUJyzO0WfM4AAAAi/bubu-dudu.gif',
-      'https://media.tenor.com/9gBByPt6k4oAAAAi/bubu-dudu-twitter.gif',
+      'https://media.tenor.com/WZyHt5hOIKsAAAAi/bubu-bubu-dudu.gif',
+      'https://media.tenor.com/GaX7wejaJGAAAAAi/bubu-sad.gif',
     ];
 
     // Preload all GIF stages
-    askGifs.forEach(src => { const img = new Image(); img.src = src; });
+    askGifs.concat(askGifsCycle).forEach(src => { const img = new Image(); img.src = src; });
 
     function initNoButton() {
       noCount = 0;
@@ -2389,9 +2403,12 @@ You mean more to me than I've let on. And this is me letting on.</p>
       btnYes.style.fontSize = yesFontSize + 'rem';
       btnYes.style.padding = `${yesPad}px ${yesPad + 26}px`;
 
-      // Swap GIF
-      const gifIdx = Math.min(noCount, askGifs.length - 1);
-      askGif.src = askGifs[gifIdx];
+      // Swap GIF — cycle through pool after main sequence
+      if (noCount < askGifs.length) {
+        askGif.src = askGifs[noCount];
+      } else {
+        askGif.src = askGifsCycle[(noCount - askGifs.length) % askGifsCycle.length];
+      }
 
       // Grow sticker
       const size = 220 + noCount * 5;
@@ -2865,7 +2882,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
         pourTo(4, 6, false, () => { btn.textContent = 'add milk'; btn.style.pointerEvents = ''; });
       } else if (cStep === 2) {
         btn.style.pointerEvents = 'none';
-        pourTo(9, 7, true, () => { btn.textContent = 'add sugar'; btn.style.pointerEvents = ''; });
+        pourTo(9, 7, true, () => { btn.textContent = 'sweeten it up'; btn.style.pointerEvents = ''; });
       } else if (cStep === 3) {
         btn.style.pointerEvents = 'none';
         cHeartOn = true;
