@@ -324,8 +324,8 @@
     }
 
     .celeb-sticker {
-      width: 140px;
-      height: 140px;
+      width: 280px;
+      height: 160px;
       overflow: hidden;
       border-radius: 18px;
       animation: celebFloat 3s ease-in-out infinite;
@@ -381,6 +381,45 @@
       text-align: center;
     }
 
+    .celeb-plan {
+      max-width: 340px;
+      width: 100%;
+      padding: 20px 28px;
+      border: 1.5px solid var(--ink-faint);
+      text-align: left;
+    }
+    .plan-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      color: var(--ink);
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .plan-detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(42,35,32,0.06);
+    }
+    .plan-detail:last-child { border-bottom: none; }
+    .plan-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+    }
+    .plan-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      text-align: right;
+      line-height: 1.4;
+    }
     .celeb-foreshadow {
       margin-top: 0.3rem;
       padding: 18px 28px;
@@ -1516,22 +1555,7 @@
     <canvas class="fade-in" style="animation-delay:0.4s" id="badmintonCanvas" width="340" height="220"></canvas>
     <p class="game-hint fade-in" style="animation-delay:0.6s" id="badHint">tap to start</p>
     <p class="badminton-msg" id="badMsg"></p>
-    <button class="btn-primary" id="badContinue" style="display:none" onclick="goTo('snack-quest')">Continue</button>
-  </section>
-
-  <!-- ═══════ SIDE QUEST — SNACK CART ═══════ -->
-  <section class="screen" id="snack-quest">
-    <h2 class="snack-title fade-in">finishing touches</h2>
-    <p class="snack-sub fade-in" style="animation-delay:0.2s">grab a snack from the cart</p>
-
-    <canvas class="fade-in" style="animation-delay:0.4s" id="snackCanvas" width="340" height="170"></canvas>
-
-    <div class="snack-btns fade-in" style="animation-delay:0.6s" id="snackBtns">
-      <button class="snack-btn" onclick="pickSnack()">papeda telur</button>
-    </div>
-
-    <p class="snack-done" id="snackDone">yum! okay, one more thing...</p>
-    <button class="btn-primary" id="snackContinue" style="display:none" onclick="goTo('courage-quest')">Continue</button>
+    <button class="btn-primary" id="badContinue" style="display:none" onclick="goTo('courage-quest')">Continue</button>
   </section>
 
   <!-- ═══════ SIDE QUEST — LOADING FEELINGS ═══════ -->
@@ -1569,22 +1593,28 @@
   <section class="screen" id="celebration">
     <div class="celeb-gifs fade-in">
       <div class="celeb-sticker">
-        <img src="https://media.tenor.com/PZhfg9F3Dg8AAAAi/tkthao219-bubududu.gif"
-             alt="Dudu hugging Bubu" loading="lazy">
+        <img src="https://media1.tenor.com/m/Dn5McONoneYAAAAC/bubu-dudu-bubu-dudu-happy.gif"
+             alt="Dudu and Bubu celebrating" loading="lazy">
       </div>
     </div>
 
-    <h2 class="celeb-title fade-in">she said yes</h2>
+    <h2 class="celeb-title fade-in">yay! I knew you would say yes!</h2>
 
-    <p class="celeb-message fade-in" style="animation-delay:0.3s">
-      what if we never met?<br>
-      then coffee would just be coffee,<br>
-      dandelions just a weed,<br>
-      and lily of the valley just a flower —<br>
-      not reminders of you.<br><br>
-      but we did meet.<br>
-      and you became my home.
-    </p>
+    <div class="celeb-plan fade-in" style="animation-delay:0.3s">
+      <h3 class="plan-title">feb 14th plan</h3>
+      <div class="plan-detail">
+        <span class="plan-label">location</span>
+        <span class="plan-value">zoom / discord</span>
+      </div>
+      <div class="plan-detail">
+        <span class="plan-label">time</span>
+        <span class="plan-value">12 noon jkt time</span>
+      </div>
+      <div class="plan-detail">
+        <span class="plan-label">outfit</span>
+        <span class="plan-value">your most comfortable<br>black hoodie</span>
+      </div>
+    </div>
 
     <div class="celeb-foreshadow fade-in" style="animation-delay:0.6s">
       <div class="foreshadow-gif">
@@ -2283,8 +2313,6 @@ You mean more to me than I've let on. And this is me letting on.</p>
 
       // Initialize No button position when Ask screen opens
       if (screenId === 'ask') initNoButton();
-      // Draw snack scene when navigating to it
-      if (screenId === 'snack-quest') setTimeout(drawSnackScene, 50);
       if (screenId === 'badminton-quest') setTimeout(initBadminton, 50);
       // Loading feelings scene
       if (screenId === 'courage-quest') setTimeout(initLoadingFeelings, 50);
