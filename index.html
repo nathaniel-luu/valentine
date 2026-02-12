@@ -1508,7 +1508,7 @@
   <!-- ═══════ SIDE QUEST — BADMINTON ═══════ -->
   <section class="screen" id="badminton-quest">
     <h2 class="snack-title fade-in">one more game</h2>
-    <p class="snack-sub fade-in" style="animation-delay:0.2s">rally to 5 — tap to swing</p>
+    <p class="snack-sub fade-in" style="animation-delay:0.2s">rally to 3 — tap to swing</p>
     <div class="badminton-hud fade-in" style="animation-delay:0.3s">
       <span id="badRally">rally: 0</span>
       <span id="badBest">best: 0</span>
@@ -3275,7 +3275,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
         // Opponent (right side) — simple auto-player
         oppX: 260, oppY: 130, oppSwing: 0,
         // Shuttlecock
-        birdX: 250, birdY: 80, birdVx: -1.5, birdVy: -2.2,
+        birdX: 250, birdY: 80, birdVx: -1.5, birdVy: -1.7,
         birdGravity: 0.035, birdActive: false,
         birdGoingRight: false, // toward opponent
         // Net
@@ -3300,7 +3300,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
           badState.birdX = badState.oppX - 10;
           badState.birdY = 80;
           badState.birdVx = -1.5;
-          badState.birdVy = -2.2;
+          badState.birdVy = -1.7;
           badState.birdGoingRight = false;
           document.getElementById('badHint').style.display = 'none';
           return;
@@ -3311,10 +3311,11 @@ You mean more to me than I've let on. And this is me letting on.</p>
           const dy = badState.birdY - badState.playerY;
           badState.playerSwing = 8; // swing animation
           if (dx > -35 && dx < 70 && dy > -60 && dy < 40) {
-            // Successful hit!
+            // Successful hit! Dynamic arc — always peaks at y≈40
             badState.rally++;
-            badState.birdVx = 1.4 + Math.random() * 0.4;
-            badState.birdVy = -2.0 - Math.random() * 0.4;
+            var needUp = Math.max(badState.birdY - 40, 20);
+            badState.birdVx = 1.4 + Math.random() * 0.3;
+            badState.birdVy = -Math.sqrt(2 * badState.birdGravity * needUp);
             badState.birdGoingRight = true;
             document.getElementById('badRally').textContent = 'rally: ' + badState.rally;
             if (badState.rally > badState.best) {
@@ -3322,7 +3323,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
               document.getElementById('badBest').textContent = 'best: ' + badState.best;
             }
             // Check win
-            if (badState.rally >= 5) {
+            if (badState.rally >= 3) {
               badState.phase = 'won';
               const msgEl = document.getElementById('badMsg');
               msgEl.textContent = 'nice rally! you two make a great team';
@@ -3338,7 +3339,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
           badState.birdX = badState.oppX - 10;
           badState.birdY = 80;
           badState.birdVx = -1.5;
-          badState.birdVy = -2.2;
+          badState.birdVy = -1.7;
           badState.birdGoingRight = false;
           badState.birdActive = true;
           document.getElementById('badRally').textContent = 'rally: 0';
@@ -3469,7 +3470,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
         }
 
         // Rally count display (pixel hearts above net)
-        for (let h = 0; h < 5; h++) {
+        for (let h = 0; h < 3; h++) {
           const hx = netX - 24 + h * 12;
           const filled = h < s.rally;
           ctx.fillStyle = filled ? '#ff4d6d' : '#d4c4b0';
@@ -3491,12 +3492,19 @@ You mean more to me than I've let on. And this is me letting on.</p>
           s.birdY += s.birdVy;
           s.birdVy += s.birdGravity;
 
-          // Opponent auto-hit when bird reaches right side
+          // Opponent auto-hit — dynamic arc, always peaks at y≈40
           if (s.birdGoingRight && s.birdX > s.oppX - 30) {
             s.oppSwing = 8;
-            s.birdVx = -(1.4 + Math.random() * 0.3);
-            s.birdVy = -2.0 - Math.random() * 0.3;
+            var oppNeedUp = Math.max(s.birdY - 40, 20);
+            s.birdVx = -(1.4 + Math.random() * 0.2);
+            s.birdVy = -Math.sqrt(2 * s.birdGravity * oppNeedUp);
             s.birdGoingRight = false;
+          }
+
+          // Ceiling safety clamp
+          if (s.birdY < 10) {
+            s.birdY = 10;
+            if (s.birdVy < 0) s.birdVy = 0;
           }
 
           // Miss detection — bird hits ground
