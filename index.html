@@ -778,48 +778,136 @@
       margin-top: 0.5rem;
     }
 
-    /* ─── BOOK 3: CONFESSIONS ─── */
-    .confession-card {
-      max-width: 380px;
-      width: 100%;
-      padding: 40px 32px;
-      border: 1px solid var(--ink-faint);
-      background: var(--white);
-      min-height: 180px;
+    /* ─── BOOK 3: TRUTH OR TRUTH ─── */
+    .tot-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--ink-faint);
+      margin-top: -0.5rem;
+    }
+
+    .tot-progress {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 16px;
-      position: relative;
+      gap: 4px;
     }
 
-    .confession-tag {
+    .tot-round {
       font-family: 'Cinzel', serif;
       font-size: 0.65rem;
       font-weight: 500;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.15em;
+      color: var(--ink-faint);
+    }
+
+    .tot-level {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--accent);
-      padding: 4px 14px;
+      padding: 3px 12px;
       border: 1px solid var(--accent);
     }
 
-    .confession-text {
+    .tot-choices {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      max-width: 380px;
+      width: 100%;
+    }
+
+    .tot-card {
+      width: 100%;
+      padding: 28px 24px;
+      border: 1.5px solid var(--ink-faint);
+      background: var(--white);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .tot-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(42, 35, 32, 0.08);
+    }
+    .tot-card.picked {
+      border-color: var(--accent);
+      background: rgba(196, 149, 106, 0.06);
+    }
+    .tot-card.dimmed {
+      opacity: 0.3;
+      pointer-events: none;
+      transform: scale(0.97);
+    }
+
+    .tot-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .tot-question {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.15rem, 4vw, 1.4rem);
+      font-size: clamp(1.05rem, 3.5vw, 1.25rem);
       font-style: italic;
       color: var(--ink);
-      line-height: 1.7;
-      text-align: center;
+      line-height: 1.6;
       transition: opacity 0.3s ease;
     }
 
-    .confession-count {
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
+    .tot-or {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      font-style: italic;
       color: var(--ink-faint);
-      letter-spacing: 0.1em;
+    }
+
+    .tot-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tot-skip {
+      background: none;
+      border: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      color: var(--ink-faint);
+      font-style: italic;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.3s;
+      letter-spacing: 0.04em;
+    }
+    .tot-skip:hover { opacity: 0.8; }
+
+    .tot-answer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .tot-answer-prompt {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--ink-light);
+      font-style: italic;
     }
 
     .btn-shuffle {
@@ -1631,10 +1719,10 @@
         <span class="book-title">Our Songs</span>
         <span class="book-desc">the playlist</span>
       </div>
-      <div class="book book-3" onclick="goTo('book-confessions')">
+      <div class="book book-3" onclick="goTo('book-truths')">
         <span class="book-number">III</span>
-        <span class="book-title">Confessions</span>
-        <span class="book-desc">things I haven't told you</span>
+        <span class="book-title">Truth or Truth</span>
+        <span class="book-desc">no dares, just honesty</span>
       </div>
       <div class="book book-4" onclick="goTo('book-memories')">
         <span class="book-number">IV</span>
@@ -1836,17 +1924,42 @@ You mean more to me than I've let on. And this is me letting on.</p>
     <button class="btn-back fade-in" style="animation-delay:0.6s" onclick="goTo('adventure')">back to shelf</button>
   </section>
 
-  <!-- ═══════ BOOK 3 — CONFESSIONS ═══════ -->
-  <section class="screen book-screen" id="book-confessions">
-    <h2 class="book-screen-title fade-in">Confessions</h2>
+  <!-- ═══════ BOOK 3 — TRUTH OR TRUTH ═══════ -->
+  <section class="screen book-screen" id="book-truths">
+    <h2 class="book-screen-title fade-in">Truth or Truth</h2>
+    <p class="tot-sub fade-in" style="animation-delay:0.2s">pick one — you have to answer it</p>
 
-    <div class="confession-card fade-in" style="animation-delay:0.3s">
-      <span class="confession-tag" id="confessionTag">flirty</span>
-      <p class="confession-text" id="confessionText">tap shuffle to begin</p>
-      <span class="confession-count" id="confessionCount"></span>
+    <!-- Round counter -->
+    <div class="tot-progress fade-in" style="animation-delay:0.3s">
+      <span class="tot-round" id="totRound">1 / 10</span>
+      <span class="tot-level" id="totLevel">getting to know you</span>
     </div>
 
-    <button class="btn-shuffle fade-in" style="animation-delay:0.5s" onclick="shuffleConfession()">Shuffle</button>
+    <!-- Two truth cards -->
+    <div class="tot-choices fade-in" style="animation-delay:0.4s" id="totChoices">
+      <div class="tot-card" id="totCard1" onclick="pickTruth(0)">
+        <span class="tot-label">truth</span>
+        <p class="tot-question" id="totQ1">tap start to begin</p>
+      </div>
+      <div class="tot-or">or</div>
+      <div class="tot-card" id="totCard2" onclick="pickTruth(1)">
+        <span class="tot-label">truth</span>
+        <p class="tot-question" id="totQ2">tap start to begin</p>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="tot-actions fade-in" style="animation-delay:0.5s">
+      <button class="btn-shuffle" id="totStart" onclick="startTruthGame()">Start</button>
+      <button class="tot-skip" id="totSkip" style="display:none" onclick="skipTruth()">skip this round</button>
+    </div>
+
+    <!-- After picking — the answer prompt -->
+    <div class="tot-answer" id="totAnswer" style="display:none">
+      <p class="tot-answer-prompt">now answer it honestly</p>
+      <button class="btn-shuffle" onclick="nextTruth()">Next</button>
+    </div>
+
     <button class="btn-back fade-in" style="animation-delay:0.6s" onclick="goTo('adventure')">back to shelf</button>
   </section>
 
@@ -2534,38 +2647,153 @@ You mean more to me than I've let on. And this is me letting on.</p>
     });
 
     // ═══════════════════════════════════════
-    //  CONFESSION RANDOMIZER
+    //  TRUTH OR TRUTH GAME
     // ═══════════════════════════════════════
-    const confessions = [
-      { text: 'I always look for you first in every room.', tag: 'flirty' },
-      { text: 'Your smile makes me forget what I was going to say.', tag: 'flirty' },
-      { text: 'I replay our conversations in my head.', tag: 'flirty' },
-      { text: "I've rewritten texts to you more times than I'll ever admit.", tag: 'flirty' },
-      { text: 'Every time you laugh I think about how lucky I am to hear it.', tag: 'flirty' },
-      { text: 'You make ordinary days feel like something worth remembering.', tag: 'sweet' },
-      { text: 'I notice the little things about you that you probably think no one sees.', tag: 'sweet' },
-      { text: 'Talking to you is my favorite part of any day.', tag: 'sweet' },
-      { text: 'You make me want to be a better person.', tag: 'sweet' },
-      { text: "I think about your laugh more than you'd believe.", tag: 'sweet' },
-      { text: 'I knew you were different the moment I met you.', tag: 'romantic' },
-      { text: 'Every love song makes more sense because of you.', tag: 'romantic' },
-      { text: "I've never been this honest with anyone.", tag: 'romantic' },
-      { text: "You're the first person I want to tell everything to.", tag: 'romantic' },
-      { text: "I'm falling for you and I don't want to stop.", tag: 'romantic' },
+    const totQuestions = {
+      warm: [
+        "What would your perfect day look like from morning to night?",
+        "What is something you've dreamed of doing but haven't yet?",
+        "What is the weirdest food combination you secretly love?",
+        "What does your ideal lazy Sunday look like?",
+        "What is something you've always wanted to learn?",
+        "What is your most treasured memory?",
+        "If you could wake up tomorrow with one new ability, what would it be?",
+        "What is the strangest nickname you've ever had?",
+        "What is your funniest fail in the kitchen?",
+        "What is the most embarrassing fashion phase you went through?",
+      ],
+      flirty: [
+        "What was the very first thing you noticed about me?",
+        "What is something I do that instantly makes you smile?",
+        "If you had to describe me to a friend in three words, what would they be?",
+        "When did you first realize you were attracted to me?",
+        "What outfit have you seen me in that you liked the most?",
+        "What song reminds you of me?",
+        "Would you rather spend a whole day with me or a whole night?",
+        "What is one thing about me that you find yourself thinking about?",
+        "If our relationship were a movie genre, what genre would it be?",
+        "Which celebrity would play me in the movie of our love story?",
+      ],
+      deep: [
+        "For what in your life do you feel most grateful?",
+        "What roles do love and affection play in your life?",
+        "What makes you feel most loved by another person?",
+        "What scares you most about the future?",
+        "How has your definition of love changed as you've gotten older?",
+        "What is the greatest accomplishment of your life so far?",
+        "Describe the moment you knew you were starting to fall for me.",
+        "What is one dream you'd love us to chase together?",
+        "What do romance movies get wrong most of the time?",
+        "What is your favorite memory of us so far?",
+      ],
+    };
+    const totLevels = [
+      { key: 'warm', label: 'getting to know you', rounds: 3 },
+      { key: 'flirty', label: 'flirty', rounds: 4 },
+      { key: 'deep', label: 'going deeper', rounds: 3 },
     ];
+    const TOT_TOTAL = 10;
+    let totRound = 0;
+    let totUsed = { warm: [], flirty: [], deep: [] };
+    let totActive = false;
 
-    let confessionIdx = -1;
-    let shuffledOrder = [];
-    const confessionTag = document.getElementById('confessionTag');
-    const confessionText = document.getElementById('confessionText');
-    const confessionCount = document.getElementById('confessionCount');
-
-    function buildShuffledOrder() {
-      shuffledOrder = confessions.map((_, i) => i);
-      for (let i = shuffledOrder.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffledOrder[i], shuffledOrder[j]] = [shuffledOrder[j], shuffledOrder[i]];
+    function getTotLevel() {
+      let count = 0;
+      for (const lv of totLevels) {
+        count += lv.rounds;
+        if (totRound < count) return lv;
       }
+      return totLevels[totLevels.length - 1];
+    }
+
+    function pickRandomQ(key) {
+      const pool = totQuestions[key];
+      const available = pool.filter((_, i) => !totUsed[key].includes(i));
+      if (available.length === 0) { totUsed[key] = []; return pickRandomQ(key); }
+      const idx = pool.indexOf(available[Math.floor(Math.random() * available.length)]);
+      totUsed[key].push(idx);
+      return pool[idx];
+    }
+
+    function showTruthPair() {
+      const lv = getTotLevel();
+      document.getElementById('totRound').textContent = (totRound + 1) + ' / ' + TOT_TOTAL;
+      document.getElementById('totLevel').textContent = lv.label;
+
+      const q1 = pickRandomQ(lv.key);
+      let q2 = pickRandomQ(lv.key);
+      // Ensure different questions
+      let tries = 0;
+      while (q2 === q1 && tries < 10) { q2 = pickRandomQ(lv.key); tries++; }
+
+      const card1 = document.getElementById('totCard1');
+      const card2 = document.getElementById('totCard2');
+      card1.classList.remove('picked', 'dimmed');
+      card2.classList.remove('picked', 'dimmed');
+
+      // Fade out then in
+      document.getElementById('totQ1').style.opacity = '0';
+      document.getElementById('totQ2').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('totQ1').textContent = q1;
+        document.getElementById('totQ2').textContent = q2;
+        document.getElementById('totQ1').style.opacity = '1';
+        document.getElementById('totQ2').style.opacity = '1';
+      }, 200);
+
+      document.getElementById('totAnswer').style.display = 'none';
+      document.getElementById('totSkip').style.display = '';
+    }
+
+    function startTruthGame() {
+      totRound = 0;
+      totUsed = { warm: [], flirty: [], deep: [] };
+      totActive = true;
+      document.getElementById('totStart').style.display = 'none';
+      document.getElementById('totSkip').style.display = '';
+      showTruthPair();
+    }
+
+    function pickTruth(idx) {
+      if (!totActive) return;
+      const card1 = document.getElementById('totCard1');
+      const card2 = document.getElementById('totCard2');
+
+      if (idx === 0) {
+        card1.classList.add('picked');
+        card2.classList.add('dimmed');
+      } else {
+        card2.classList.add('picked');
+        card1.classList.add('dimmed');
+      }
+
+      document.getElementById('totSkip').style.display = 'none';
+      document.getElementById('totAnswer').style.display = '';
+    }
+
+    function nextTruth() {
+      totRound++;
+      if (totRound >= TOT_TOTAL) {
+        // Game complete
+        document.getElementById('totQ1').textContent = 'that was beautiful.';
+        document.getElementById('totQ2').textContent = 'thanks for being honest with me.';
+        document.getElementById('totCard1').classList.remove('picked', 'dimmed');
+        document.getElementById('totCard2').classList.remove('picked', 'dimmed');
+        document.getElementById('totCard1').style.pointerEvents = 'none';
+        document.getElementById('totCard2').style.pointerEvents = 'none';
+        document.getElementById('totAnswer').style.display = 'none';
+        document.getElementById('totSkip').style.display = 'none';
+        document.getElementById('totRound').textContent = 'done';
+        document.getElementById('totLevel').textContent = 'you two are adorable';
+        totActive = false;
+        return;
+      }
+      showTruthPair();
+    }
+
+    function skipTruth() {
+      if (!totActive) return;
+      showTruthPair();
     }
 
     // ═══════════════════════════════════════
@@ -3841,25 +4069,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
       }, 700);
     }
 
-    function shuffleConfession() {
-      confessionIdx++;
-      if (confessionIdx >= confessions.length) {
-        confessionIdx = 0;
-        buildShuffledOrder();
-      }
-      if (shuffledOrder.length === 0) buildShuffledOrder();
-
-      const c = confessions[shuffledOrder[confessionIdx]];
-
-      // Fade out, swap, fade in
-      confessionText.style.opacity = '0';
-      setTimeout(() => {
-        confessionText.textContent = c.text;
-        confessionTag.textContent = c.tag;
-        confessionCount.textContent = (confessionIdx + 1) + ' / ' + confessions.length;
-        confessionText.style.opacity = '1';
-      }, 200);
-    }
+    // (confessions replaced by Truth or Truth game above)
   </script>
 </body>
 </html>
