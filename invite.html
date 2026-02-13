@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>For Aamira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f0eb;
+      --bg-warm: #f0ebe4;
+      --ink: #2a2320;
+      --ink-light: #6b5e54;
+      --ink-faint: #a89e94;
+      --accent: #c4956a;
+      --accent-warm: #d4a574;
+      --white: #faf8f5;
+    }
+
+    body {
+      font-family: 'Cormorant Garamond', serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* ─── PARTICLES ─── */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      bottom: -20px;
+      opacity: 0;
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { opacity: 0; transform: translateY(0) translateX(0); }
+      15%  { opacity: 0.35; }
+      85%  { opacity: 0.15; }
+      100% { opacity: 0; transform: translateY(-105dvh) translateX(var(--drift, 20px)); }
+    }
+
+    /* ─── ENVELOPE SCENE ─── */
+    .scene {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    /* ─── ENVELOPE ─── */
+    .envelope-wrap {
+      perspective: 800px;
+      cursor: pointer;
+      position: relative;
+      width: 280px;
+      height: 190px;
+      transition: transform 0.6s ease;
+      animation: envelopeFloat 3s ease-in-out infinite;
+    }
+    @keyframes envelopeFloat {
+      0%, 100% { transform: translateY(0) rotate(-0.5deg); }
+      50% { transform: translateY(-6px) rotate(0.5deg); }
+    }
+    .envelope-wrap.opened {
+      animation: none;
+    }
+
+    .envelope {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Envelope body */
+    .env-body {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 140px;
+      background: linear-gradient(135deg, #e8ddd0 0%, #ddd2c4 100%);
+      border: 1.5px solid #c8bfb4;
+      border-radius: 0 0 6px 6px;
+      z-index: 2;
+      box-shadow: 0 4px 20px rgba(42, 35, 32, 0.1);
+    }
+
+    /* Inner shadow of envelope */
+    .env-body::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(42,35,32,0.04), transparent);
+    }
+
+    /* Envelope inner V (visible behind card) */
+    .env-inner {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 140px;
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 0 0 6px 6px;
+    }
+    .env-inner::before {
+      content: '';
+      position: absolute;
+      top: -70px;
+      left: 50%;
+      width: 250px;
+      height: 250px;
+      background: #f0e8de;
+      border: 1px solid #d4ccc0;
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    /* Flap (top triangle) */
+    .env-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      z-index: 4;
+      transform-origin: top center;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .env-flap::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 140px solid transparent;
+      border-right: 140px solid transparent;
+      border-top: 100px solid #ddd2c4;
+      filter: drop-shadow(0 2px 4px rgba(42,35,32,0.06));
+    }
+    .env-flap::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 140px solid transparent;
+      border-right: 140px solid transparent;
+      border-top: 100px solid #e8ddd0;
+      transform: rotateX(180deg);
+      backface-visibility: hidden;
+    }
+
+    .envelope-wrap.opened .env-flap {
+      transform: rotateX(180deg);
+    }
+
+    /* Wax seal */
+    .seal {
+      position: absolute;
+      top: 78px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle at 35% 35%, #d4785a, #b85a40 50%, #9a4530);
+      border-radius: 50%;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(42,35,32,0.2), inset 0 1px 2px rgba(255,255,255,0.15);
+      transition: opacity 0.3s ease 0.2s;
+    }
+    .seal span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      margin-top: -1px;
+    }
+    .envelope-wrap.opened .seal {
+      opacity: 0;
+    }
+
+    /* ─── CARD (inside envelope) ─── */
+    .card-container {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 250px;
+      z-index: 3;
+      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s,
+                  opacity 0.4s ease 0.3s;
+      transform-origin: bottom center;
+    }
+
+    .envelope-wrap.opened .card-container {
+      transform: translateX(-50%) translateY(-320px);
+    }
+
+    /* The actual card */
+    .card {
+      background: var(--white);
+      border: 1.5px solid var(--ink-faint);
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.5s;
+    }
+    .envelope-wrap.opened .card {
+      opacity: 1;
+    }
+
+    .card::before {
+      content: '';
+      display: block;
+      height: 3px;
+      background: linear-gradient(to right, var(--accent), var(--accent-warm), var(--accent));
+    }
+
+    .card-inner {
+      padding: 28px 24px 24px;
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .card-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      display: inline-block;
+      padding: 3px 12px;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0.06em;
+      line-height: 1.3;
+    }
+
+    .card-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--ink-faint);
+      margin-top: 4px;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--ink-faint), transparent);
+      margin: 4px 0 18px;
+    }
+
+    .details {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+
+    .detail-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+      min-width: 62px;
+    }
+
+    .detail-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.98rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .plan-items {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .plan-item {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      line-height: 1.5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .plan-bullet {
+      color: var(--accent);
+      font-size: 0.65rem;
+    }
+
+    .card-footer {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(168, 158, 148, 0.2);
+    }
+
+    .card-sign {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--ink-faint);
+    }
+
+    .card-bottom {
+      height: 3px;
+      background: linear-gradient(to right, var(--accent), var(--accent-warm), var(--accent));
+    }
+
+    /* Corner ornaments */
+    .ornament {
+      position: absolute;
+      color: var(--ink-faint);
+      opacity: 0.18;
+      font-size: 1rem;
+      line-height: 1;
+      z-index: 1;
+    }
+    .ornament-tl { top: 10px; left: 10px; }
+    .ornament-tr { top: 10px; right: 10px; transform: scaleX(-1); }
+    .ornament-bl { bottom: 10px; left: 10px; transform: scaleY(-1); }
+    .ornament-br { bottom: 10px; right: 10px; transform: scale(-1); }
+
+    /* ─── HINT TEXT ─── */
+    .hint {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--ink-faint);
+      animation: pulse 2.5s ease-in-out infinite;
+      transition: opacity 0.4s ease;
+    }
+    .hint.hidden { opacity: 0; pointer-events: none; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* ─── FULL CARD VIEW (after pull-out) ─── */
+    .full-card {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      background: var(--bg);
+    }
+    .full-card.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .full-card .card-big {
+      background: var(--white);
+      border: 1.5px solid var(--ink-faint);
+      max-width: 380px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      transform: translateY(20px);
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s;
+    }
+    .full-card.visible .card-big {
+      transform: translateY(0);
+    }
+
+    .card-big::before {
+      content: '';
+      display: block;
+      height: 4px;
+      background: linear-gradient(to right, var(--accent), var(--accent-warm), var(--accent));
+    }
+
+    .card-big .card-inner {
+      padding: 36px 32px 32px;
+    }
+
+    .card-big .card-label {
+      font-size: 0.65rem;
+      padding: 4px 16px;
+      margin-bottom: 16px;
+    }
+
+    .card-big .card-title {
+      font-size: 1.6rem;
+    }
+
+    .card-big .card-subtitle {
+      font-size: 1rem;
+      margin-top: 6px;
+    }
+
+    .card-big .divider {
+      margin: 4px 0 24px;
+    }
+
+    .card-big .details {
+      gap: 18px;
+    }
+
+    .card-big .detail-label {
+      font-size: 0.68rem;
+      min-width: 70px;
+    }
+
+    .card-big .detail-value {
+      font-size: 1.08rem;
+    }
+
+    .card-big .plan-items {
+      gap: 4px;
+    }
+
+    .card-big .plan-item {
+      font-size: 1.05rem;
+    }
+
+    .card-big .plan-bullet {
+      font-size: 0.7rem;
+    }
+
+    .card-big .card-footer {
+      margin-top: 28px;
+      padding-top: 20px;
+    }
+
+    .card-big .card-sign {
+      font-size: 1rem;
+    }
+
+    .card-big .card-bottom {
+      height: 4px;
+      background: linear-gradient(to right, var(--accent), var(--accent-warm), var(--accent));
+    }
+
+    .card-big .ornament { font-size: 1.2rem; opacity: 0.2; }
+    .card-big .ornament-tl { top: 14px; left: 14px; }
+    .card-big .ornament-tr { top: 14px; right: 14px; }
+    .card-big .ornament-bl { bottom: 14px; left: 14px; }
+    .card-big .ornament-br { bottom: 14px; right: 14px; }
+
+    /* ─── REDUCED MOTION ─── */
+    @media (prefers-reduced-motion: reduce) {
+      .particle, .envelope-wrap { animation: none !important; }
+      .hint { animation: none !important; opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- ENVELOPE SCENE -->
+  <div class="scene" id="scene">
+    <div class="envelope-wrap" id="envelope" onclick="openEnvelope()">
+      <!-- Flap -->
+      <div class="env-flap"></div>
+      <!-- Wax seal -->
+      <div class="seal"><span>N</span></div>
+      <!-- Card inside -->
+      <div class="card-container">
+        <div class="card">
+          <div class="card-inner" style="padding: 16px 14px 14px;">
+            <div class="card-header" style="margin-bottom:10px;">
+              <span class="card-label" style="font-size:0.45rem;padding:2px 8px;margin-bottom:8px;">You're Invited</span>
+              <h1 class="card-title" style="font-size:0.9rem;">Valentine's Date</h1>
+            </div>
+          </div>
+          <div class="card-bottom"></div>
+        </div>
+      </div>
+      <!-- Envelope inner -->
+      <div class="env-inner"></div>
+      <!-- Envelope body -->
+      <div class="env-body"></div>
+    </div>
+
+    <p class="hint" id="hint">tap to open</p>
+  </div>
+
+  <!-- FULL CARD VIEW -->
+  <div class="full-card" id="fullCard">
+    <div class="card-big">
+      <div class="ornament ornament-tl">&#10053;</div>
+      <div class="ornament ornament-tr">&#10053;</div>
+      <div class="ornament ornament-bl">&#10053;</div>
+      <div class="ornament ornament-br">&#10053;</div>
+
+      <div class="card-inner">
+        <div class="card-header">
+          <span class="card-label">You're Invited</span>
+          <h1 class="card-title">Valentine's Date</h1>
+          <p class="card-subtitle">the official itinerary</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="details">
+          <div class="detail-row">
+            <span class="detail-label">Date</span>
+            <span class="detail-value">Feb 14 &mdash; ~12noon+ (JKT time)</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Plan</span>
+            <div class="plan-items">
+              <span class="plan-item"><span class="plan-bullet">&#9830;</span> Gift</span>
+              <span class="plan-item"><span class="plan-bullet">&#9830;</span> Watch Inception</span>
+              <span class="plan-item"><span class="plan-bullet">&#9830;</span> Games &#129299;</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">Zoom / Discord</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Outfit</span>
+            <span class="detail-value">Ur most comfy black hoodie, etc.</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <p class="card-sign">&mdash; N</p>
+        </div>
+      </div>
+
+      <div class="card-bottom"></div>
+    </div>
+  </div>
+
+  <script>
+    // Particles
+    (function() {
+      const bg = document.getElementById('particles');
+      const chars = ['\u2727', '\u00B7', '\u2022', '\u2726'];
+      const count = window.innerWidth < 600 ? 8 : 14;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('span');
+        p.className = 'particle';
+        p.textContent = chars[Math.floor(Math.random() * chars.length)];
+        p.style.left = Math.random() * 100 + '%';
+        p.style.fontSize = (8 + Math.random() * 10) + 'px';
+        p.style.color = 'rgba(42,35,32,' + (0.08 + Math.random() * 0.1) + ')';
+        p.style.animationDuration = (14 + Math.random() * 16) + 's';
+        p.style.animationDelay = (Math.random() * 18) + 's';
+        p.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+        bg.appendChild(p);
+      }
+    })();
+
+    let opened = false;
+
+    function openEnvelope() {
+      if (opened) return;
+      opened = true;
+
+      const env = document.getElementById('envelope');
+      const hint = document.getElementById('hint');
+
+      // Open the flap + slide card out
+      env.classList.add('opened');
+      hint.classList.add('hidden');
+
+      // After card slides out, transition to full card view
+      setTimeout(() => {
+        document.getElementById('scene').style.opacity = '0';
+        document.getElementById('scene').style.transition = 'opacity 0.4s ease';
+        document.getElementById('fullCard').classList.add('visible');
+      }, 1200);
+    }
+  </script>
+</body>
+</html>
