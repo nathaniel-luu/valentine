@@ -718,16 +718,25 @@
       pointer-events: none;
     }
 
-    /* Scrollable song list for many tracks */
+    /* Scrollable song list — contained scroll */
     #book-songs {
       justify-content: flex-start;
-      padding-top: 3rem;
-      padding-bottom: 2rem;
-      overflow-y: auto;
+      padding-top: 2.5rem;
+      padding-bottom: 1.5rem;
+      overflow-y: hidden;
     }
     #book-songs .songs-list {
-      max-height: none;
+      max-height: 40dvh;
+      overflow-y: auto;
+      border: 1px solid rgba(168, 158, 148, 0.2);
+      scrollbar-width: thin;
+      scrollbar-color: var(--ink-faint) transparent;
     }
+    #book-songs .songs-list::-webkit-scrollbar { width: 4px; }
+    #book-songs .songs-list::-webkit-scrollbar-thumb {
+      background: var(--ink-faint); border-radius: 2px;
+    }
+    #book-songs .songs-list::-webkit-scrollbar-track { background: transparent; }
 
     .song-num {
       font-family: 'Cinzel', serif;
@@ -1643,25 +1652,25 @@
         <span class="book-title">Our Songs</span>
         <span class="book-desc">the playlist</span>
       </div>
-      <div class="book book-3" onclick="goTo('book-truths')">
+      <div class="book book-3" onclick="goTo('book-memories')">
         <span class="book-number">III</span>
-        <span class="book-title">Truth or Truth</span>
-        <span class="book-desc">no dares, just honesty</span>
-      </div>
-      <div class="book book-4" onclick="goTo('book-memories')">
-        <span class="book-number">IV</span>
         <span class="book-title">Memories</span>
         <span class="book-desc">our moments</span>
       </div>
-      <div class="book book-5" onclick="goTo('book-care')">
-        <span class="book-number">V</span>
+      <div class="book book-4" onclick="goTo('book-care')">
+        <span class="book-number">IV</span>
         <span class="book-title">Care Guide</span>
         <span class="book-desc">because I care about you</span>
       </div>
-      <div class="book book-6" onclick="openFlowers()">
-        <span class="book-number">VI</span>
+      <div class="book book-5" onclick="openFlowers()">
+        <span class="book-number">V</span>
         <span class="book-title">Flowers</span>
         <span class="book-desc">for you</span>
+      </div>
+      <div class="book book-6" onclick="goTo('book-truths')">
+        <span class="book-number">VI</span>
+        <span class="book-title">Truth or Truth</span>
+        <span class="book-desc">no dares, just honesty</span>
       </div>
     </div>
     <div class="shelf-line fade-in" style="animation-delay:0.4s"></div>
@@ -1897,14 +1906,24 @@ You mean more to me than I've let on. And this is me letting on.</p>
       <!-- MEMORY 1 -->
       <div class="memory-card">
         <div class="memory-photo">
-          <img src="photos/lego-call.jpg" alt="Our 2nd video call — legos together" loading="lazy">
+          <img src="photos/first-talk.jpg" alt="The first time we talked" loading="lazy" style="object-position:center 40%;">
         </div>
         <div class="memory-caption">
-          <p class="memory-text">our 2nd ever video call. we made legos together, and then you stayed with me until I fell asleep.</p>
+          <p class="memory-text">the first time we ever talked. flowers everywhere, the city behind us — I knew right then I wanted to know you more. I even took a video of that day.</p>
         </div>
       </div>
 
-      <!-- MEMORY 2 (placeholder — add more like the one above) -->
+      <!-- MEMORY 2 -->
+      <div class="memory-card">
+        <div class="memory-photo">
+          <img src="photos/lego-call.jpg" alt="Our 2nd video call — legos together" loading="lazy" style="object-position:center center;">
+        </div>
+        <div class="memory-caption">
+          <p class="memory-text">our second video call. we built legos together for hours, and you stayed on until I fell asleep.</p>
+        </div>
+      </div>
+
+      <!-- MEMORY 3 (placeholder) -->
       <div class="memory-card memory-placeholder">
         <div class="memory-photo placeholder-photo">
           <span class="placeholder-icon">+</span>
