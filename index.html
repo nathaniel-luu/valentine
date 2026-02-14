@@ -686,6 +686,20 @@
       text-align: right;
     }
 
+    /* ─── LETTER LOCK ─── */
+    .letter-lock {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .letter-lock-hint {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--ink-faint);
+    }
+
     /* ─── BOOK 2: SONGS ─── */
     .songs-list {
       max-width: 380px;
@@ -1682,17 +1696,24 @@
   <section class="screen book-screen" id="book-letter">
     <h2 class="book-screen-title fade-in">The Letter</h2>
 
-    <div class="letter-content fade-in" style="animation-delay:0.3s">
+    <!-- Lock overlay -->
+    <div class="letter-lock fade-in" style="animation-delay:0.3s" id="letterLock">
+      <p class="letter-lock-hint">this letter is sealed</p>
+      <div class="code-entry">
+        <input type="text" id="letterCode" class="code-input" placeholder="enter the code" maxlength="10" autocomplete="off" spellcheck="false">
+        <p class="code-error" id="letterCodeError">hmm, that's not it</p>
+      </div>
+      <button class="btn-start" onclick="tryLetterCode()">Unlock</button>
+    </div>
+
+    <!-- Hidden letter content -->
+    <div class="letter-content fade-in" style="animation-delay:0.3s; display:none;" id="letterContent">
       <p class="letter-salutation">Dear Aamira,</p>
-      <p class="letter-body">I've been meaning to tell you something for a while now. Not through a text, not through a voice note — but like this. In a way that you can read again whenever you want.
+      <p class="letter-body">Maybe the universe really does conspire, because somehow it gave me you.
 
-You've changed something in me. The way I think, the way I move through my days. You've made everything feel a little more vivid, a little more worth paying attention to.
+These flowers are for my safe space, my home.
 
-I don't know when it started exactly. Maybe it was the way you laugh, or the way you talk about the things you love. But somewhere along the way, you became the person I think about first and last.
-
-I'm not great with words in person. I stumble, I overthink, I second-guess. But here, on paper, I can say it plainly:
-
-You mean more to me than I've let on. And this is me letting on.</p>
+Thank you for being you, Aamira.</p>
       <p class="letter-sign">Yours,<br>Nathaniel</p>
     </div>
 
@@ -1911,7 +1932,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
           <img src="photos/first-talk.jpg" alt="The first time we talked" loading="lazy" style="object-position:center 40%;">
         </div>
         <div class="memory-caption">
-          <p class="memory-text">the first time we ever talked. flowers everywhere, the city behind us — I knew right then I wanted to know you more. I even took a video of that day.</p>
+          <p class="memory-text">the first time we ever talked with each other! I knew I wanted to get to know you even better, and I took a video of that day! view of flowers and u.</p>
         </div>
       </div>
 
@@ -1925,13 +1946,33 @@ You mean more to me than I've let on. And this is me letting on.</p>
         </div>
       </div>
 
-      <!-- MEMORY 3 (placeholder) -->
-      <div class="memory-card memory-placeholder">
-        <div class="memory-photo placeholder-photo">
-          <span class="placeholder-icon">+</span>
+      <!-- MEMORY 3 — BADMINTON -->
+      <div class="memory-card">
+        <div class="memory-photo">
+          <img src="photos/badminton.jpg" alt="First time playing badminton" loading="lazy" style="object-position:center center;">
         </div>
         <div class="memory-caption">
-          <p class="memory-text placeholder-text">more memories coming...</p>
+          <p class="memory-text">our first time playing badminton together! was so much fun, I learned your signature move then hehe. and good night talks and tiktoks afterwards xD</p>
+        </div>
+      </div>
+
+      <!-- MEMORY 4 — LUNCH -->
+      <div class="memory-card">
+        <div class="memory-photo">
+          <img src="photos/lunch.jpg" alt="First work lunch together" loading="lazy" style="object-position:center center;">
+        </div>
+        <div class="memory-caption">
+          <p class="memory-text">first work lunch together! many rants and the start to something special!</p>
+        </div>
+      </div>
+
+      <!-- MEMORY 5 — COOKING -->
+      <div class="memory-card">
+        <div class="memory-photo">
+          <img src="photos/cooking.jpg" alt="Cooking together" loading="lazy" style="object-position:center center;">
+        </div>
+        <div class="memory-caption">
+          <p class="memory-text">the best night ever! was so fun cooking with you, and meeting your parents! great conversations learning more about you and your family. and thank you for the rawon and drinks HAHA</p>
         </div>
       </div>
 
@@ -2480,6 +2521,36 @@ You mean more to me than I've let on. And this is me letting on.</p>
     // Allow Enter key to submit code
     codeInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') tryCode();
+    });
+
+    // ═══════════════════════════════════════
+    //  LETTER CODE LOCK
+    // ═══════════════════════════════════════
+    const LETTER_CODE = 'malu';
+    const letterCodeInput = document.getElementById('letterCode');
+    const letterCodeError = document.getElementById('letterCodeError');
+
+    function tryLetterCode() {
+      const entered = letterCodeInput.value.trim().toLowerCase();
+      if (entered === LETTER_CODE) {
+        document.getElementById('letterLock').style.display = 'none';
+        document.getElementById('letterContent').style.display = '';
+      } else {
+        letterCodeError.classList.add('visible');
+        letterCodeInput.style.borderBottomColor = '#c4956a';
+        letterCodeInput.style.animation = 'none';
+        void letterCodeInput.offsetHeight;
+        letterCodeInput.style.animation = 'shakeIt 0.35s ease-in-out';
+        setTimeout(() => {
+          letterCodeError.classList.remove('visible');
+          letterCodeInput.style.borderBottomColor = '';
+          letterCodeInput.style.animation = '';
+        }, 2000);
+      }
+    }
+
+    letterCodeInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') tryLetterCode();
     });
 
     // ═══════════════════════════════════════
