@@ -967,64 +967,113 @@
       margin-bottom: 0.5rem;
     }
 
-    .memories-scroll {
-      max-width: 420px;
+    .memories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      max-width: 360px;
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 2.5rem;
     }
 
-    .memory-card {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .memory-photo {
-      width: 100%;
-      aspect-ratio: 4 / 3;
+    .memory-thumb {
+      aspect-ratio: 1;
       overflow: hidden;
-      border: 1px solid rgba(168, 158, 148, 0.3);
-      background: var(--bg-warm);
+      border: 1px solid rgba(168, 158, 148, 0.25);
+      cursor: pointer;
+      transition: opacity 0.3s, transform 0.3s;
     }
 
-    .memory-photo img {
+    .memory-thumb:hover {
+      opacity: 0.85;
+      transform: scale(1.03);
+    }
+
+    .memory-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .memory-caption {
-      padding: 0 4px;
-    }
-
-    .memory-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
-      font-style: italic;
-      color: var(--ink-light);
-      line-height: 1.7;
-    }
-
-    /* Placeholder card for future memories */
-    .placeholder-photo {
+    /* ─── MEMORY LIGHTBOX ─── */
+    .memory-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(42, 35, 32, 0.92);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      border: 1.5px dashed var(--ink-faint);
-      background: transparent;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s;
+    }
+    .memory-lightbox.open {
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    .placeholder-icon {
-      font-size: 2rem;
-      color: var(--ink-faint);
-      opacity: 0.5;
-    }
-
-    .placeholder-text {
-      color: var(--ink-faint);
+    .lb-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      color: var(--white);
+      cursor: pointer;
       opacity: 0.6;
+      transition: opacity 0.3s;
+      z-index: 1001;
+    }
+    .lb-close:hover { opacity: 1; }
+
+    .lb-img-wrap {
+      max-width: 88vw;
+      max-height: 55vh;
+      overflow: hidden;
+      border: 1px solid rgba(168, 158, 148, 0.3);
+    }
+    .lb-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .lb-caption {
+      max-width: 400px;
+      margin-top: 16px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: rgba(250, 248, 245, 0.75);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .lb-nav {
+      display: flex;
+      gap: 32px;
+      margin-top: 18px;
+    }
+    .lb-nav button {
+      background: none;
+      border: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: rgba(250, 248, 245, 0.5);
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .lb-nav button:hover { color: var(--white); }
+
+    .lb-counter {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      color: rgba(250, 248, 245, 0.35);
+      margin-top: 8px;
     }
 
     /* ─── BOOK 5: CARE GUIDE ─── */
@@ -1922,104 +1971,34 @@ Thank you for being you, Aamira.</p>
   <!-- ═══════ BOOK 4 — MEMORIES ═══════ -->
   <section class="screen book-screen" id="book-memories">
     <h2 class="book-screen-title fade-in">Memories</h2>
-    <p class="memories-sub fade-in" style="animation-delay:0.2s">the moments I hold onto</p>
+    <p class="memories-sub fade-in" style="animation-delay:0.2s">tap a photo to relive it</p>
 
-    <div class="memories-scroll fade-in" style="animation-delay:0.4s">
-
-      <!-- MEMORY 1 -->
-      <div class="memory-card">
-        <div class="memory-photo">
-          <img src="photos/first-talk.jpg" alt="The first time we talked" loading="lazy" style="object-position:center 40%;">
-        </div>
-        <div class="memory-caption">
-          <p class="memory-text">the first time we ever talked with each other! I knew I wanted to get to know you even better, and I took a video of that day! view of flowers and u.</p>
-        </div>
-      </div>
-
-      <!-- MEMORY 2 -->
-      <div class="memory-card">
-        <div class="memory-photo">
-          <img src="photos/lego-call.jpg" alt="Our 2nd video call — legos together" loading="lazy" style="object-position:center center;">
-        </div>
-        <div class="memory-caption">
-          <p class="memory-text">our second video call. we built legos together for hours, and you stayed on until I fell asleep.</p>
-        </div>
-      </div>
-
-      <!-- MEMORY 3 — BADMINTON -->
-      <div class="memory-card">
-        <div class="memory-photo">
-          <img src="photos/badminton.jpg" alt="First time playing badminton" loading="lazy" style="object-position:center center;">
-        </div>
-        <div class="memory-caption">
-          <p class="memory-text">our first time playing badminton together! was so much fun, I learned your signature move then hehe. and good night talks and tiktoks afterwards xD</p>
-        </div>
-      </div>
-
-      <!-- MEMORY 4 — LUNCH -->
-      <div class="memory-card">
-        <div class="memory-photo">
-          <img src="photos/lunch.jpg" alt="First work lunch together" loading="lazy" style="object-position:center center;">
-        </div>
-        <div class="memory-caption">
-          <p class="memory-text">first work lunch together! many rants and the start to something special!</p>
-        </div>
-      </div>
-
-      <!-- MEMORY 5 — COOKING -->
-      <div class="memory-card">
-        <div class="memory-photo">
-          <img src="photos/cooking.jpg" alt="Cooking together" loading="lazy" style="object-position:center center;">
-        </div>
-        <div class="memory-caption">
-          <p class="memory-text">the best night ever! was so fun cooking with you, and meeting your parents! great conversations learning more about you and your family. and thank you for the rawon and drinks HAHA</p>
-        </div>
-      </div>
-
-      <!-- MEMORY 6 — FIRST GIFT -->
-      <div class="memory-card">
-        <div class="memory-photo">
-          <img src="photos/first-gift.jpg" alt="First gift from you" loading="lazy" style="object-position:center center;">
-        </div>
-        <div class="memory-caption">
-          <p class="memory-text">my first ever gift from you! I was so surprised and touched when you gave it to me! was thinking about it all day after our lunch together :)</p>
-        </div>
-      </div>
-
-      <!-- MEMORY 7 — CUTEST PHOTO -->
-      <div class="memory-card">
-        <div class="memory-photo">
-          <img src="photos/cute-photo.jpg" alt="The cutest photo ever" loading="lazy" style="object-position:center center;">
-        </div>
-        <div class="memory-caption">
-          <p class="memory-text">THE CUTEST PHOTO EVER, appreciate post hehe</p>
-        </div>
-      </div>
-
-      <!-- MEMORY 8 — WALKS + PAPEDA -->
-      <div class="memory-card">
-        <div class="memory-photo">
-          <img src="photos/walks-papeda.jpg" alt="Walks and trying papeda telur" loading="lazy" style="object-position:center center;">
-        </div>
-        <div class="memory-caption">
-          <p class="memory-text">walks + trying papeda telur! an emotional day for me :(( </p>
-        </div>
-      </div>
-
-      <!-- MEMORY 9 — FIRST PHOTO FROM YOU -->
-      <div class="memory-card">
-        <div class="memory-photo">
-          <img src="photos/first-photo.jpg" alt="The first photo from you" loading="lazy" style="object-position:center center;">
-        </div>
-        <div class="memory-caption">
-          <p class="memory-text">the first photo I ever got from you!</p>
-        </div>
-      </div>
-
+    <div class="memories-grid fade-in" style="animation-delay:0.4s">
+      <div class="memory-thumb" onclick="openMemory(0)"><img src="photos/first-talk.jpg" alt="First time talking" loading="lazy" style="object-position:center 40%;"></div>
+      <div class="memory-thumb" onclick="openMemory(1)"><img src="photos/badminton.jpg" alt="Badminton" loading="lazy"></div>
+      <div class="memory-thumb" onclick="openMemory(2)"><img src="photos/lunch.jpg" alt="First lunch" loading="lazy"></div>
+      <div class="memory-thumb" onclick="openMemory(3)"><img src="photos/cooking.jpg" alt="Cooking together" loading="lazy"></div>
+      <div class="memory-thumb" onclick="openMemory(4)"><img src="photos/first-gift.jpg" alt="First gift" loading="lazy"></div>
+      <div class="memory-thumb" onclick="openMemory(5)"><img src="photos/cute-photo.jpg" alt="Cutest photo" loading="lazy"></div>
+      <div class="memory-thumb" onclick="openMemory(6)"><img src="photos/walks-papeda.jpg" alt="Walks and papeda" loading="lazy"></div>
+      <div class="memory-thumb" onclick="openMemory(7)"><img src="photos/first-photo.jpg" alt="First photo from you" loading="lazy"></div>
+      <div class="memory-thumb" onclick="openMemory(8)"><img src="photos/lego-call.jpg" alt="Lego video call" loading="lazy"></div>
     </div>
 
     <button class="btn-back fade-in" style="animation-delay:0.6s" onclick="goTo('adventure')">back to shelf</button>
   </section>
+
+  <!-- Memory lightbox -->
+  <div class="memory-lightbox" id="memoryLightbox">
+    <button class="lb-close" onclick="closeMemory()">&times;</button>
+    <div class="lb-img-wrap"><img id="lbImg" src="" alt=""></div>
+    <p class="lb-caption" id="lbCaption"></p>
+    <div class="lb-nav">
+      <button onclick="navMemory(-1)">&larr; prev</button>
+      <button onclick="navMemory(1)">next &rarr;</button>
+    </div>
+    <p class="lb-counter" id="lbCounter"></p>
+  </div>
 
   <!-- ═══════ BOOK 6 — FLOWERS ═══════ -->
   <section class="screen book-screen" id="book-flowers">
@@ -2591,6 +2570,56 @@ Thank you for being you, Aamira.</p>
 
     letterCodeInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') tryLetterCode();
+    });
+
+    // ═══════════════════════════════════════
+    //  MEMORY LIGHTBOX
+    // ═══════════════════════════════════════
+    const memories = [
+      { src: 'photos/first-talk.jpg', pos: 'center 40%', caption: 'the first time we ever talked with each other! I knew I wanted to get to know you even better, and I took a video of that day! view of flowers and u.' },
+      { src: 'photos/badminton.jpg', pos: 'center center', caption: 'our first time playing badminton together! was so much fun, I learned your signature move then hehe. and good night talks and tiktoks afterwards xD' },
+      { src: 'photos/lunch.jpg', pos: 'center center', caption: 'first work lunch together! many rants and the start to something special!' },
+      { src: 'photos/cooking.jpg', pos: 'center center', caption: 'the best night ever! was so fun cooking with you, and meeting your parents! great conversations learning more about you and your family. and thank you for the rawon and drinks HAHA' },
+      { src: 'photos/first-gift.jpg', pos: 'center center', caption: 'my first ever gift from you! I was so surprised and touched when you gave it to me! was thinking about it all day after our lunch together :)' },
+      { src: 'photos/cute-photo.jpg', pos: 'center center', caption: 'THE CUTEST PHOTO EVER, appreciate post hehe' },
+      { src: 'photos/walks-papeda.jpg', pos: 'center center', caption: 'walks + trying papeda telur! an emotional day for me :((' },
+      { src: 'photos/first-photo.jpg', pos: 'center center', caption: 'the first photo I ever got from you!' },
+      { src: 'photos/lego-call.jpg', pos: 'center center', caption: 'our second video call! we built legos together for hours, and you stayed on until I fell asleep. one of my best nights <3' },
+    ];
+    let currentMemory = 0;
+    const lbEl = document.getElementById('memoryLightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbCaption = document.getElementById('lbCaption');
+    const lbCounter = document.getElementById('lbCounter');
+
+    function showMemory(i) {
+      currentMemory = i;
+      const m = memories[i];
+      lbImg.src = m.src;
+      lbImg.style.objectPosition = m.pos;
+      lbCaption.textContent = m.caption;
+      lbCounter.textContent = (i + 1) + ' / ' + memories.length;
+    }
+
+    function openMemory(i) {
+      showMemory(i);
+      lbEl.classList.add('open');
+    }
+
+    function closeMemory() {
+      lbEl.classList.remove('open');
+    }
+
+    function navMemory(dir) {
+      let next = currentMemory + dir;
+      if (next < 0) next = memories.length - 1;
+      if (next >= memories.length) next = 0;
+      showMemory(next);
+    }
+
+    // Close on background click
+    lbEl.addEventListener('click', (e) => {
+      if (e.target === lbEl) closeMemory();
     });
 
     // ═══════════════════════════════════════
