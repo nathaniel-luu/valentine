@@ -1148,38 +1148,51 @@
       letter-spacing: 0.06em;
     }
 
-    .flowers-sub {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1rem, 3vw, 1.15rem);
-      font-style: italic;
-      color: var(--ink-light);
-      max-width: 360px;
-      line-height: 1.7;
+    .flower-customizer {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 300px;
+      width: 100%;
     }
 
-    .flowers-reveal {
-      padding: 20px 28px;
-      border: 1.5px solid var(--accent);
-      max-width: 380px;
-      text-align: center;
-      opacity: 0;
-      animation: fadeIn 0.7s ease 2s forwards;
+    .customizer-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
-    .flowers-reveal p {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem;
-      color: var(--ink);
-      line-height: 1.7;
-    }
-
-    .flowers-reveal .reveal-hint {
+    .customizer-label {
       font-family: 'Cinzel', serif;
-      font-size: 0.85rem;
+      font-size: 0.6rem;
       font-weight: 500;
-      color: var(--accent);
-      letter-spacing: 0.08em;
-      margin-top: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      min-width: 50px;
+    }
+
+    .color-swatches {
+      display: flex;
+      gap: 8px;
+    }
+
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0;
+      box-shadow: 0 1px 4px rgba(42,35,32,0.1);
+    }
+    .swatch:hover {
+      transform: scale(1.15);
+    }
+    .swatch.active {
+      border-color: var(--ink) !important;
+      transform: scale(1.1);
     }
 
     .bouquet-wrap {
@@ -1913,11 +1926,29 @@ You mean more to me than I've let on. And this is me letting on.</p>
     </div>
 
     <h2 class="flowers-title fade-in" style="animation-delay:0.4s">white lilies</h2>
-    <p class="flowers-sub fade-in" style="animation-delay:0.6s">your favorite.</p>
 
-    <div class="flowers-reveal">
-      <p>these aren't staying on a screen.</p>
-      <p class="reveal-hint">real ones are on the way.</p>
+    <!-- Color customizer -->
+    <div class="flower-customizer fade-in" style="animation-delay:0.6s">
+      <div class="customizer-row">
+        <span class="customizer-label">petals</span>
+        <div class="color-swatches" id="petalSwatches">
+          <button class="swatch active" data-color="white" style="background:#fefcfa;border-color:var(--ink-faint)" onclick="setLilyColor('white',this)"></button>
+          <button class="swatch" data-color="pink" style="background:#f5b8c4" onclick="setLilyColor('pink',this)"></button>
+          <button class="swatch" data-color="lavender" style="background:#c8b8e0" onclick="setLilyColor('lavender',this)"></button>
+          <button class="swatch" data-color="peach" style="background:#f5d0a8" onclick="setLilyColor('peach',this)"></button>
+          <button class="swatch" data-color="yellow" style="background:#f5e8a0" onclick="setLilyColor('yellow',this)"></button>
+        </div>
+      </div>
+      <div class="customizer-row">
+        <span class="customizer-label">vase</span>
+        <div class="color-swatches" id="vaseSwatches">
+          <button class="swatch active" data-color="terracotta" style="background:#c4785a;border-color:var(--ink-faint)" onclick="setVaseColor('terracotta',this)"></button>
+          <button class="swatch" data-color="blue" style="background:#6b9ec2" onclick="setVaseColor('blue',this)"></button>
+          <button class="swatch" data-color="sage" style="background:#8aaa7a" onclick="setVaseColor('sage',this)"></button>
+          <button class="swatch" data-color="cream" style="background:#e8ddd0" onclick="setVaseColor('cream',this)"></button>
+          <button class="swatch" data-color="slate" style="background:#7a8a96" onclick="setVaseColor('slate',this)"></button>
+        </div>
+      </div>
     </div>
 
     <button class="btn-back fade-in" style="animation-delay:0.8s" onclick="goTo('adventure')">back to shelf</button>
@@ -2612,122 +2643,99 @@ You mean more to me than I've let on. And this is me letting on.</p>
     // ═══════════════════════════════════════
     //  BOOK 6: FLOWERS — PIXEL ART LILY BOUQUET
     // ═══════════════════════════════════════
-    (function drawPixelLilies() {
+    const lilyPalettes = {
+      white:    { petal: '#fefcfa', petalSh: '#e8e4dc', petalHi: '#ffffff' },
+      pink:     { petal: '#f5b8c4', petalSh: '#e8a0b0', petalHi: '#fdd0d8' },
+      lavender: { petal: '#c8b8e0', petalSh: '#b0a0cc', petalHi: '#dcd0f0' },
+      peach:    { petal: '#f5d0a8', petalSh: '#e8c090', petalHi: '#fde0c0' },
+      yellow:   { petal: '#f5e8a0', petalSh: '#e8d880', petalHi: '#fff4c0' },
+    };
+    const vasePalettes = {
+      terracotta: { main: '#c4785a', dk: '#a05838', lt: '#d4906e', rim: '#b06848', accent: '#d49878' },
+      blue:       { main: '#6b9ec2', dk: '#5a8db5', lt: '#8aacc8', rim: '#5a8aaa', accent: '#90bcd0' },
+      sage:       { main: '#8aaa7a', dk: '#6a8a5a', lt: '#a0c090', rim: '#7a9a6a', accent: '#b0c8a0' },
+      cream:      { main: '#e8ddd0', dk: '#d4c8b8', lt: '#f0eae0', rim: '#d0c4b0', accent: '#f5f0e8' },
+      slate:      { main: '#7a8a96', dk: '#5a6a78', lt: '#90a0ac', rim: '#6a7a88', accent: '#a0b0b8' },
+    };
+    let curLilyColor = 'white';
+    let curVaseColor = 'terracotta';
+
+    function drawBouquet() {
       const cvs = document.getElementById('lilyCanvas');
       if (!cvs) return;
       const ctx = cvs.getContext('2d');
       ctx.imageSmoothingEnabled = false;
-      const p = 5; // pixel size
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      const p = 5;
 
-      // Colors
+      const lp = lilyPalettes[curLilyColor];
+      const vp = vasePalettes[curVaseColor];
+
       const C = {
         stem: '#4a8c3f', stemDk: '#357030', stemLt: '#5ea352',
         leaf: '#3d7a35', leafLt: '#5a9e4e', leafDk: '#2d6028',
-        petal: '#fefcfa', petalSh: '#e8e4dc', petalHi: '#ffffff',
-        stamen: '#e8b830', stamenDk: '#c49520', stamenTip: '#d4a020',
+        petal: lp.petal, petalSh: lp.petalSh, petalHi: lp.petalHi,
+        stamen: '#e8b830', stamenTip: '#d4a020',
         center: '#8aaa50', centerDk: '#6b8a3a',
-        wrap: '#6b9ec2', wrapDk: '#5a8db5', wrapLt: '#8aacc8',
-        ribbon: '#d4a574', ribbonDk: '#b88a5a',
       };
 
       function px(x, y, col) {
         ctx.fillStyle = col;
         ctx.fillRect(x * p, y * p, p, p);
       }
-
       function rect(x, y, w, h, col) {
         ctx.fillStyle = col;
         ctx.fillRect(x * p, y * p, w * p, h * p);
       }
 
-      // Draw a pixel lily at position (cx, cy) with scale
-      function drawLily(cx, cy, angle) {
-        // Petals — 6 directions, chunky pixel style
-        const dirs = [
-          [0, -5], [4, -3], [4, 2], [0, 5], [-4, 2], [-4, -3]
-        ];
-        dirs.forEach(([dx, dy], i) => {
-          const col = i % 2 === 0 ? C.petal : C.petalSh;
-          const hi = i % 3 === 0 ? C.petalHi : C.petal;
-          // Each petal = 3x5 block radiating outward
-          for (let s = 0; s < 4; s++) {
-            const fx = cx + Math.round(dx * (s + 1) / 4);
-            const fy = cy + Math.round(dy * (s + 1) / 4);
-            px(fx, fy, s < 2 ? hi : col);
-            // Width of petal
-            if (Math.abs(dx) > Math.abs(dy)) {
-              px(fx, fy - 1, col);
-              px(fx, fy + 1, s > 1 ? C.petalSh : col);
-            } else {
-              px(fx - 1, fy, col);
-              px(fx + 1, fy, s > 1 ? C.petalSh : col);
-            }
-          }
-          // Petal tip highlight
-          const tx = cx + dx;
-          const ty = cy + dy;
-          px(tx, ty, C.petal);
-        });
+      // --- VASE (rounded, elegant pixel pot) ---
+      const vc = 28; // vase center x
 
-        // Center
-        px(cx, cy, C.center);
-        px(cx + 1, cy, C.centerDk);
-        px(cx - 1, cy, C.center);
-        px(cx, cy - 1, C.centerDk);
+      // Vase rim (wide top)
+      rect(vc - 8, 46, 17, 1, vp.rim);
+      rect(vc - 9, 47, 19, 1, vp.dk);
+      rect(vc - 8, 48, 17, 1, vp.rim);
 
-        // Stamens
-        const stDirs = [[1, -2], [2, 0], [1, 2], [-1, 2], [-2, 0], [-1, -2]];
-        stDirs.forEach(([sx, sy]) => {
-          px(cx + sx, cy + sy, C.stamen);
-          px(cx + Math.round(sx * 1.5), cy + Math.round(sy * 1.5), C.stamenTip);
-        });
-      }
-
-      // Draw leaf
-      function drawLeaf(x, y, dir, len) {
-        for (let i = 0; i < len; i++) {
-          const lx = x + dir * Math.round(i * 0.7);
-          const ly = y - i;
-          px(lx, ly, i < 2 ? C.leafDk : C.leaf);
-          px(lx + dir, ly, C.leafLt);
-          if (i > 1 && i < len - 1) {
-            px(lx + dir * 2, ly, C.leaf);
-          }
+      // Vase body — curved profile
+      const vaseRows = [
+        // [y, halfWidth]
+        [49, 7], [50, 7], [51, 7], [52, 8], [53, 8],
+        [54, 9], [55, 9], [56, 10], [57, 10], [58, 10],
+        [59, 10], [60, 10], [61, 10], [62, 9], [63, 9],
+        [64, 8], [65, 8], [66, 7], [67, 7], [68, 6],
+        [69, 6], [70, 5],
+      ];
+      vaseRows.forEach(([y, hw]) => {
+        for (let c = vc - hw; c <= vc + hw; c++) {
+          let col = vp.main;
+          if (c === vc - hw || c === vc + hw) col = vp.dk;
+          else if (c === vc - hw + 1) col = vp.lt;
+          else if (c === vc + hw - 1) col = vp.dk;
+          // Highlight stripe
+          else if (c === vc - 2 || c === vc - 3) col = vp.accent;
+          px(c, y, col);
         }
+      });
+
+      // Vase base
+      rect(vc - 6, 71, 13, 1, vp.dk);
+      rect(vc - 7, 72, 15, 1, vp.rim);
+
+      // Subtle pattern on vase — horizontal accent lines
+      for (let c = vc - 7; c <= vc + 7; c++) {
+        if (c >= vc - vaseRows[4][1] && c <= vc + vaseRows[4][1])
+          px(c, 53, vp.accent);
+        if (c >= vc - vaseRows[12][1] && c <= vc + vaseRows[12][1])
+          px(c, 61, vp.accent);
       }
 
-      // --- DRAW THE BOUQUET ---
-
-      // Wrapping paper (trapezoid)
-      const wrapTop = 50, wrapBot = 72;
-      for (let row = wrapTop; row <= wrapBot; row++) {
-        const t = (row - wrapTop) / (wrapBot - wrapTop);
-        const halfW = Math.round(8 + t * 5);
-        const cx = 28;
-        for (let c = cx - halfW; c <= cx + halfW; c++) {
-          let col = C.wrap;
-          if (c === cx - halfW || c === cx + halfW) col = C.wrapDk;
-          if (c === cx - halfW + 1 || c === cx + halfW - 1) col = C.wrapLt;
-          // Subtle vertical stripes
-          if ((c + row) % 6 === 0) col = C.wrapLt;
-          px(c, row, col);
-        }
-      }
-
-      // Ribbon
-      rect(22, 49, 13, 1, C.ribbon);
-      rect(23, 50, 11, 1, C.ribbonDk);
-      // Ribbon tails
-      px(22, 51, C.ribbon); px(21, 52, C.ribbon); px(20, 53, C.ribbon);
-      px(34, 51, C.ribbon); px(35, 52, C.ribbon); px(36, 53, C.ribbon);
-
-      // Stems
+      // --- STEMS ---
       const stems = [
-        { x: 27, top: 16, bot: 50 },
-        { x: 28, top: 10, bot: 50 },
-        { x: 29, top: 14, bot: 50 },
-        { x: 25, top: 22, bot: 50 },
-        { x: 31, top: 20, bot: 50 },
+        { x: 27, top: 16, bot: 48 },
+        { x: 28, top: 10, bot: 48 },
+        { x: 29, top: 14, bot: 48 },
+        { x: 25, top: 22, bot: 48 },
+        { x: 31, top: 20, bot: 48 },
       ];
       stems.forEach((s, i) => {
         const lean = (i - 2) * 0.15;
@@ -2737,19 +2745,73 @@ You mean more to me than I've let on. And this is me letting on.</p>
         }
       });
 
-      // Leaves
-      drawLeaf(24, 42, -1, 8);
-      drawLeaf(32, 40, 1, 7);
-      drawLeaf(26, 36, -1, 6);
-      drawLeaf(30, 44, 1, 5);
+      // --- LEAVES ---
+      function drawLeaf(x, y, dir, len) {
+        for (let i = 0; i < len; i++) {
+          const lx = x + dir * Math.round(i * 0.7);
+          const ly = y - i;
+          px(lx, ly, i < 2 ? C.leafDk : C.leaf);
+          px(lx + dir, ly, C.leafLt);
+          if (i > 1 && i < len - 1) px(lx + dir * 2, ly, C.leaf);
+        }
+      }
+      drawLeaf(23, 40, -1, 8);
+      drawLeaf(33, 38, 1, 7);
+      drawLeaf(25, 34, -1, 6);
+      drawLeaf(31, 42, 1, 5);
 
-      // 5 White lilies
-      drawLily(24, 16, 0);  // left
-      drawLily(28, 10, 0);  // center top
-      drawLily(33, 14, 0);  // right
-      drawLily(22, 22, 0);  // lower left
-      drawLily(35, 20, 0);  // lower right
-    })();
+      // --- LILIES ---
+      function drawLily(cx, cy) {
+        const dirs = [[0, -5], [4, -3], [4, 2], [0, 5], [-4, 2], [-4, -3]];
+        dirs.forEach(([dx, dy], i) => {
+          const col = i % 2 === 0 ? C.petal : C.petalSh;
+          const hi = i % 3 === 0 ? C.petalHi : C.petal;
+          for (let s = 0; s < 4; s++) {
+            const fx = cx + Math.round(dx * (s + 1) / 4);
+            const fy = cy + Math.round(dy * (s + 1) / 4);
+            px(fx, fy, s < 2 ? hi : col);
+            if (Math.abs(dx) > Math.abs(dy)) {
+              px(fx, fy - 1, col);
+              px(fx, fy + 1, s > 1 ? C.petalSh : col);
+            } else {
+              px(fx - 1, fy, col);
+              px(fx + 1, fy, s > 1 ? C.petalSh : col);
+            }
+          }
+          px(cx + dx, cy + dy, C.petal);
+        });
+        px(cx, cy, C.center); px(cx + 1, cy, C.centerDk);
+        px(cx - 1, cy, C.center); px(cx, cy - 1, C.centerDk);
+        const stDirs = [[1, -2], [2, 0], [1, 2], [-1, 2], [-2, 0], [-1, -2]];
+        stDirs.forEach(([sx, sy]) => {
+          px(cx + sx, cy + sy, C.stamen);
+          px(cx + Math.round(sx * 1.5), cy + Math.round(sy * 1.5), C.stamenTip);
+        });
+      }
+      drawLily(24, 16);
+      drawLily(28, 10);
+      drawLily(33, 14);
+      drawLily(22, 22);
+      drawLily(35, 20);
+    }
+    drawBouquet();
+
+    function setLilyColor(color, el) {
+      curLilyColor = color;
+      document.querySelectorAll('#petalSwatches .swatch').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      drawBouquet();
+      // Update title
+      const names = { white: 'white lilies', pink: 'pink lilies', lavender: 'lavender lilies', peach: 'peach lilies', yellow: 'yellow lilies' };
+      document.querySelector('.flowers-title').textContent = names[color] || 'lilies';
+    }
+
+    function setVaseColor(color, el) {
+      curVaseColor = color;
+      document.querySelectorAll('#vaseSwatches .swatch').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      drawBouquet();
+    }
 
     // Open flowers screen with floating petal animation
     let flowersOpened = false;
