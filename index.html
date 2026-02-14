@@ -1012,14 +1012,6 @@
       overflow-y: auto;
     }
 
-    .care-sub {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.95rem;
-      font-style: italic;
-      color: var(--ink-faint);
-      margin-bottom: 0.5rem;
-    }
-
     .care-tabs {
       display: flex;
       gap: 0;
@@ -1110,91 +1102,10 @@
       height: 380px;
     }
 
-    /* Blue wrapping paper — cone shape */
-    .bouquet-paper {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 160px;
-      height: 180px;
-      background: linear-gradient(135deg, #8aacc8 0%, #6b9ec2 40%, #5a8db5 100%);
-      clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
-      border-radius: 0 0 4px 4px;
-      z-index: 2;
-    }
-    .bouquet-paper::after {
-      content: '';
-      position: absolute;
-      top: -6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 12px;
-      background: linear-gradient(135deg, #7ba3c0, #5a8db5);
-      border-radius: 50%;
-      z-index: 3;
-    }
-
-    /* Ribbon */
-    .bouquet-ribbon {
-      position: absolute;
-      bottom: 120px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px;
-      height: 8px;
-      background: #d4a574;
-      border-radius: 4px;
-      z-index: 4;
-    }
-
-    /* Stems */
-    .lily-stem {
-      position: absolute;
-      bottom: 100px;
-      left: 50%;
-      width: 2px;
-      background: linear-gradient(to top, #6e8455, #8a9e6e);
-      z-index: 1;
-      transform-origin: bottom center;
-    }
-
-    /* Individual lily flower */
-    .lily {
-      position: absolute;
-      z-index: 3;
-    }
-
-    .lily-petal {
-      position: absolute;
-      width: 18px;
-      height: 40px;
-      background: linear-gradient(to top, #f5f0eb, #ffffff);
-      border-radius: 50% 50% 45% 45%;
-      transform-origin: bottom center;
-      border: 1px solid rgba(200, 195, 188, 0.3);
-    }
-
-    .lily-center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 8px;
-      height: 8px;
-      background: radial-gradient(circle, #e8c547 30%, #d4a030 100%);
-      border-radius: 50%;
-      z-index: 5;
-    }
-
-    /* Stamen dots */
-    .lily-stamen {
-      position: absolute;
-      width: 3px;
-      height: 3px;
-      background: #c4956a;
-      border-radius: 50%;
+    /* Pixel lily canvas */
+    #lilyCanvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
 
     /* Floating petals animation */
@@ -1998,67 +1909,7 @@ You mean more to me than I've let on. And this is me letting on.</p>
   <!-- ═══════ BOOK 6 — FLOWERS ═══════ -->
   <section class="screen book-screen" id="book-flowers">
     <div class="bouquet-wrap fade-in" id="bouquetWrap">
-      <svg viewBox="0 0 280 380" xmlns="http://www.w3.org/2000/svg" width="280" height="380">
-        <defs>
-          <linearGradient id="paperGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#8aacc8"/>
-            <stop offset="50%" stop-color="#6b9ec2"/>
-            <stop offset="100%" stop-color="#5a8db5"/>
-          </linearGradient>
-          <radialGradient id="glowBg" cx="50%" cy="32%" r="38%">
-            <stop offset="0%" stop-color="rgba(232,197,71,0.14)"/>
-            <stop offset="100%" stop-color="rgba(232,197,71,0)"/>
-          </radialGradient>
-          <g id="lily">
-            <ellipse cx="0" cy="-16" rx="7" ry="18" fill="#fefcfa" stroke="#ccc8c0" stroke-width="0.7" transform="rotate(0)"/>
-            <ellipse cx="0" cy="-16" rx="7" ry="18" fill="#fefcfa" stroke="#ccc8c0" stroke-width="0.7" transform="rotate(60)"/>
-            <ellipse cx="0" cy="-16" rx="7" ry="18" fill="#fefcfa" stroke="#ccc8c0" stroke-width="0.7" transform="rotate(120)"/>
-            <ellipse cx="0" cy="-16" rx="7" ry="18" fill="#fefcfa" stroke="#ccc8c0" stroke-width="0.7" transform="rotate(180)"/>
-            <ellipse cx="0" cy="-16" rx="7" ry="18" fill="#fefcfa" stroke="#ccc8c0" stroke-width="0.7" transform="rotate(240)"/>
-            <ellipse cx="0" cy="-16" rx="7" ry="18" fill="#fefcfa" stroke="#ccc8c0" stroke-width="0.7" transform="rotate(300)"/>
-            <circle cx="0" cy="0" r="4.5" fill="#e8c547"/>
-            <circle cx="0" cy="-7" r="1.5" fill="#c4956a"/>
-            <circle cx="6" cy="-3.5" r="1.5" fill="#c4956a"/>
-            <circle cx="6" cy="3.5" r="1.5" fill="#c4956a"/>
-            <circle cx="0" cy="7" r="1.5" fill="#c4956a"/>
-            <circle cx="-6" cy="3.5" r="1.5" fill="#c4956a"/>
-            <circle cx="-6" cy="-3.5" r="1.5" fill="#c4956a"/>
-          </g>
-        </defs>
-
-        <!-- Soft golden glow behind flowers -->
-        <circle cx="140" cy="125" r="110" fill="url(#glowBg)"/>
-
-        <!-- Stems -->
-        <line x1="125" y1="248" x2="105" y2="112" stroke="#6e8455" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="135" y1="248" x2="140" y2="90"  stroke="#6e8455" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="145" y1="248" x2="170" y2="105" stroke="#6e8455" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="130" y1="248" x2="118" y2="132" stroke="#6e8455" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="148" y1="248" x2="158" y2="138" stroke="#6e8455" stroke-width="2.5" stroke-linecap="round"/>
-
-        <!-- Leaves -->
-        <ellipse cx="112" cy="188" rx="4" ry="15" fill="#8a9e6e" transform="rotate(-20 112 188)"/>
-        <ellipse cx="158" cy="182" rx="4" ry="14" fill="#7d9260" transform="rotate(18 158 182)"/>
-        <ellipse cx="128" cy="198" rx="3.5" ry="12" fill="#8a9e6e" transform="rotate(12 128 198)"/>
-
-        <!-- Wrapping paper -->
-        <polygon points="105,248 175,248 188,370 92,370" fill="url(#paperGrad)"/>
-        <line x1="115" y1="258" x2="107" y2="355" stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/>
-        <line x1="140" y1="248" x2="140" y2="370" stroke="rgba(255,255,255,0.08)" stroke-width="0.8"/>
-        <line x1="162" y1="258" x2="170" y2="355" stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/>
-
-        <!-- Gold ribbon -->
-        <ellipse cx="140" cy="250" rx="38" ry="5" fill="#d4a574"/>
-        <path d="M118,255 Q112,273 105,283" stroke="#d4a574" fill="none" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M162,255 Q168,273 175,283" stroke="#d4a574" fill="none" stroke-width="2.5" stroke-linecap="round"/>
-
-        <!-- 5 White lilies -->
-        <use href="#lily" transform="translate(105,112) scale(1.05) rotate(-8)"/>
-        <use href="#lily" transform="translate(140,90) scale(1.15)"/>
-        <use href="#lily" transform="translate(170,105) scale(1.1) rotate(6)"/>
-        <use href="#lily" transform="translate(118,132) scale(0.95) rotate(-3)"/>
-        <use href="#lily" transform="translate(158,138) scale(0.98) rotate(10)"/>
-      </svg>
+      <canvas id="lilyCanvas" width="280" height="380" style="image-rendering:pixelated;image-rendering:crisp-edges;"></canvas>
     </div>
 
     <h2 class="flowers-title fade-in" style="animation-delay:0.4s">white lilies</h2>
@@ -2075,21 +1926,13 @@ You mean more to me than I've let on. And this is me letting on.</p>
   <!-- ═══════ BOOK 5 — CARE GUIDE ═══════ -->
   <section class="screen book-screen" id="book-care">
     <h2 class="book-screen-title fade-in">Care Guide</h2>
-    <p class="care-sub fade-in" style="animation-delay:0.2s">researched with love</p>
-
     <div class="care-tabs fade-in" style="animation-delay:0.3s">
       <button class="care-tab active" onclick="switchCareTab('sleep', this)">Sleep</button>
-      <button class="care-tab" onclick="switchCareTab('comfort', this)">Comfort</button>
       <button class="care-tab" onclick="switchCareTab('period', this)">Period</button>
     </div>
 
     <!-- SLEEP PANEL -->
     <div class="care-panel active" id="care-sleep">
-      <div class="tip-card">
-        <p class="tip-title">Keep a Consistent Schedule</p>
-        <p class="tip-text">Go to bed and wake up at the same time every day — even weekends. Your body's internal clock loves routine, and consistency is one of the strongest predictors of good sleep.</p>
-        <p class="tip-source">Irish et al., 2015 — Sleep Medicine Reviews</p>
-      </div>
       <div class="tip-card">
         <p class="tip-title">Cool Your Room Down</p>
         <p class="tip-text">Set your bedroom to around 18-20°C (65-68°F). Your core body temperature naturally drops at night to initiate sleep, and a cool room helps that process along.</p>
@@ -2097,57 +1940,13 @@ You mean more to me than I've let on. And this is me letting on.</p>
       </div>
       <div class="tip-card">
         <p class="tip-title">Screens Off Before Bed</p>
-        <p class="tip-text">Put away phones and laptops at least 30-60 minutes before sleep. Blue light suppresses melatonin production and tricks your brain into thinking it's still daytime.</p>
+        <p class="tip-text">Put away phones and laptops at least 30-60 minutes before sleep. Blue light suppresses melatonin production and tricks your brain into thinking it's still daytime. I know this one is especially hard haha...</p>
         <p class="tip-source">Chang et al., 2015 — Proceedings of the National Academy of Sciences</p>
       </div>
       <div class="tip-card">
         <p class="tip-title">Try 4-7-8 Breathing</p>
         <p class="tip-text">Breathe in for 4 seconds, hold for 7, exhale slowly for 8. This activates your parasympathetic nervous system and helps your body shift into rest mode.</p>
         <p class="tip-source">Jerath et al., 2015 — Medical Hypotheses</p>
-      </div>
-      <div class="tip-card">
-        <p class="tip-title">Consider Magnesium</p>
-        <p class="tip-text">Magnesium supplements (~500mg) improve sleep quality by regulating neurotransmitters that calm the nervous system. Especially helpful if you're not getting enough from food.</p>
-        <p class="tip-source">Abbasi et al., 2012 — Journal of Research in Medical Sciences</p>
-      </div>
-      <div class="tip-card">
-        <p class="tip-title">Write Down Your Worries</p>
-        <p class="tip-text">Spend 5 minutes before bed writing a to-do list for tomorrow. Offloading thoughts onto paper significantly reduces the time it takes to fall asleep.</p>
-        <p class="tip-source">Scullin et al., 2018 — Journal of Experimental Psychology</p>
-      </div>
-    </div>
-
-    <!-- COMFORT PANEL -->
-    <div class="care-panel" id="care-comfort">
-      <div class="tip-card">
-        <p class="tip-title">Chicken Soup Actually Works</p>
-        <p class="tip-text">Not just comfort food — chicken soup has mild anti-inflammatory properties that help reduce upper respiratory symptoms. Your grandma was scientifically right.</p>
-        <p class="tip-source">Rennard et al., 2000 — CHEST Journal</p>
-      </div>
-      <div class="tip-card">
-        <p class="tip-title">Honey for Sore Throats</p>
-        <p class="tip-text">A spoonful of honey (especially buckwheat) soothes a sore throat and calms a cough — studies show it works as well as some over-the-counter cough suppressants.</p>
-        <p class="tip-source">Paul et al., 2007 — Archives of Pediatrics & Adolescent Medicine</p>
-      </div>
-      <div class="tip-card">
-        <p class="tip-title">Stay Hydrated (Seriously)</p>
-        <p class="tip-text">When you're sick, your body loses fluids faster through fever and congestion. Warm fluids like tea or broth also loosen congestion and soothe irritated airways.</p>
-        <p class="tip-source">Sanu & Eccles, 2008 — Rhinology</p>
-      </div>
-      <div class="tip-card">
-        <p class="tip-title">Ginger for Nausea</p>
-        <p class="tip-text">If your stomach is upset, ginger genuinely works. About 1-1.5g of ginger has been shown to significantly reduce nausea from multiple causes.</p>
-        <p class="tip-source">Ernst & Pittler, 2000 — British Journal of Anaesthesia</p>
-      </div>
-      <div class="tip-card">
-        <p class="tip-title">Prioritize Sleep and Rest</p>
-        <p class="tip-text">Sleep is when your immune system does its heaviest work. Sleep deprivation measurably reduces your body's ability to fight infection — so rest guilt-free.</p>
-        <p class="tip-source">Prather et al., 2015 — Sleep</p>
-      </div>
-      <div class="tip-card">
-        <p class="tip-title">Zinc Within 24 Hours</p>
-        <p class="tip-text">If you catch a cold early, zinc lozenges taken within the first 24 hours can reduce how long you're sick by about a day. Timing is everything here.</p>
-        <p class="tip-source">Singh & Das, 2013 — Cochrane Database of Systematic Reviews</p>
       </div>
     </div>
 
@@ -2159,29 +1958,14 @@ You mean more to me than I've let on. And this is me letting on.</p>
         <p class="tip-source">Akin et al., 2001 — Journal of Reproductive Medicine</p>
       </div>
       <div class="tip-card">
-        <p class="tip-title">Magnesium Eases Cramps</p>
-        <p class="tip-text">Magnesium relaxes uterine smooth muscle and reduces pain intensity. Around 250-360mg daily in the days before and during your period can genuinely help.</p>
-        <p class="tip-source">Parazzini et al., 2017 — Magnesium Research</p>
-      </div>
-      <div class="tip-card">
-        <p class="tip-title">Gentle Movement Helps</p>
-        <p class="tip-text">Light exercise — walking, stretching, yoga — releases endorphins that act as natural painkillers. Even 20-30 minutes of low-intensity movement makes a difference.</p>
-        <p class="tip-source">Matthewman et al., 2018 — BMC Women's Health</p>
+        <p class="tip-title">Anti-Inflammatory Foods</p>
+        <p class="tip-text">Omega-3s from fish, flaxseed, or walnuts reduce prostaglandins — the compound directly responsible for uterine cramping. Add these in the days before your period.</p>
+        <p class="tip-source">Harel et al., 1996 — American Journal of Obstetrics and Gynecology</p>
       </div>
       <div class="tip-card">
         <p class="tip-title">Ginger Tea for Pain</p>
         <p class="tip-text">750-2000mg of ginger powder per day during the first 3-4 days of your period reduces menstrual pain as effectively as ibuprofen. Make it a warm tea.</p>
         <p class="tip-source">Ozgoli et al., 2009 — Journal of Alternative and Complementary Medicine</p>
-      </div>
-      <div class="tip-card">
-        <p class="tip-title">Dark Chocolate (Yes, Really)</p>
-        <p class="tip-text">Dark chocolate (70%+ cacao) is rich in magnesium and triggers endorphin release. There's real science behind the craving — and it may genuinely help with cramps and mood.</p>
-        <p class="tip-source">Davinelli et al., 2014 — Nutrition Reviews; Bruinsma & Taren, 1999 — JADA</p>
-      </div>
-      <div class="tip-card">
-        <p class="tip-title">Anti-Inflammatory Foods</p>
-        <p class="tip-text">Omega-3s from fish, flaxseed, or walnuts reduce prostaglandins — the compound directly responsible for uterine cramping. Add these in the days before your period.</p>
-        <p class="tip-source">Harel et al., 1996 — American Journal of Obstetrics and Gynecology</p>
       </div>
     </div>
 
@@ -2826,10 +2610,146 @@ You mean more to me than I've let on. And this is me letting on.</p>
     }
 
     // ═══════════════════════════════════════
-    //  BOOK 6: FLOWERS — LILY BOUQUET
+    //  BOOK 6: FLOWERS — PIXEL ART LILY BOUQUET
     // ═══════════════════════════════════════
-    // Build CSS lilies in the bouquet
-    // Bouquet is now rendered as inline SVG — no JS needed
+    (function drawPixelLilies() {
+      const cvs = document.getElementById('lilyCanvas');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      const p = 5; // pixel size
+
+      // Colors
+      const C = {
+        stem: '#4a8c3f', stemDk: '#357030', stemLt: '#5ea352',
+        leaf: '#3d7a35', leafLt: '#5a9e4e', leafDk: '#2d6028',
+        petal: '#fefcfa', petalSh: '#e8e4dc', petalHi: '#ffffff',
+        stamen: '#e8b830', stamenDk: '#c49520', stamenTip: '#d4a020',
+        center: '#8aaa50', centerDk: '#6b8a3a',
+        wrap: '#6b9ec2', wrapDk: '#5a8db5', wrapLt: '#8aacc8',
+        ribbon: '#d4a574', ribbonDk: '#b88a5a',
+      };
+
+      function px(x, y, col) {
+        ctx.fillStyle = col;
+        ctx.fillRect(x * p, y * p, p, p);
+      }
+
+      function rect(x, y, w, h, col) {
+        ctx.fillStyle = col;
+        ctx.fillRect(x * p, y * p, w * p, h * p);
+      }
+
+      // Draw a pixel lily at position (cx, cy) with scale
+      function drawLily(cx, cy, angle) {
+        // Petals — 6 directions, chunky pixel style
+        const dirs = [
+          [0, -5], [4, -3], [4, 2], [0, 5], [-4, 2], [-4, -3]
+        ];
+        dirs.forEach(([dx, dy], i) => {
+          const col = i % 2 === 0 ? C.petal : C.petalSh;
+          const hi = i % 3 === 0 ? C.petalHi : C.petal;
+          // Each petal = 3x5 block radiating outward
+          for (let s = 0; s < 4; s++) {
+            const fx = cx + Math.round(dx * (s + 1) / 4);
+            const fy = cy + Math.round(dy * (s + 1) / 4);
+            px(fx, fy, s < 2 ? hi : col);
+            // Width of petal
+            if (Math.abs(dx) > Math.abs(dy)) {
+              px(fx, fy - 1, col);
+              px(fx, fy + 1, s > 1 ? C.petalSh : col);
+            } else {
+              px(fx - 1, fy, col);
+              px(fx + 1, fy, s > 1 ? C.petalSh : col);
+            }
+          }
+          // Petal tip highlight
+          const tx = cx + dx;
+          const ty = cy + dy;
+          px(tx, ty, C.petal);
+        });
+
+        // Center
+        px(cx, cy, C.center);
+        px(cx + 1, cy, C.centerDk);
+        px(cx - 1, cy, C.center);
+        px(cx, cy - 1, C.centerDk);
+
+        // Stamens
+        const stDirs = [[1, -2], [2, 0], [1, 2], [-1, 2], [-2, 0], [-1, -2]];
+        stDirs.forEach(([sx, sy]) => {
+          px(cx + sx, cy + sy, C.stamen);
+          px(cx + Math.round(sx * 1.5), cy + Math.round(sy * 1.5), C.stamenTip);
+        });
+      }
+
+      // Draw leaf
+      function drawLeaf(x, y, dir, len) {
+        for (let i = 0; i < len; i++) {
+          const lx = x + dir * Math.round(i * 0.7);
+          const ly = y - i;
+          px(lx, ly, i < 2 ? C.leafDk : C.leaf);
+          px(lx + dir, ly, C.leafLt);
+          if (i > 1 && i < len - 1) {
+            px(lx + dir * 2, ly, C.leaf);
+          }
+        }
+      }
+
+      // --- DRAW THE BOUQUET ---
+
+      // Wrapping paper (trapezoid)
+      const wrapTop = 50, wrapBot = 72;
+      for (let row = wrapTop; row <= wrapBot; row++) {
+        const t = (row - wrapTop) / (wrapBot - wrapTop);
+        const halfW = Math.round(8 + t * 5);
+        const cx = 28;
+        for (let c = cx - halfW; c <= cx + halfW; c++) {
+          let col = C.wrap;
+          if (c === cx - halfW || c === cx + halfW) col = C.wrapDk;
+          if (c === cx - halfW + 1 || c === cx + halfW - 1) col = C.wrapLt;
+          // Subtle vertical stripes
+          if ((c + row) % 6 === 0) col = C.wrapLt;
+          px(c, row, col);
+        }
+      }
+
+      // Ribbon
+      rect(22, 49, 13, 1, C.ribbon);
+      rect(23, 50, 11, 1, C.ribbonDk);
+      // Ribbon tails
+      px(22, 51, C.ribbon); px(21, 52, C.ribbon); px(20, 53, C.ribbon);
+      px(34, 51, C.ribbon); px(35, 52, C.ribbon); px(36, 53, C.ribbon);
+
+      // Stems
+      const stems = [
+        { x: 27, top: 16, bot: 50 },
+        { x: 28, top: 10, bot: 50 },
+        { x: 29, top: 14, bot: 50 },
+        { x: 25, top: 22, bot: 50 },
+        { x: 31, top: 20, bot: 50 },
+      ];
+      stems.forEach((s, i) => {
+        const lean = (i - 2) * 0.15;
+        for (let y = s.bot; y >= s.top; y--) {
+          const x = s.x + Math.round((s.bot - y) * lean);
+          px(x, y, y % 3 === 0 ? C.stemDk : C.stem);
+        }
+      });
+
+      // Leaves
+      drawLeaf(24, 42, -1, 8);
+      drawLeaf(32, 40, 1, 7);
+      drawLeaf(26, 36, -1, 6);
+      drawLeaf(30, 44, 1, 5);
+
+      // 5 White lilies
+      drawLily(24, 16, 0);  // left
+      drawLily(28, 10, 0);  // center top
+      drawLily(33, 14, 0);  // right
+      drawLily(22, 22, 0);  // lower left
+      drawLily(35, 20, 0);  // lower right
+    })();
 
     // Open flowers screen with floating petal animation
     let flowersOpened = false;
